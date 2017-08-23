@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Battleship</title>
+<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript">
+//@todo: make ships placeable
+//@todo: make boards on different screens
+//@todo: make arrow above turn indicator
+//@todo: make all .square an .legendSquare unselectable
+//o=$('#board1 .square')[32] returns a javascript object, not a jquery object
+// ie o.style.backgroundColor = 'yellow' 
+
+debug = false; 
+
+var boardSize = 8; // (8x8 = 64)
+var squareSize = 40;
+var noShips = 5;
+var playerTurn;
+
+var hitbox1 = new Array( boardSize * boardSize ); 
+var hitbox2 = new Array( boardSize * boardSize );
+
+var isHitCount1 = 0;
+var isHitCount2 = 0;
+var isHitMax1 = 14; // @todo no ships gauss formula more robust
+var isHitMax2 = 14;
+
+var shotsFired1 = new Array( boardSize * boardSize ); 
+var shotsFired2 = new Array( boardSize * boardSize );
+
+$( document ).ready( function() {
+	generateBoard( $( '#board1' ) );
+	generateBoard( $( '#board2' ) );
+
+  //#targetBoard2 targets #board2
+	generateTargetBoard( $( '#targetBoard2' ), 2 );
+	generateTargetBoard( $( '#targetBoard1' ), 1 );
+
+	spawnShips( $( '#board1' ), 1 );
+	spawnShips( $( '#board2' ), 2 );
+
+	switchTurn();
+
+	if( debug ) {
+	  showHitboxes( hitbox1, $( '#board1 > .square' ) );
+	  showHitboxes( hitbox2, $( '#board2 > .square' ) );
+  }
+});
+
+function endGame( winner ) {
+	$('body').html( '<div style="background-color:#ff0;font-size:80px;font-weight:bold">Player ' + winner + ' wins!</div>' );
+}
+
+function showHitboxes( hitbox, divArray ) {
+  for( var i = 0; i < hitbox.length; i++ ) {
+  	if( hitbox[ i ] ) {
+  		divArray[ i ].style.backgroundColor = '#ff0';
+  	}
+  }
+}
+
+function generateTargetBoard( container, boardNo ) {
+	var size = boardSize + 1;
+  var char = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'; //how to int to ascii?
+
+  container.append( '<div class="legendSquare"></div>' );
+	for( let i = 1; i < size * size; i++ ) {
+		let clazz = 'square';
+		//i is the full board index (including coordinate ledgends)
+		let squareIndex = i - size - Math.floor( i / size );
+		content = debug ? squareIndex : '';
+
+		if( i < size ) {
+			clazz = 'legendSquare';
+			content = i;
+		} else if( i % size == 0 ) {
+			clazz = 'legendSquare';
+			content = char[ (i / size) - 1 ]
+		}
+
+		container.append( '<div class="' + clazz + '" + onclick="clickSquare(' + squareIndex + ', ' + boardNo + ')">' + content + '</div>' );
+	}
+}
+
+function clickSquare( squareNo, targetBoardNo ) {
+	if( debug )
+		console.log( squareNo );
+
+	if( playerTurn === targetBoardNo ) {
+		alert('not your turn!');
+		return;
+	}
+
+	var isOne = targetBoardNo === 1;
+	var hitbox = isOne ? hitbox1 : hitbox2;
+	var isHit = !!hitbox[ squareNo ];
+	var target = isOne ? $( '#targetBoard1 > .square' ) : $( '#targetBoard2 > .square' );
+	var board = isOne ? $( '#board1 > .square' ) : $( '#board2 > .square' );
+	var hitColor = '#000';
+	var hitCounter = isOne ? isHitCount1 : isHitCount2;
+	var maxCounter = isOne ? isHitMax1 : isHitMax2;
+
+	if( isHit ) {
+		hitColor = '#f00';
+		hitCounter++;
+	}
+
+	target[ squareNo ].style.backgroundColor = hitColor;
+	board[ squareNo ].style.backgroundColor = hitColor;
+
+	if( isOne && isHitCount2 === isHitMax2 || !isOne && isHitCount1 === isHitMax2 ) {
+		console.log(hitCounter);
+		console.log(maxCounter);
+		endGame( playerTurn );
+	}
+
+	switchTurn();
+}
+
+function switchTurn() {
+	var suffix = 'turn';
+	if( !playerTurn ) {
+		playerTurn = randInt( 2 ) + 1;
+		suffix = 'start!';
+	} else {
+		playerTurn = playerTurn === 1 ? 2 : 1;
+	}
+	$( '#playerTurnIndicator' ).text( 'Player' + playerTurn + ' ' + suffix );
+	$( '#playerTurnIndicator' ).css( 'margin-left', playerTurn === 1 ? '20px' : '400px' );
+
+}
+
+function generateBoard( container ) {
+  var size = boardSize + 1;
+  var char = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'; //how to int to ascii?
+
+  container.append( '<div class="legendSquare"></div>' );
+	for( let i = 1; i < size * size; i++ ) {
+		let clazz = 'square';
+		content = '';
+
+		if( i < size ) {
+			clazz = 'legendSquare';
+			content = i;
+		} else if( i % size == 0 ) {
+			clazz = 'legendSquare';
+			content = char[ (i / size) - 1 ]
+		}
+
+		container.append( '<div class="' + clazz + '">' + content + '</div>' );
+	}
+}
+
+function spawnShips( container, player ) {
+	if( player === 1 ) {
+		randomizeShips( container, hitbox1 );
+	} else {
+		randomizeShips( container, hitbox2 );
+	}
+}
+
+function randomizeShips( container, hitbox ) {
+	for( var i = 2; i < noShips + 1; ) {
+		if( addShip( container, hitbox, i, randIndex( boardSize ), randIndex( boardSize ), randInt( 2 ) ) ) {
+			i++;
+		}
+	}
+}
+
+function randInt( range ) { //ZERO INDEXED: return: 0 <= x < range
+	return Math.floor( Math.random() * range );
+}
+
+function randIndex( range ) { //ONE INDEXED: returns 0 < x <= range
+	return Math.ceil( Math.random() * range );
+}
+//how2 modify jquery obj protoype to include addShip $.prototype.addShip(e) ?
+
+/**
+ * @param xIndex: horizontal square index ( > 0 )
+ * @param yIndex: vertical square index ( > 0 )
+ */
+function addShip( container, hitbox, shipNo, xIndex, yIndex, isVertical ) {
+	//check valid: cant add ship if hitbox is already registered
+	var zeroX = xIndex - 1; //0-7 gamespace x
+	var zeroY = yIndex - 1; //0-7 gamespace y
+
+  // 2 cases where ship is outside the gameBoard
+  if( !isVertical && ( xIndex + shipNo - 1 ) > boardSize) {
+  	if( debug )
+  		console.log( container.selector+'.ship' + shipNo + ' fell of the map X');
+  	return false;
+  }	else if( isVertical && ( yIndex + shipNo - 1 ) > boardSize ) {
+  	if( debug )
+	  	console.log( container.selector+'.ship' + shipNo + ' fell of the map Y');
+  	return false; 
+	}
+
+	// zeroX zeroY for accessing the 1D hitbox Array
+	// transaction must be ACID, consequently, 2 iters
+	for( var i = 0; i < shipNo; i++ ) {
+		if( hitbox[ ( zeroX + i * !isVertical ) + ( zeroY + i * isVertical ) * boardSize ] ) {
+			if( debug )
+				console.log( 'Collision error: Cannot place ship ' + shipNo + ' on ' + container.selector );
+			return false;
+		}
+	}
+	for( var i = 0; i < shipNo; i++ ) {
+		hitbox[ ( zeroX + i * !isVertical ) + ( zeroY + i * isVertical ) * boardSize ] = true;
+	}	
+
+	var rotateOffset = ( isVertical ? ( ( shipNo - 1 ) * squareSize * .5 ) : 0 );
+	var left = squareSize * xIndex - rotateOffset;
+	var top  = squareSize * yIndex + rotateOffset;
+
+	container.append( '<div class="ship ship' + shipNo + 
+	( isVertical ? ' rotate' : '' ) + 
+	'" style="left:' + left + 
+	'px;top:' + top + 'px;"></div>' );
+	return true; 
+}
+</script>
+<style>
+
+.ship { 
+	display:block;
+	position:absolute;
+	left:40px;
+	top:40px;
+	height: 40px;
+}
+
+.ship5{
+	width: 200px;
+	background: url( 'pix/5.svg' );
+}
+.ship4{
+	width: 160px;
+	background: url( 'pix/4.svg' );
+}
+.ship3{
+
+	width: 120px;
+	background: url( 'pix/3.svg' );
+}
+.ship2{
+	width: 80px;
+	background: url( 'pix/2.svg' );
+}
+
+.rotate{
+	transform: rotate( 90deg ); /* HowTo Css origin 0,0 !?? */
+}
+
+.square {
+	width: 38px; /* squaresize-2 */
+	height: 38px;
+	float:left;
+	display: inline-block;
+	border: 1px solid #aaf;
+	/*boder-collapse: collapse; howto*/
+}
+.legendSquare{
+	width: 40px;
+	height: 40px; 
+	float: left;
+	text-align:center;
+	font-weight: bold;
+	font-size: 20px;
+	line-height:40px;
+}
+html, body {
+	margin: 0;
+	padding: 0;
+	font-family: Helvetica, Arial, sans-serif;
+}
+body {
+	color: #0af;
+	background-color: #222;
+}
+h3{ 
+	margin: 5px 0;
+	text-align:center;
+	color: #fff;
+	width: 360px;
+	float:left;
+	margin-left:20px;
+}
+#board1, #board2, #targetBoard1, #targetBoard2 {
+	margin: 10px;
+	position: relative;
+	width: 360px;  /* equals squareSize * (boardsize+1) */ 
+	height: 360px;
+	float: left;
+	margin: 0 0 0 20px;
+	background-color: #37d;
+}
+#board1, #board2 {
+	border-radius: 20px 20px 0 0;
+} 
+
+#targetBoard1, #targetBoard2 {
+	border-radius: 0 0 0 20px;
+}
+
+#targetBoard1 > .square, #targetBoard2 > .square {
+	cursor: pointer;
+}
+
+#targetBoard1 > .square:hover, #targetBoard2 > .square:hover {
+	background-color: #0af;
+}
+
+
+#targetBoard1 > .square:active, #targetBoard2 > .square:active {
+	background-color: #fa0;
+}
+
+#playerTurnIndicator {
+  float:left;
+	background-color: #0c0;
+
+	display:block;
+	margin-top: 10px;
+	margin-left: 20px;
+	width: 360px;
+	height: 50px;
+	color: #000;
+	text-align: center;
+	font-weight: bold;
+	font-size:20px;
+	line-height: 50px;
+}
+
+</style>
+</head>
+<body>
+<h3>Player1</h3>
+<h3>Player2</h3>
+<div id="board1"></div>
+<div id="board2"></div>
+<br>
+<div id="targetBoard2"></div>
+<div id="targetBoard1"></div>
+<br>
+<div id="playerTurnIndicator">Player1 turn</div>
+</body>
+</html>
