@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+<style>
+#grid{
+	width:504px;
+	height:504px;
+	background-color:#222;
+	padding:2px;
+}
+
+#grid > div {
+	width:10px;
+	height:10px;
+	float:left;
+	border:1px solid #222;
+	background-color:#444;
+}
+
+#grid > div.snake {
+	background-color:#4c4;
+}
+
+#grid > div.food {
+	background-color:#4c4;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<title></title>
+</head>
+<body>
+<div id="grid"></div> <!-- makeing this self closing implicitly adds an invisible first child-->
+
+<script>
+  //arrays:
+  //push()    = add to end
+  //pop()     = remove from end
+  //unshift() = add to start
+  //shift()   = remove from start
+
+                   //end  head (every frame, end gets moved to new head)
+	var snakeState = [ 222, 264 ];
+	var snakeDead  = false;
+	var snakeDir   = 'down'; //up down left right
+	var boardSize  = 42;
+	var food       = spawnFood();
+
+  //init field
+	for( var i=0; i<boardSize*boardSize; i++ ) {
+		$( '#grid' ).append( '<div/>' );
+	}
+
+	function updateFrame() {
+		$( '#grid > div' ).removeClass( 'snake food' );
+		snakeState.push( move( snakeState.shift() ) );
+		snakeState.forEach( goGreen );
+		goFood( food );
+		//$('title').text( snakeDir );
+	}
+
+  //@todo add self collision detection
+  // took ~2hrs, still happy with accomplish
+
+	function move( numb ) {
+		var head = snakeState[ snakeState.length - 1 ];
+		var ret;
+		if( snakeDead )
+			return numb;
+		else if( snakeDir == 'down' )
+			ret = ( head + boardSize ) % ( boardSize * boardSize );
+		else if( snakeDir == 'up' )
+			ret = ( boardSize*boardSize + head - boardSize ) % ( boardSize * boardSize );
+		else if( snakeDir == 'right' )
+			ret = head + 1 - (head % boardSize == 0 ? boardSize : 0);
+		else if( snakeDir == 'left' )
+			ret = head - 1 + (head % boardSize == 1 ? boardSize : 0);
+
+		if( ret == food ) {
+			snakeState.unshift( numb );
+			food = spawnFood();
+		}
+
+		return ret;
+	}
+
+	function spawnFood() {
+		var potentialFood;
+		while( !potentialFood || snakeState.includes( potentialFood ) ) {
+			potentialFood = Math.floor( Math.random() * boardSize * boardSize );
+		};
+		return potentialFood;
+	}
+
+	function goFood( n ) {
+		$( '#grid > div:nth-child(' + n + ')' ).addClass( 'food' );
+	}
+
+	function goGreen( n ) {
+		$( '#grid > div:nth-child(' + n + ')' ).addClass( 'snake' );
+	}
+
+
+	$(document).keydown(function(e) {
+	    switch(e.which) {
+	    	case 37: // left
+	    	snakeDir = 'left';
+        break;
+
+        case 38: // up
+        snakeDir = 'up';
+        break;
+
+        case 39: // right
+        snakeDir = 'right';
+        break;
+
+        case 40: // down
+        snakeDir = 'down';
+        break;
+
+        default: return;
+	    }
+	});
+
+	setInterval( updateFrame, 100 );
+</script>
+</body>
+</html>
