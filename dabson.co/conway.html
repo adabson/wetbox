@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<title>Press Space - Conways Game of Life</title>
+<canvas id="canvas" width="1002" height="505" style="background-color:#dedede;cursor:cell"></canvas>
+<script>
+
+var canvas    = document.getElementById('canvas');
+var context   = this.canvas.getContext('2d');
+var cellSize  = 6;
+var cellSpace = 1;
+var notch     = cellSize + cellSpace;
+var rows      = (canvas.height - cellSpace) / notch;
+var cols      = (canvas.width  - cellSpace) / notch;
+var state     = zeros([cols,rows]);     // state[142][71] is max
+var colors    = ["#fff","#f00","#0f0"]; // [0]empty [1]active [2]died
+var isPaint   = false; 
+var isPlaying = false;
+var speed     = 100; // in milliseconds, smaller is faster
+
+canvas.addEventListener( 'mousemove',  e  => isPaint ? activateCell(e) : {} ); //doPaint
+canvas.addEventListener( 'mousedown',  () => isPaint = true  );
+canvas.addEventListener( 'mouseup',    () => isPaint = false );
+canvas.addEventListener( 'mouseenter', () => isPaint = false );
+document.addEventListener( 'keyup', keyPress );
+drawFrame();
+
+function keyPress( e ) {
+  var SPACE = 32;
+  if( e.keyCode == SPACE )
+    playPause();
+}
+
+function tick() {
+  if( !isPlaying ) return;
+  var newState = state.map( arr => arr.slice() ); // deep-copy the 2d array
+  for(var i=0;i<cols;i++)
+    for(var j=0;j<rows;j++)
+      updateCell( i, j, newState );
+  state = newState;
+  drawFrame();
+}
+
+function updateCell( i, j, newState ) { // its ok, arrays are pass-by-reference
+  var count = neighborCount( i, j );
+  var current = state[i][j];
+  if( current == 1 && ( count < 2 || count > 3 ) ) { 
+    newState[i][j] = 2; //died
+  } else if( count == 3 ) {
+    newState[i][j] = 1; //born
+  }
+}
+
+function neighborCount( i, j ) {
+  var x = cols - 1; // x-bound
+  var y = rows - 1; // y-bound
+
+  var n = j > 0 && state[i][j-1] == 1 ? 1 : 0;
+  var e = i < x && state[i+1][j] == 1 ? 1 : 0;
+  var s = j < y && state[i][j+1] == 1 ? 1 : 0;
+  var w = i > 0 && state[i-1][j] == 1 ? 1 : 0;
+
+  var ne = j < x && i > 0 && state[i-1][j+1] == 1 ? 1 : 0;
+  var se = j < x && i < y && state[i+1][j+1] == 1 ? 1 : 0;
+  var sw = j > 0 && i < y && state[i+1][j-1] == 1 ? 1 : 0;
+  var nw = j > 0 && i > 0 && state[i-1][j-1] == 1 ? 1 : 0;
+
+  return 0 + n + ne + e + se + s + sw + w + nw;
+}
+
+function drawFrame() {
+  for(var i=0;i<cols;i++)
+    for(var j=0;j<rows;j++)
+      drawCell( i, j );
+}
+
+function drawCell( i, j ) {
+  var x0 = cellSpace + notch * i;
+  var y0 = cellSpace + notch * j;
+  context.fillStyle = colors[state[i][j]];
+  context.fillRect( x0, y0, cellSize, cellSize );
+}
+
+function zeros( dimensions ) {
+  var array = [];
+  for(var i=0;i<dimensions[0];++i)
+    array.push( dimensions.length == 1 ? 0 : zeros( dimensions.slice( 1 ) ) );
+  return array;
+}
+
+function activateCell( e ) {
+  var relativeX = e.clientX - canvas.offsetLeft;
+  var relativeY = e.clientY - canvas.offsetTop;
+
+  if( relativeX < canvas.width && relativeY < canvas.height ) {
+    var i = Math.floor( relativeX / notch );
+    var j = Math.floor( relativeY / notch );
+    state[i][j] = 1;
+    drawCell( i, j);
+  }
+}
+
+function playPause() {
+  isPlaying = !isPlaying;
+  if( isPlaying ) {
+    window.setInterval( tick, speed );
+  } else {
+    document.title = "Paused";
+  }
+}
+
+</script>
+</html>
