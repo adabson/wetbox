@@ -34,7 +34,6 @@ function init() {
     { x: -100, y: -200, z: -0 },
   ].forEach( addLight )
 
-
   var geoStem = new THREE.BoxBufferGeometry( 50, -200, 50 );
   var geoFlower = new THREE.BoxBufferGeometry( 100, 100, 100 );
   var matGreen = new THREE.MeshPhongMaterial( { color: 0x00aa00, emissive: 0x004400, side: THREE.DoubleSide, flatShading: true } ); //MeshBasicMaterial( {color:0xffff00})
@@ -64,6 +63,8 @@ function animate() {
   requestAnimationFrame( animate );
   // mesh.rotation.x += 0.005;
   // mesh.rotation.y += 0.01;
+  meshStem.rotation.y += 0.01;
+  meshFlower.rotation.y += 0.01;
   renderer.render( scene, camera );
 }
 
