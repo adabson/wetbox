@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<style>body {margin:0;padding:0;background-color:#222} #container{color:red;background-color:black}</style>
+	<title>Turbine plane</title>
+</head>
+<body>
+	<div id="container"></div>
+	<script src="three.min81.js"></script> 
+	<script src="dat.gui.min.js"></script> <!-- from three/examples/lib/js .. YOU NEED THIS FOR YOUR SLIDERS -->
+	<!--<script src="http://dat-gui.googlecode.com/git/build/dat.gui.min.js"></script> <!---->
+	<script defer="defer">
+
+		var camera, scene, renderer;
+		var cameraControls;
+		var wing, turbine;
+		var params = {xrot:-45, yrot:-30, zrot:0}; //the slide bars
+		var p      = {xrot:-45, yrot:-30, zrot:0}; //the current setup
+		var mousedown = false;
+
+		document.body.onmousedown = function() { mousedown = true;  }
+		document.body.onmouseup   = function() { mousedown = false; }
+
+		var angularSpeed=0.2;
+		var lastTime=0;
+
+		function rainbow(s) { //takes in a value from 0 (red) to 1 (violet) and outputs a pseudo-spectral color in hex
+			var r = 0.0; // setup the color chanels -  could just assign them in 3 differnt functions, but hextriplets are sexy ;)
+			var g = 0.0;
+			var b = 0.0; 
+
+			//the color spectrum will be piecewise definined into 4 quadrents according to http://answers.yahoo.com/question/index?qid=20091123051136AAEdZnT -> changed the last quadrent, I belive z should be the r channel, not g channel.
+			if(s<0.25){
+				r = 255;
+				g = s*4*255;
+				b = 0;
+			}
+			else if(s >= 0.25 && s < 0.5) {
+				r = (0.5-s)*4*255;
+				g = 255;
+				b = 0;
+			}
+			else if(s >= 0.5 && s < 0.75) {
+				r = 0;
+				g = (0.75-s)*4*255;
+				b = (s-0.5)*4*255;
+			}
+			else if(s >= 0.75) {
+				r = (s-0.75)*4*192;
+				g = 0;//(s-0.75)*4*192;
+				b = 255;
+			}
+
+			r = Math.floor(r);
+			g = Math.floor(g);
+			b = Math.floor(b);
+
+			return (r&255) << 16 ^ (g&255) << 8 ^ (b&255);
+		}
+
+
+		function init() {
+			renderer = new THREE.WebGLRenderer(); //renderer
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			document.body.appendChild(renderer.domElement);
+
+			camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000); //camera
+			camera.position.set(0, 0, 700); //aka camera.position.z = 700;
+
+			//SCENE;
+			scene = new THREE.Scene(); //scene
+
+			//CAMERA --------------------------------------------------------------------------------------camera controls dont work yet
+			//cameraControls = new THREE.OrbitAndPanControls(camera, renderer.domElement);
+			//cameraControls.target.set(54, 106, 33);
+
+
+			generate(); //---mmaayybee
+		}
+
+		function animate() {
+			requestAnimationFrame( function(){animate();}); //request new frame - local browser webGL function
+			//now render next frame
+			//this.cxr = params.xrot;
+			//this.cyr = params.yrot;
+			//params.zrot = this.params.zrot;
+
+			if(p.xrot !== params.xrot || p.yrot !== params.yrot || p.zrot !== params.zrot) {
+				p.xrot = params.xrot;
+				p.yrot = params.yrot;
+				p.zrot = params.zrot;
+
+				generate();
+			}
+			//generate();
+
+
+			var time = (new Date()).getTime();
+			var timeDiff = time - lastTime;
+			var angleChange = angularSpeed * timeDiff * 2.0 * Math.PI / 1000;
+			//wing.rotation.x = -Math.PI*13/12.0; //angleChange;
+
+			if(!mousedown) {
+				wing.rotation.x += angleChange*0.1;
+				turbine.rotation.y += angleChange; //SPIN MEH
+			}
+
+			lastTime = time;
+
+
+			//for our (less formal) puproses, animate and render are the same thing..
+
+
+			renderer.render(scene, camera); //render
+		}
+
+		function setupgui() {
+					//add a gui
+		var gui = new dat.GUI({height: 5*32-1});
+
+		//var p1 = {xrot:90}; //params 1
+		//var p2 = {yrot:-45};       //params 2
+		//var p3 = {zrot:0};         //params 3
+
+		gui.add(params, 'xrot').min(-180).max(180).step(1);
+
+
+		gui.add(params, 'yrot').onFinishChange(function(){
+			//can change something once finished modifing the interaction
+		}).min(-180).max(180).step(1);
+
+//*/
+		gui.add(params, 'zrot').onFinishChange(function(){
+			//can change something once finished modifing the interaction
+		}).min(-180).max(180).step(1);
+
+		//gui.add({abc:123}, 'hi there');
+
+		}
+
+
+
+
+		function generate(){ //put up all the scene setty uppy in here
+			scene = new THREE.Scene(); //referesh the scene
+			//setup mats & vars
+			var tlen = 200; // the turbine length
+			var nofans = 24; // the number of fanblades in the turbine
+			var fanGeometry = new THREE.CylinderGeometry(20, 20, tlen, 16, 32, false);
+
+			//cxr = -Math.PI/4.0; //cylinder x rotation
+			//cyr = -Math.PI/6.0;
+			//czr = 0;
+
+			var mat1 = new THREE.MeshPhongMaterial({specular:0xa9fcff,color:0x00abb1,emissive:0x006063,shininess:100}); //a nice bluey materail
+			var mat2 = new THREE.MeshPhongMaterial({specular:0xa9fcff,color:0xe7cc36,emissive:0x111111,shininess:20,transparent:true, opacity:0.2}); //a simmilar yellowymaterial
+			var mat3 = new THREE.MeshPhongMaterial({specular:0xffffff,color:0xffffff,emissive:0xaaaaaa,shininess:20,transparent:true, opacity:0.5}); //a simmilar yellowymaterial
+
+			//setup dummys
+			wing = new THREE.Object3D(); //the heirarchy = wing -> turbine -> geometry objects
+			turbine = new THREE.Object3D();
+			wing.rotation.x = Math.PI/2.0;
+			wing.rotation.z = -Math.PI/4.0;
+
+			//setup geometry
+			var cylinder = new THREE.Mesh(
+				new THREE.CylinderGeometry(100, 80, 100, 50, 50, false),
+				mat1
+			);
+
+			for(var i = 0; i < nofans; i++) {
+				//var colorphase = 1 - i/(nofans-1.0));
+				//mat3.color.r = (rainbow(colorphase))/255; // = new THREE.color("rgb(128,128,128)"); //should be mat3.color.setHex //YOU MUST REDEFINE A NEW MATERIAL EACH TIME, DERP
+
+				matn = new THREE.MeshPhongMaterial({specular:0x000000,color:rainbow(1-(i/(nofans-1.0))),emissive:0x000000,shininess:60});
+
+				var cyl2 = new THREE.Mesh(fanGeometry, matn);
+				var tpivot = new THREE.Object3D(); //in order to rotate about the fans tip, we need to create a dummy (superobject) class that encapsulates the fan and rotate that instead
+				cyl2.scale.z = 0.25; 
+				cyl2.position.x = tlen / 2.0;
+
+				cyl2.rotation.x = p.xrot * Math.PI/180; //originally cxr
+				cyl2.rotation.y = p.yrot * Math.PI/180;
+				cyl2.rotation.z = p.zrot * Math.PI/180;
+
+				tpivot.add(cyl2);
+				tpivot.rotation.y = i*Math.PI/12.0; //15degrees
+				turbine.add(tpivot);
+			}
+
+			cylinder.overdraw = true; //overdraw=true means the canvas render actually expands the fill beyond the edges of the face so they sometimes 'overlap' a little bit
+
+
+			//create a dummycube to show me where exactly the light is
+			zar = new THREE.Mesh( new THREE.SphereGeometry(15, 16, 32), mat3);
+			zar.rotation.x = -Math.PI/2.9;
+			//zar.rotation.y = Math.PI/4.0;
+			zar.rotation.z = Math.PI/4.0;
+			zar.overdraw = true;
+			scene.add(zar);
+
+			//turbine.add(cylinder);
+			wing.add(turbine);
+			scene.add(wing);
+
+
+
+			var ambientLight = new THREE.AmbientLight(0x020202); //add an ambient light
+			scene.add(ambientLight);
+
+			var directionalLight = new THREE.DirectionalLight(0xffffff);
+			directionalLight.position.set(10, 100, 100).normalize();
+			scene.add(directionalLight);
+		}
+
+		init();
+		//generate();
+		animate();
+		setupgui();
+	</script>
+</body>
+<!-- error detection: <input type="text" id="err"> document.getElementById("err").value+=" "+s; -->
+</html>

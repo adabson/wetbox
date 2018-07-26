@@ -1,0 +1,317 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body{
+    margin:0;
+    padding:0;
+    font-family:Arial,Helvetica,Sans-serif;
+    font-size:11px;
+    background-color:#000;
+}
+canvas{
+    display: block; /*fixes the 100%width-height issue not taking into account the scrollbars*/
+}
+</style>
+<script src="three.min81.js"></script>
+</head>
+<body oncontextmenu="return false">
+<script>
+window.addEventListener( 'resize', onWindowResize, false );
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+}
+
+var isDragging = false;
+var previousMousePosition = { x: 0, y: 0 };
+var key = [ false, false, false, false ];
+
+window.addEventListener( 'mousedown', function ( e ) {
+    isDragging = true;
+}, false );
+
+window.addEventListener( 'mousemove', function( e ) {
+    var deltaMove = {
+        x: e.offsetX-previousMousePosition.x,
+        y: e.offsetY-previousMousePosition.y
+    };
+
+    if( isDragging ) {
+        if( e.button == 2 ) {
+            console.log( 'right-dragging' );
+
+            dragCamera( deltaMove.x, deltaMove.y );
+        }
+        else {
+            console.log( 'left-dragging' );
+        }
+    }
+
+    previousMousePosition = { x: e.offsetX, y: e.offsetY };
+}, false );
+window.addEventListener( 'mouseup', function( e ) {
+    isDragging = false;
+}, false );
+
+window.addEventListener( 'keypress', function( e ) { //32 for space
+    if( e.keyCode == 32 && !isJumping ) {
+        isJumping = true;
+    }
+    
+});
+
+window.addEventListener( 'keydown', function( e ) { //w a s d = 87 65 83 68
+    switch( e.keyCode ) {
+        case 87:
+        key[0] = true;
+        break;
+        case 65:
+        key[1] = true;
+        break;
+        case 83:
+        key[2] = true;
+        break;
+        case 68:
+        key[3] = true;
+        break;
+    }
+});
+
+window.addEventListener( 'keyup', function( e ) {
+    switch( e.keyCode ) {
+        case 87:
+        key[0] = false;
+        break;
+        case 65:
+        key[1] = false;
+        break;
+        case 83:
+        key[2] = false;
+        break;
+        case 68:
+        key[3] = false;
+        break;
+    }
+});
+
+if (document.addEventListener) {
+    document.addEventListener( 'mousewheel', MouseWheelHandler(), false );
+    document.addEventListener( 'DOMMouseScroll', MouseWheelHandler(), false );
+} else {
+    sq.attachEvent( 'onmousewheel', MouseWheelHandler() );
+}
+
+function MouseWheelHandler() {
+    var zoomSensitivity = 0.2; // 0 <= zoomSensitivity < 1
+    var minZoom = 20;
+    var maxZoom = 65;
+
+    return function ( e ) {
+        var e = window.event || e;
+        var delta = Math.max( -1, Math.min( 1, ( e.wheelDelta || -e.detail ) ) );
+        var magnitudePopPop = cameraPosition.lengthSq();
+        var del = 1;
+        console.log
+        if ( delta < 0 ) {
+            if( magnitudePopPop <= maxZoom * maxZoom ) {
+                del += zoomSensitivity;
+                cameraPosition.multiplyScalar( del );
+                camera.fov *= del;
+                camera.updateProjectionMatrix();
+            }
+        } else {
+            //console.log( 'up/in' );
+            if( magnitudePopPop >= minZoom * minZoom ) {
+                del -= zoomSensitivity;
+                cameraPosition.multiplyScalar( del );
+                camera.fov *= del;
+                camera.updateProjectionMatrix();
+            }
+
+        }
+        return false;
+    }
+}
+
+function move() {
+    //console.log( cameraTarget.x + ' ' + cameraTarget.y + ' ' + cameraTarget.z + ':' + camera.position.x + ' ' + camera.position.y + ' ' + camera.position.z + ' ' );
+
+    var forwardUnit = new THREE.Vector3( -cameraPosition.x, -cameraPosition.y, -cameraPosition.z );
+    forwardUnit.normalize();
+
+    var leftUnit = ( new THREE.Vector3( 0, 1, 0) ).cross( forwardUnit );
+    leftUnit.normalize();
+
+    if( key[0] ) {
+        cameraTarget.x += forwardUnit.x;
+        cameraTarget.z += forwardUnit.z;
+    }
+    if( key[1] ) {
+        cameraTarget.x += leftUnit.x;
+        cameraTarget.z += leftUnit.z;
+    }
+    if( key[2] ) {
+        cameraTarget.x -= forwardUnit.x;
+        cameraTarget.z -= forwardUnit.z;
+    }
+    if( key[3] ) {
+        cameraTarget.x -= leftUnit.x;
+        cameraTarget.z -= leftUnit.z;
+    }
+
+
+    jump();
+/*
+
+    if( key[0] ) {
+        cameraTarget.z += 1;
+    }
+    if( key[1] ) {
+        cameraTarget.x += 1;
+    }
+    if( key[2] ) {
+        cameraTarget.z -= 1;
+    }
+    if( key[3] ) {
+        cameraTarget.x -= 1;
+    }
+    */
+}
+
+function jump() {
+    var jumpHeight = 20;
+
+    if( isJumping && !jumpApex) {
+        if( cameraTarget.y < jumpHeight ) {
+            cameraTarget.y += 1;
+        } else {
+            jumpApex = true;
+        }
+    }
+    else if( cameraTarget.y > 5 ) {
+        cameraTarget.y = cameraTarget.y - 1;
+        if( cameraTarget.y <= 5) {
+            cameraTarget.y = 5;
+            isJumping = false;
+            jumpApex = false;
+        }
+    }
+
+}
+
+var renderer, scene, camera, cameraTarget, cameraPosition;
+var box, plane, toonAxis;
+var isJumping = false;
+var jumpApex = false;
+
+init();
+animate();
+
+function toRadians( x ) { // degrees to radians
+    return x * Math.PI / 180;
+}
+
+function toDegrees( x ) {
+    return x * 180 / Math.PI;
+}
+
+function dragCamera( delA, delB ) {
+    var sensitivity = 1.8;
+
+    var theta = toRadians( delB * -.1 );
+    var gamma = toRadians( delA * -.1 );
+    var deltaRotationQuaternion = new THREE.Quaternion()
+    .setFromEuler( new THREE.Euler(
+        theta,
+        gamma,
+        0,
+        'XYZ'
+    ) );
+
+    //box.quaternion.multiplyQuaternions( deltaRotationQuaternion, box.quaternion );
+    //camera.quaternion.multiplyQuaternions( deltaRotationQuaternion, camera.quaternion );
+
+    //cameraPosition.applyAxisAngle( new THREE.Vector3( 0, 1, 0), gamma);
+
+    var rotation = new THREE.Quaternion();
+    rotation.setFromAxisAngle( new THREE.Vector3( 0, 1, 0), gamma * sensitivity );
+
+    cameraPosition.applyQuaternion( rotation );
+    box.quaternion.multiplyQuaternions( rotation, box.quaternion );
+    toonAxis.quaternion.multiplyQuaternions( rotation, box.quaternion );
+}
+
+function init() {
+
+
+    scene = new THREE.Scene();
+
+    camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 10000 );
+    cameraPosition = new THREE.Vector3 ( 0, 20, -40 );
+    camera.position.set( cameraPosition.x, cameraPosition.y, cameraPosition.z );
+    cameraTarget = new THREE.Vector3( 0, 5, 0 );
+    camera.lookAt( cameraTarget );
+
+    var boxGeometry = new THREE.BoxGeometry( 10, 10, 10 );
+    //material = new THREE.MeshBasicMaterial( { color: 0x333333, wireframe: false } ); // THREE.MeshBasicMaterial does'nt support lighting :(
+    var material = new THREE.MeshLambertMaterial( { color: 0x666666, shading: THREE.SmoothShading } );
+
+    light = new THREE.PointLight( 0xff4000, 10 );
+    light.position.set( 20, 15, 0 );
+    scene.add( light );
+    scene.add( new THREE.AmbientLight( 0xffffff ) );
+
+    helper = new THREE.PointLightHelper( light, 1 );
+    scene.add( helper );
+
+    var worldAxis = new THREE.AxisHelper( 25 );
+    scene.add( worldAxis );
+
+    toonAxis = new THREE.AxisHelper( 10 );
+    toonAxis.position.set( cameraTarget.x, cameraTarget.y, cameraTarget.z );
+    scene.add( toonAxis );
+
+    box = new THREE.Mesh( boxGeometry, material );
+    box.position.y = 10;
+    scene.add( box );
+
+    planeGeometry = new THREE.PlaneGeometry( 10, 15, 1, 1 );
+    plane = new THREE.Mesh( planeGeometry, material );
+    plane.rotation.x = toRadians( -90 );
+    scene.add( plane );
+
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    document.body.appendChild( renderer.domElement );
+}
+
+function animate() {
+    requestAnimationFrame( animate );
+    
+    //camera.lookAt( cameraTarget );
+
+    //box.rotation.x += 0.02;
+    //box.rotation.y += 0.01;
+    //plane.rotation.x = 1;
+    move();
+
+    renderer.render( scene, camera );
+
+    //camera.lookAt( cameraTarget );
+    box.position.x = cameraTarget.x;
+    box.position.y = cameraTarget.y;
+    box.position.z = cameraTarget.z;
+
+    toonAxis.position.set( cameraTarget.x, cameraTarget.y, cameraTarget.z );
+
+    camera.position.x = cameraTarget.x + cameraPosition.x;
+    camera.position.y = cameraTarget.y + cameraPosition.y;
+    camera.position.z = cameraTarget.z + cameraPosition.z;
+    camera.lookAt( cameraTarget );
+}
+</script>
+</body>
+</html>
