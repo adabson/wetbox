@@ -55,12 +55,13 @@ function init() {
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
+  camera.position.x = 200;
   renderer.setSize( window.innerWidth, window.innerHeight );
 }
 function animate() {
   requestAnimationFrame( animate );
-  mesh.rotation.x += 0.005;
-  mesh.rotation.y += 0.01;
+  //mesh.rotation.x += 0.005;
+  //mesh.rotation.y += 0.01;
   renderer.render( scene, camera );
 }
 </script>
