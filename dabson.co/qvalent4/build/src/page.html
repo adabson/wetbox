@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Qvalent</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Qvalent provides web-based software and support services that enable organisations operating in the public, private and not-for-profit sectors to streamline financial business processes such as accounts payable, accounts receivable and superannuation.">
+  <meta name="theme-color" content="#621a4b">
+</head>
+<body>
+<div class="header1">
+  <a href="https://ilink.westpac.com.au" target="_blank">iLink</a>
+  <a href="https://quickstream.westpac.com.au" target="_blank">Quickstream</a>
+  <a href="https://www.payway.com.au" target="_blank">PayWay</a>
+  <a href="https://quicksuper.westpac.com.au" target="_blank">QuickSuper</a>
+  <a href="https://paymentsplus.westpac.com.au" target="_blank">PaymentsPlus</a>
+</div>
+
+<div class="header2">
+  <a href="#homeAnchor" class="qvalentLogo" alt="Qvalent logo" title="Qvalent logo"></a>
+  <ul>
+    <li><a href="#homeAnchor">Home</a></li>
+    <li><a href="#contactAnchor">Contact us</a></li>
+    <li><a href="#maintenanceAnchor">System Status</a></li>
+  </ul>
+</div>
+
+<div id="homeAnchor" class="anchor"></div>
+<canvas id="home"></canvas>
+<div class="canvasOverlay"><h1 id="blurb"></h1></div>
+<div class="splash darkBg" id="dummy"></div>
+
+<div class="splash lightBg">
+  <div class="innerSplash">
+    <h1>Who we are</h1>
+    <p>
+      Qvalent is a wholly owned subsidiary of Westpac Banking Corporation. 
+      We provide web-based software and support services that enable organisations operating 
+      in the public, private and not-for-profit sectors to streamline financial business processes. 
+      Our solutions cover accounts receivable, accounts payable, superannuation and payroll event reporting.
+    </p>
+    <p>
+      Represented in Australia since 1997, we operate as an agile and innovative business 
+      in Newcastle that delivers both the development and support for all our products in-house - providing job 
+      opportunities and giving back to the local economy.
+    </p>
+    <p>
+      Designed for the Australian and New Zealand markets, our products are fully integrated with 
+      the banking systems giving access to all major payment channels (including credit cards and direct entry). 
+      We deliver our 50,000+ business customers with scalable and functional solutions, and the support of our 
+      software engineers and analysts including consulting, implementation and ongoing services.
+    </p>
+    <p>
+      To protect both our customers and our own data, we treat security as a prime concern. Backed by the security 
+      infrastructure and policies of Westpac, we ensure all financial data transmitted between Westpac and our customers 
+      is encrypted and digitally signed for everyone's protection.
+    </p>
+    <p>
+      Qvalent meets the requirements of the Payment Card Industry Data Security Standard (PCIDSS) and has done so 
+      continuously for over a decade.
+    </p>
+  </div>
+</div>
+
+<div id="products" class="splash darkBg">
+  <div class="innerSplash">
+    <h1>What we do&#8230;</h1>
+    <div class="products">
+      <div class="product" onclick="window.open('https://quickstream.westpac.com.au')">
+        <h4>Quickstream</h4>
+        <p>A comprehensive platform. With our extensive range of APIs, Quickstream empowers sophisticated businesses to receive and manage payments.</p>
+      </div>
+      <div class="product" onclick="window.open('https://quicksuper.westpac.com.au')">
+        <h4>QuickSuper</h4>
+        <p>A secure way to manage payments and administration of employee super contributions online. Includes reporting facilities to government and fund administrators.</p>
+      </div>
+      <div class="product" onclick="window.open('https://www.payway.com.au')">
+        <h4>PayWay</h4>
+        <p>A simple and secure solution. With multiple payment channels, PayWay makes it easy for customers to pay you.</p>
+      </div>
+      <div class="product" onclick="window.open('https://paymentsplus.westpac.com.au')">
+        <h4>PaymentsPlus</h4>
+        <p>A multi-channel online payment solution supporting all your payable needs.</p>
+      </div>
+      <div class="product" onclick="window.open('https://ilink.westpac.com.au')">
+        <h4>iLink</h4>
+        <p>With multiple host-to-host connectivity options, iLink provides access to directly connect to your banking services.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="developerZone" class="splash lightBg">
+  <div class="innerSplash devZone">
+    <h1>Developer Zone</h1>
+    <div class="apis">
+      <div class="apiRow">
+        <a class="apiLink" href="https://quickstream.westpac.com.au/docs/quickstreamapi/v1/" target="_blank">QuickStream API Reference</a>   
+        <a class="apiLink" href="https://www.payway.com.au/docs/rest.html" target="_blank">PayWay API Reference</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="maintenanceAnchor" class="anchor"></div>
+<div id="maintenance" class="splash darkBg">
+  <div class="innerSplash">
+    <h1>System Status</h1>
+    <ul id="systemList">
+      <li id="sys_WIBS">        <h4>WIBS</h4>        <div class="sysIco poll">&#160;</div><a href="https://qvalent.statuspage.io/" class="sys poll">&#160;</a></li>
+      <li id="sys_PayWay">      <h4>PayWay</h4>      <div class="sysIco poll">&#160;</div><a href="https://qvalent.statuspage.io/" class="sys poll">&#160;</a></li>
+      <li id="sys_QuickSuper">  <h4>QuickSuper</h4>  <div class="sysIco poll">&#160;</div><a href="https://qvalent.statuspage.io/" class="sys poll">&#160;</a></li>
+      <li id="sys_QuickStream"> <h4>QuickStream</h4> <div class="sysIco poll">&#160;</div><a href="https://qvalent.statuspage.io/" class="sys poll">&#160;</a></li>
+      <li id="sys_PaymentsPlus"><h4>PaymentsPlus</h4><div class="sysIco poll">&#160;</div><a href="https://qvalent.statuspage.io/" class="sys poll">&#160;</a></li>
+    </ul>
+    <a href="https://qvalent.statuspage.io" target="_blank" class="fullStatusLink">View Detailed Status</a>
+  </div>
+</div>
+
+<div id="clients" class="splash lightBg">
+  <div class="innerSplash">
+    <h1>Our clients include&#8230;</h1>
+    <ul id="clientLogos">
+      <li class="clientLogo origin" title="Origin Energy"></li>
+      <li class="clientLogo nestle" title="Nestle"></li>
+      <li class="clientLogo nswgov" title="NSW Government"></li>
+      <li class="clientLogo jetstar" title="Jetstar"></li>
+      <li class="clientLogo dominos" title="Domino's Pizzas"></li>
+      <li class="clientLogo caltex" title="Caltex"></li>
+      <li class="clientLogo csiro" title="CSIRO"></li>
+      <li class="clientLogo internode" title="Internode"></li>
+      <li class="clientLogo surflifesaving" title="Surf Life Saving"></li>
+      <li class="clientLogo hoytes" title="HOYTS Cinemas"></li>
+      <li class="clientLogo hungryjacks" title="Hungry Jack's"></li>
+      <li class="clientLogo btgroup" title="BT Group"></li>
+      <li class="clientLogo mcdonalds" title="McDonald's"></li>
+      <li class="clientLogo nswambulance" title="NSW Ambulance"></li>
+      <li class="clientLogo qantas" title="Qantas"></li>
+      <li class="clientLogo louisvuitton" title="Louis Vuitton"></li>
+      <li class="clientLogo quicksilver" title="Quiksilver"></li>
+      <li class="clientLogo bunnings" title="Bunnings Warehouse"></li>
+      <li class="clientLogo universal" title="Universal Pictures"></li>
+      <li class="clientLogo coke" title="Coca-Cola"></li>
+      <li class="clientLogo fairfax" title="Fairfax Media"></li>
+      <li class="clientLogo latrobe" title="La Trobe University"></li>
+      <li class="clientLogo netflix" title="Netflix"></li>
+      <li class="clientLogo cityofsydney" title="City of Sydney"></li>
+    </ul>
+    <span class="note">All logos are registered trademarks of their respective organisations.</span>
+  </div>
+</div>
+
+<div id="contactAnchor" class="anchor"></div>
+<div id="contact" class="splash lightBg">
+  <div class="innerSplash">
+    <h1>Get in touch</h1>
+    <h4>Banking Enquiries</h4>
+    <p>
+      For all banking enquiries, the first point of contact is your Westpac Relationship Enquiry Manager. 
+      They will be available during normal business hours.
+    </p>
+
+    <h4>Quickstream</h4>
+    <a class="contactLink" href="https://quickstream.westpac.com.au/docs/general/technical-support/" target="_blank">QuickStream technical support</a>
+
+    <h4>QuickSuper</h4>
+    <a class="contactLink" href="https://quicksuper.westpac.com.au/ContactHelpdeskView" target="_blank">QuickSuper contact us</a>
+
+    <h4>PayWay</h4>
+    <a class="contactLink" href="https://www.payway.com.au/core/ContactHelpdeskView" target="_blank">PayWay contact us</a>
+
+    <h4>PaymentsPlus</h4>
+    <a class="contactLink" href="https://paymentsplus.westpac.com.au/docs/wbc/general/technical-support/" target="_blank">PaymentsPlus technical support</a>
+  </div>
+</div>
+
+<div class="splash darkBg noMinHeight">
+  <div class="innerSplash footer">
+    &copy;&#160;<span id="copyYear"></span>&#160;Qvalent Pty Ltd ABN 71 088 314 827.&#160;<a href="https://www.westpac.com.au/privacy/privacy-policy/" target="_blank">Westpac Privacy Policy</a>
+  </div>
+</div>
+</body>
+</html>
