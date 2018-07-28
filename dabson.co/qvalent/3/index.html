@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Qvalent</title>
+  <link rel="icon" type="image/png" href="img/favicon48.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Qvalent provides web-based software and support services that enable organisations operating in the public, private and not-for-profit sectors to streamline financial business processes such as accounts payable, accounts receivable and superannuation.">
+  <meta name="theme-color" content="#621a4b">
+<style>
+@import url('https://fonts.googleapis.com/css?family=Droid+Sans');
+@import url('https://fonts.googleapis.com/css?family=Comfortaa');
+@import url('https://fonts.googleapis.com/css?family=Work+Sans');
+
+.header1, .header2 {
+  overflow:hidden;
+}
+html,body{
+  margin:0;
+  padding:0;
+}
+body {
+  padding-top:120px;
+  font-size:1em;
+  font-family:"Droid Sans",Arial,Helvetica,sans-serif;
+  letter-spacing:.015em;
+  background-color:#ddd;
+}
+h1 {
+  font-family:"Comfortaa",Arial,Helvetica,sans-serif; 
+  font-size:2.5em;
+  color:#3b007a;
+  margin:0 0 .67em 0;
+}
+p {
+  text-align:justify;
+}
+a {
+  color:#6c30cc;
+  text-decoration:none;
+}
+a:hover {
+  text-decoration:underline;
+}
+ul {
+  list-style:none;
+  padding:0;
+}
+.header1, .header2{
+  z-index:100;
+}
+.header1 {
+  position:fixed;
+  font-size:13px;
+  top:0;
+  width:100%;
+  height:48px;
+  color:#fff;
+  text-align:right;
+  background-color:#621a4b;
+}
+.header1 a {
+  color:#fff;
+  padding:0 15px;
+  display:inline-block;
+  height:100%;
+  line-height:48px;
+}
+.header2 {
+  position:fixed;
+  top:48px;
+  background-color:#fff;
+  width:100%;
+  height:71px;
+  line-height:71px;
+  font-size:18px;
+  border-bottom:1px solid #d7d2cb;
+}
+.header2 img {
+  margin:15px 0 15px 20px;
+  padding:5px 20px 5px 0;
+  height:30px;
+  line-height:100%;
+  border-right:1px solid #d7d2cb;
+  border-height:12px;
+}
+.header2 ul {
+  margin:0;
+  padding:0;
+  display:inline-block;
+}
+.header2 li {
+  display:inline-block;
+  float:left;
+}
+.header2 li a {
+  color:#2d373e;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",sans-serif;
+  font-size:18px;
+  height:100%;
+  display:inline-block;
+  padding-left:20px;
+}
+#home, .canvasOverlay {
+  position:absolute;
+  overflow:hidden;
+  display:block;
+  top:120px;
+  width:100%;
+  height:54vh;
+}
+#home{
+  background:#231433;
+}
+.canvasOverlay {
+  z-index:0;
+  color:#fff;
+  box-shadow:0 0 15px #000 inset;
+}
+h4{
+  margin:7px 0;
+  letter-spacing:.1em;
+}
+p {
+  margin-top:0;
+  line-height:1.4em;
+}
+.splash{
+  vertical-align:top; /*to fix spacing issue caused by overflow:hidden on .innerSplash*/
+  overflow:hidden;
+  background-color:#ddd;
+  display:inline-block;
+  min-height:54vh;
+  width:100%;
+}
+.innerSplash {
+  overflow:hidden;
+  margin:auto;
+  padding: 3vh;
+  width:60%;
+  height:100%;
+  min-height:48vh;
+  background:transparent;
+  box-shadow:0 0 15px #000;
+}
+.lightBg {
+  background:#aaa url('img/bg.svg');
+  background-size:400px 300px;
+}
+.darkBg { 
+  background:linear-gradient(to right,  #231433, #36163a, #36163a, #231433 );
+  color:#ddd;
+}
+.lightBg > .innerSplash {
+  background:#ddd;
+  box-shadow:0 0 15px #000, inset 0 0 15px #666;
+}
+.darkBg > .innerSplash {
+  background:#231433;
+  color:#ddd;
+}
+.darkBg .innerSplash h1{ 
+  color:#ddd;
+}
+.darkBg .innerSplash h4,.darkBg .innerSplash p {
+  color:#fff;
+}
+.splash h1 {
+  color:#3b007a;
+}
+.splash h4,p {
+  color:#231433;
+}
+#products ul, #systems ul {
+  padding:0 7%;
+}
+#products ul li {
+  cursor: pointer;
+  text-align:left;
+  border-radius:2px;
+}
+#products ul li p {
+  text-align:left;
+}
+#products ul li:hover {
+  background:#62204c;
+  box-shadow:0 0 50px #62204c;
+}
+#systems li {
+  display:table;
+  width:100%;
+  margin:55px 0;
+}
+#systems li>h4 {
+  display:table-cell;
+  width:20%;
+  min-width:200px;
+  margin-top:3px;
+  letter-spacing:.16em;
+}
+.sys {
+  display:table-cell;
+  margin-top:2px;
+  margin-bottom:5px;
+  background-color:#faee62;
+  border-radius:3px;
+  box-shadow:inset 0 0 2px #000;
+}
+.sys:hover {
+  text-decoration:none;
+}
+.sys.up {
+  background-color:#008000;
+}
+.sys.down {
+  background-color:#800000;
+}
+#clientLogos > li {
+  display:inline-block;
+  width:16%;
+  margin:4%;
+  vertical-align:middle;
+}
+#clientLogos > li > img {
+  width:100%;
+  height:auto;
+}
+#blurb {
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  margin:auto;
+  width:calc(60% + 6vh);
+  font-size:calc(2.2em + 2vw);
+  padding:0 0 2vh 0;
+  font-family:'Work Sans';
+  font-weight:bold;
+  text-align:center;
+  color:#fff;
+  line-height:1.4em;
+  text-shadow:0 0 10px #341e4d;
+  text-shadow:0 0 20px #462866;
+  text-shadow:0 0 30px #110a1a;
+}
+</style>
+</head>
+<body>
+<div class="header1">
+  <a href="https://ilink.westpac.com.au" target="blank">iLink</a>
+  <a href="https://quickstream.westpac.com.au" target="blank">Quickstream</a>
+  <a href="https://www.payway.com.au" target="blank">PayWay</a>
+  <a href="https://quicksuper.westpac.com.au" target="blank">QuickSuper</a>
+  <a href="https://paymentsplus.westpac.com.au" target="blank">PaymentsPlus</a>
+</div>
+<div class="header2">
+  <a href="#home"><img src="img/QvalentLogo.svg" alt="Qvalent logo" title="Qvalent logo"></a>
+  <ul>
+    <li><a href="#home">Home</a></li>
+    <li><a href="#contact">Contact us</a></li>
+    <li><a href="https://qvalent.statuspage.io">System Status</a></li>
+  </ul>
+</div>
+
+<canvas id="home"></canvas>
+<div class="canvasOverlay"><h1 id="blurb"></h1></div>
+<div class="splash darkBg" id="dummy"></div>
+
+<div class="splash lightBg">
+  <div class="innerSplash">
+    <h1>Who are we?</h1>
+    <p>Qvalent is a wholly owned subsidiary of the Westpac Banking Corporation. We provide web-based software and support services that enable organisations operating in the public, private and not-for-profit sectors to streamline financial business processes such as accounts payable, accounts receivable and superannuation.</p>
+    <p>Represented in Australia since 1997, Qvalent Pty Ltd is 100% owned by Westpac Banking Corporation. Qvalent's offices are located in Newcastle where our team of software engineers and analysts develop and support all products in-house.</p>
+    <p>Qvalent provides web-based software and support services that enable medium to large enterprises operating in the public, private and not-for-profit sectors to streamline financial business processes such as accounts payable, accounts receivable and superannuation.</p>
+    <p>These solutions are available seamlessly within Australia and New Zealand. Qvalent's products are fully integrated with the banking systems providing access to all payment channels including credit cards and direct entry. Qvalent has enabled large corporate clients and provides consulting, implementation and on-going support services.</p>
+    <p>Qvalent treats security as a prime concern. As Qvalent is a 100% wholly owned subsidiary of the Westpac Banking Corporation, it must conform to all Westpac security policies. This is to ensure that the Customer's and Westpac's data is secure, no insecure network applications are used and all communications between Qvalent applications themselves or external applications are carried out over secure links. In addition, all financial data transmitted between Qvalent (Westpac) must be encrypted and digitally signed for both the customer and Westpac's protection. Qvalent meets the requirements of the Payment Card Industry Data Security Standard (PCI-DSS).</p>
+  </div>
+</div>
+
+<div id="products" class="splash darkBg">
+  <div class="innerSplash">
+    <h1>What we do&#8230;</h1>
+    <ul>
+      <li onclick="window.open('https://quickstream.westpac.com.au')">
+        <h4>Quickstream</h4>
+        <p>A comprehensive platform. With our extensive range of APIs, Quickstream empowers sophisticated businesses to receive and manage payments.</p>
+      </li>
+      <li onclick="window.open('https://www.payway.com.au')">
+        <h4>PayWay</h4>
+        <p>A simple and secure solution. With multiple payment channels, PayWay makes it easy for customers to pay you.</p>
+      </li>
+      <li onclick="window.open('https://paymentsplus.westpac.com.au')">
+        <h4>PaymentsPlus</h4>
+        <p>A multi-channel online payment solution supporting all your payable needs.</p>
+      </li>
+      <li onclick="window.open('https://quicksuper.westpac.com.au')">
+        <h4>QuickSuper</h4>
+        <p></p>
+      </li>
+      <li onclick="window.open('https://ilink.westpac.com.au')">
+        <h4>iLink</h4>
+        <p></p>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div id="contact" class="splash lightBg">
+  <div class="innerSplash">
+    <h1>Get in touch</h1>
+    <h4>Banking Enquiries</h4>
+    <p>For all banking enquiries, the first point of contact is your Westpac Client Enquiry Manager. They will be available during normal business hours.</p>
+    <h4>Quickstream - Business Hours</h4>
+    <p>The Quickstream help desk is attended 7am - 6pm AEST Monday - Friday (excluding NSW public holidays). For Quickstream technical enquiries please email <a href="mailto:quickstream@qvalent.com">quickstream@qvalent.com</a> or call 1300 726 370 (Australia) or 0800 777 229 (New Zealand).</p>
+    <h4>Quickstream - After Hours</h4>
+    <p>After hours assistance is provided for urgent, high severity issues only. First, check that this is not a scheduled maintenance window on the Service Status page.</p>
+    <p>If required out of normal business hours, call 1300 726 370. If our help desk is unattended, you will be transferred to our answering service with whom you can leave your name, business and phone number. Our on-call support personnel will then return your call as soon as possible.</p>
+  </div>
+</div>
+
+<div id="systems" class="splash darkBg">
+  <div class="innerSplash">
+    <h1>System Status</h1>
+    <ul>
+      <li><h4>WIBS</h4>        <a href="https://qvalent.statuspage.io/" class="sys up" title="Service Operational">&#160;</a></li>
+      <li><h4>PayWay</h4>      <a href="https://qvalent.statuspage.io/" class="sys up" title="Service Operational">&#160;</a></li>
+      <li><h4>QuickSuper</h4>  <a href="https://qvalent.statuspage.io/" class="sys up" title="Service Operational">&#160;</a></li>
+      <li><h4>QuickStream</h4> <a href="https://qvalent.statuspage.io/" class="sys up" title="Service Operational">&#160;</a></li>
+      <li><h4>PaymentsPlus</h4><a href="https://qvalent.statuspage.io/" class="sys up" title="Service Operational">&#160;</a></li>
+    </ul>
+  </div>
+</div>
+
+<div id="clients" class="splash lightBg">
+  <div class="innerSplash">
+    <h1>Our clients include…</h1>
+    <ul id="clientLogos">
+      <li><img src="img/client_origin.svg" title="Origin Energy" alt="Origin Energy"></li>
+      <li><img src="img/client_nestle.svg" title="Nestle" alt="Nestle"></li>
+      <li><img src="img/client_nswgov.svg" title="NSW Government" alt="NSW Government"></li>
+      <li><img src="img/client_jetstar.svg" title="Jetstar" alt="Jetstar"></li>
+      <li><img src="img/client_dominos.svg" title="Domino's Pizzas" alt="Domino's Pizza"></li>
+      <li><img src="img/client_caltex.svg" title="Caltex" alt="Caltex"></li>
+      <li><img src="img/client_csiro.svg" title="CSIRO" alt="CSIRO"></li>
+      <li><img src="img/client_internode.svg" title="Internode" alt="Internode"></li>
+      <li><img src="img/client_hoytes.svg" title="HOYTS Cinemas" alt="HOYTS Cinemas"></li>
+      <li><img src="img/client_fairfax.svg" title="Fairfax Media" alt="Fairfax Media"></li>
+      <li><img src="img/client_hungryjacks.svg" title="Hungry Jack's" alt="Hungry Jack's"></li>
+      <li><img src="img/client_btgroup.svg" title="BT Group" alt="BT Group"></li>
+      <li><img src="img/client_mcdonalds.svg" title="McDonald's" alt="McDonald's"></li>
+      <li><img src="img/client_latrobe.svg" title="La Trobe University" alt="La Trobe University"></li>
+      <li><img src="img/client_qantas.svg" title="Qantas" alt="Qantas"></li>
+      <li><img src="img/client_coke.svg" title="Coca-Cola" alt="Coca-Cola"></li>
+      <li><img src="img/client_quicksilver.svg" title="Quiksilver" alt="Quiksilver"></li>
+      <li><img src="img/client_bunnings.svg" title="Bunnings Warehouse" alt="Bunnings Warehouse"></li>
+      <li><img src="img/client_universal.svg" title="Universal Pictures" alt="Universal Pictures"></li>
+      <li><img src="img/client_lv.svg" title="Louis Vuitton" alt="Louis Vuitton"></li>
+    </ul>
+  </div>
+</div>
+
+</body>
+<script>
+var blurbs = [
+  "Supporting Australian<br>business each step<br>of the way.",
+  "Keep capital flowing<br>with the leading<br>Westpac fintech.",
+  "Fully established<br>solutions with<br>PCI compliance."
+];
+
+function randEl( array ) {
+  return array[ Math.floor( Math.random() * array.length ) ];
+}
+function generateBlurb() {
+  document.getElementById( 'blurb' ).innerHTML = randEl( blurbs );
+}
+
+window.requestAnimFrame = function() {
+  return (
+    window.requestAnimationFrame       || 
+    window.webkitRequestAnimationFrame || 
+    window.mozRequestAnimationFrame    || 
+    window.oRequestAnimationFrame      || 
+    window.msRequestAnimationFrame     || 
+    function( callback ){
+      window.setTimeout(callback, 1000 / 60);
+    }
+  );
+}();
+
+var canvas = document.getElementById('home'); 
+var context = canvas.getContext('2d');
+
+var W = window.innerWidth, H = window.innerHeight;
+canvas.width = W;
+canvas.height = H;
+
+var particle_count = 80,
+particles = [],
+couleurs = ["#f8c343", "#f7d27c", "#dada36", "#aa9", "#fbee62", "#eeee44"];
+function Particle() {
+  this.radius = Math.round(Math.random()*4+1);
+  this.x = Math.floor((Math.random() * canvas.width) + this.radius); 
+  this.y =  Math.floor((Math.random() * canvas.height) + this.radius); 
+  this.color = couleurs[Math.round(Math.random()*couleurs.length)];
+  this.speedx = Math.round((Math.random()*201)+0)/100;
+  this.speedy = Math.round((Math.random()*201)+0)/100;
+
+  switch (Math.round(Math.random()*couleurs.length)) {
+    case 1:
+    this.speedx *= 1;
+    this.speedy *= 1;
+    break;
+    case 2:
+    this.speedx *= -1;
+    this.speedy *= 1;
+    break;
+    case 3:
+    this.speedx *= 1;
+    this.speedy *= -1;
+    break;
+    case 4:
+    this.speedx *= -1;
+    this.speedy *= -1;
+    break;
+  }
+
+  this.move = function() {
+    context.beginPath();
+    context.globalCompositeOperation = 'source-over';
+    context.fillStyle   = this.color;
+    context.globalAlpha = 1;
+    context.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    context.fill();
+    context.closePath();
+
+    this.x = this.x + this.speedx;
+    this.y = this.y + this.speedy;
+    
+    if(this.x <= 0+this.radius) {
+      this.speedx *= -1;
+    }
+    if(this.x >= canvas.width-this.radius) {
+      this.speedx *= -1;
+    }
+    if(this.y <= 0+this.radius) {
+      this.speedy *= -1;
+    }
+    if(this.y >= canvas.height-this.radius) {
+      this.speedy *= -1;
+    }
+
+    for (var j = 0; j < particle_count; j++) {
+      var particleActuelle = particles[j],
+        yd = particleActuelle.y - this.y,
+        xd = particleActuelle.x - this.x,
+        d  = Math.sqrt(xd * xd + yd * yd);
+
+      if ( d < 200 ) {
+        context.beginPath();
+        context.globalAlpha = (200 - d) / (200 - 0);
+        context.globalCompositeOperation = 'source-over'; //destination-over ?
+        context.lineWidth = .5;
+        context.moveTo(this.x, this.y);
+        context.lineTo(particleActuelle.x, particleActuelle.y);
+        context.strokeStyle = this.color;
+        context.lineCap = "round";
+        context.stroke();
+        context.closePath();
+      }
+    }
+  };
+};
+for (var i = 0; i < particle_count; i++) {
+  var particle = new Particle();
+  particles.push(particle);
+}
+
+drawBg = function() {
+  var grd=context.createRadialGradient(W*.5,H*1.5,5,W*.5,H*.9,W*.7);
+  grd.addColorStop(0,"#621a4b");
+  grd.addColorStop(1,"#231433");
+
+  // Fill with gradient
+  context.globalCompositeOperation = 'source-over';
+  context.fillStyle=grd;
+  context.fillRect(0,0,W,H);
+};
+
+function animate() {
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  drawBg();
+  for (var i = 0; i < particle_count; i++) {
+    particles[i].move();
+  }
+  requestAnimFrame(animate);
+}
+
+animate(); 
+generateBlurb();
+
+</script>
+<!-- Andrew.Dabson.co -->
+</html>

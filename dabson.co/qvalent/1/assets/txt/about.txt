@@ -1,0 +1,9 @@
+Represented in Australia since 1997, Qvalent Pty Ltd is 100% owned by <a href="http://www.westpac.com.au" target="_blank">Westpac Banking Corporation</a>. Qvalent's offices are located in Newcastle where our team of software engineers and analysts develop and support all products in-house.
+
+Qvalent provides web-based software and support services that enable medium to large enterprises operating in the public, private and not-for-profit sectors to streamline financial business processes such as accounts payable, accounts receivable and superannuation.
+
+These solutions are available seamlessly within Australia and New Zealand. Qvalent's products are fully integrated with the banking systems providing access to all payment channels including credit cards and direct entry. Qvalent has enabled large corporate clients and provides consulting, implementation and on-going support services.
+
+Qvalent treats security as a prime concern. As Qvalent is a 100% wholly owned subsidiary of the Westpac Banking Corporation, it must conform to all Westpac security policies. This is to ensure that the Customer's and Westpac's data is secure, no insecure network applications are used and all communications between Qvalent applications themselves or external applications are carried out over secure links. In addition, all financial data transmitted between Qvalent (Westpac) must be encrypted and digitally signed for both the customer and Westpac's protection.
+
+Qvalent meets the requirements of the <a href="https://www.pcisecuritystandards.org/security_standards/" target="_blank">Payment Card Industry Data Security Standard (PCIDSS)</a>.

@@ -1,0 +1,19 @@
+{
+  "name": "Qvalent",
+  "short_name": "Qvalent",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#462866",
+  "theme_color": "#462866",
+  "description": "A brochure of Qvalent and their product offerings.",
+  "icons": [{
+    "src": "img/favicon48.png",
+    "sizes": "48x48",
+    "type": "image/png"
+  },
+  {
+    "src": "img/favicon512.png",
+    "sizes": "512x512",
+    "type": "image/png"
+  }]
+}

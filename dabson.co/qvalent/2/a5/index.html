@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<!-- Andrew Dabson -->
+<html>
+<head>
+<title>Qvalent Pty Ltd</title>
+<link rel="icon" type="image/png" href="favicon.png" />
+<style>
+@import url(https://fonts.googleapis.com/css?family=Droid+Sans);
+@import url(https://fonts.googleapis.com/css?family=Comfortaa);
+
+html,body{
+  margin:0;
+  padding:0;
+}
+body {
+  padding-top:120px;
+  font-size: 1em;
+  font-family: "Droid Sans",Arial,Helvetica,sans-serif;
+  background-color:#ddd;
+}
+h1 {
+  font-family: "Comfortaa",Arial,Helvetica,sans-serif; 
+  font-size:3em;
+  color: #3b007a;
+}
+.header1, .header2{
+  z-index:100;
+}
+.header1 {
+  position:fixed;
+  top:0;
+  width:100%;
+  height:48px;
+  color:#fff;
+  text-align:right;
+  background-color: #621a4b;
+}
+.header1 a {
+  color:#fff;
+  text-decoration:none;
+  padding: 0 15px;
+  display:inline-block;
+  height:100%;
+  line-height:48px;
+}
+.header1 a:hover {
+  text-decoration: underline;
+}
+.header2 {
+  position:fixed;
+  top:48px;
+  background-color:#fff;
+  width:100%;
+  height:71px;
+  line-height:71px;
+  font-size:18px;
+  border-bottom: 1px solid #d7d2cb;
+}
+.header2 img {
+  margin:  15px 0 15px 20px;
+  padding: 5px 20px 5px 0;
+  height:30px;
+  line-height:100%;
+  border-right:1px solid #d7d2cb;
+  border-height:12px;
+}
+.header2 ul {
+  margin:0;
+  padding:0;
+  display:inline-block;
+  list-style: none;
+}
+.header2 li {
+  display:inline-block;
+  float:left;
+  padding-left:20px;
+}
+.header2 li a {
+  color: #2d373e;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",sans-serif;
+  font-size: 18px;
+  text-decoration:none;
+}
+.header2 li a:hover {
+  text-decoration: underline;
+}
+#home{
+  display:block;
+  background:#231433;
+  width:100%;
+  height:66vh;
+}
+.canvasOverlay {
+  z-index:0;
+  position: absolute;
+  color:#fff;
+  top:120px;
+
+  width:100%;
+  height:66vh;
+  overflow: hidden;
+  display:block;
+  box-shadow: 0 0 10px #000 inset;
+}
+.canvasOverlay h1 {
+  color: #fff;
+  font-size:4em;
+  line-height:1.4em;
+  margin:0;
+  position:absolute;
+  bottom:10%;
+  padding: .7em 0;
+  text-align:center;
+  width:100%;
+  text-shadow: 0 0 10px #341e4d;
+  text-shadow: 0 0 20px #462866;
+  text-shadow: 0 0 30px #110a1a;
+  letter-spacing:.04em;
+}
+
+.splash{
+  padding: 0 20%;
+  display:inline-block;
+  width:60%;
+  padding-top: 6vh;
+  height:60vh;
+}
+.splash p {
+  text-align: justify;
+}
+.greyBg{ 
+  background:#231433;
+  color:#fff;
+}
+</style>
+</head>
+<body>
+<div class="header1">
+  <a href="https://quickstream.westpac.com.au">QuickStream</a>
+  <a href="https://www.payway.com.au">PayWay</a>
+  <a href="https://quicksuper.westpac.com.au">QuickSuper</a>
+  <a href="https://paymentsplus.westpac.com.au">PaymentsPlus</a>
+</div>
+<div class="header2">
+  <a href="#home"><img src="pure_standard_cropped.svg"></a>
+  <ul>
+    <li><a href="#home">Home</a></li>
+    <li><a href="#contact">Contact us</a></li>
+    <li><a href="https://qvalent.statuspage.io">System Status</a></li>
+  </ul>
+</div>
+<canvas id="home"></canvas>
+<div class="canvasOverlay"><h1 id="blurb"></h1></div>
+
+<div class="splash">
+  <h1>Who Are We?</h1>
+  <p>Qvalent is a wholly owned subsidiary of the Westpac Banking Corporation. We provide web-based software and support services that enable organisations operating in the public, private and not-for-profit sectors to streamline financial business processes such as accounts payable, accounts receivable and superannuation.</p>
+  <p>Represented in Australia since 1997, Qvalent Pty Ltd is 100% owned by Westpac Banking Corporation. Qvalent's offices are located in Newcastle where our team of software engineers and analysts develop and support all products in-house.</p>
+  <p>Qvalent provides web-based software and support services that enable medium to large enterprises operating in the public, private and not-for-profit sectors to streamline financial business processes such as accounts payable, accounts receivable and superannuation.</p>
+  <p>These solutions are available seamlessly within Australia and New Zealand. Qvalent's products are fully integrated with the banking systems providing access to all payment channels including credit cards and direct entry. Qvalent has enabled large corporate clients and provides consulting, implementation and on-going support services.</p>
+  <p>Qvalent treats security as a prime concern. As Qvalent is a 100% wholly owned subsidiary of the Westpac Banking Corporation, it must conform to all Westpac security policies. This is to ensure that the Customer's and Westpac's data is secure, no insecure network applications are used and all communications between Qvalent applications themselves or external applications are carried out over secure links. In addition, all financial data transmitted between Qvalent (Westpac) must be encrypted and digitally signed for both the customer and Westpac's protection. Qvalent meets the requirements of the Payment Card Industry Data Security Standard (PCIDSS).</p>
+</div>
+
+<div class="splash greyBg">zee bee bee ell</div>
+</body>
+<script>
+var blurbs = [
+  "Supporting Australian Business<br>each step of the way.",
+  "Keep your capital flowing with <br> a leading Westpac fintech.",
+  "Fully established solutions<br> with PCI-DSS compliance."
+];
+
+function randEl( array ) {
+  return array[ Math.floor( Math.random() * array.length ) ];
+}
+function generateBlurb() {
+  document.getElementById( 'blurb' ).innerHTML = randEl( blurbs );
+}
+
+window.requestAnimFrame = function() {
+  return (
+    window.requestAnimationFrame       || 
+    window.webkitRequestAnimationFrame || 
+    window.mozRequestAnimationFrame    || 
+    window.oRequestAnimationFrame      || 
+    window.msRequestAnimationFrame     || 
+    function( callback ){
+      window.setTimeout(callback, 1000 / 60);
+    }
+  );
+}();
+
+var canvas = document.getElementById('home'); 
+var context = canvas.getContext('2d');
+
+var W = window.innerWidth, H = window.innerHeight;
+canvas.width = W;
+canvas.height = H;
+
+var particle_count = 80,
+particles = [],
+couleurs = ["#f8c343", "#f7d27c", "#dada36", "#aa9", "#fbee62", "#eeee44"];
+function Particle() {
+  this.radius = Math.round(Math.random()*4+1);
+  this.x = Math.floor((Math.random() * canvas.width) + this.radius); 
+  this.y =  Math.floor((Math.random() * canvas.height) + this.radius); 
+  this.color = couleurs[Math.round(Math.random()*couleurs.length)];
+  this.speedx = Math.round((Math.random()*201)+0)/100;
+  this.speedy = Math.round((Math.random()*201)+0)/100;
+
+  switch (Math.round(Math.random()*couleurs.length)) {
+    case 1:
+    this.speedx *= 1;
+    this.speedy *= 1;
+    break;
+    case 2:
+    this.speedx *= -1;
+    this.speedy *= 1;
+    break;
+    case 3:
+    this.speedx *= 1;
+    this.speedy *= -1;
+    break;
+    case 4:
+    this.speedx *= -1;
+    this.speedy *= -1;
+    break;
+  }
+
+  this.move = function() {
+    context.beginPath();
+    context.globalCompositeOperation = 'source-over';
+    context.fillStyle   = this.color;
+    context.globalAlpha = 1;
+    context.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    context.fill();
+    context.closePath();
+
+    this.x = this.x + this.speedx;
+    this.y = this.y + this.speedy;
+    
+    if(this.x <= 0+this.radius) {
+      this.speedx *= -1;
+    }
+    if(this.x >= canvas.width-this.radius) {
+      this.speedx *= -1;
+    }
+    if(this.y <= 0+this.radius) {
+      this.speedy *= -1;
+    }
+    if(this.y >= canvas.height-this.radius) {
+      this.speedy *= -1;
+    }
+
+    for (var j = 0; j < particle_count; j++) {
+      var particleActuelle = particles[j],
+        yd = particleActuelle.y - this.y,
+        xd = particleActuelle.x - this.x,
+        d  = Math.sqrt(xd * xd + yd * yd);
+
+      if ( d < 200 ) {
+        context.beginPath();
+        context.globalAlpha = (200 - d) / (200 - 0);
+        context.globalCompositeOperation = 'source-over'; //destination-over ?
+        context.lineWidth = .5;
+        context.moveTo(this.x, this.y);
+        context.lineTo(particleActuelle.x, particleActuelle.y);
+        context.strokeStyle = this.color;
+        context.lineCap = "round";
+        context.stroke();
+        context.closePath();
+      }
+    }
+  };
+};
+for (var i = 0; i < particle_count; i++) {
+  var particle = new Particle();
+  particles.push(particle);
+}
+
+
+drawBg = function() {
+  var grd=context.createRadialGradient(W*.5,H*1.5,5,W*.5,H*.9,W*.7);
+  grd.addColorStop(0,"#621a4b");
+  grd.addColorStop(1,"#231433");
+
+  // Fill with gradient
+  context.globalCompositeOperation = 'source-over';
+  context.fillStyle=grd;
+  context.fillRect(0,0,W,H);
+};
+
+function animate() {
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  drawBg();
+  for (var i = 0; i < particle_count; i++) {
+    particles[i].move();
+  }
+  requestAnimFrame(animate);
+}
+
+animate(); 
+generateBlurb();
+
+</script>
+</html>
