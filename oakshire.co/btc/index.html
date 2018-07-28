@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<link rel="icon"/>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+var image = "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Ccircle fill='%23f7931a' cx='8' cy='8' r='8'/%3E%3Ctext x='8' y='12' fill='%23fff' font-family='Arial' font-weight='bold' font-size='.75em' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E";
+
+function poll(){
+    getData( function( data ) {
+        console.log( data[0][7] );
+        $( 'title' ).text( ( data[0][7] / 100.0 ).toFixed(1) ); 
+        $( "link[rel='icon']" ).attr( "href", image );
+    });
+}
+
+function getData( successFunction ) {
+    var ret = $.ajax({
+      dataType: 'json',
+      type: 'get',
+      url: 'https://api.bitfinex.com/v2/tickers?symbols=tBTCUSD',
+      success: successFunction
+    });
+}
+
+poll();
+setInterval( poll, 15000);
+</script>
+<style>
+html,body{
+  margin:0;
+  padding:0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size:0.85em;
+  line-height:150%;
+}
+#bod{
+  width:600px;
+  height:200px;
+  border:1px solid #000;
+}
+
+.up, .down{
+  width:5px;
+  float:left;
+  position: relative;
+  top:50%;
+}
+
+.up{
+  background-color:#0d0;
+  transform-origin: top center;
+  transform:rotate(180deg);
+}
+.down{
+  background-color:#d00;
+}
+</style>
+<title></title>
+</head>
+<body>
+<div id="bod"></div>
+<div id="main"></div>
+
+<script>
+var processData = function( json ) {
+  dat = json;
+  console.log( "got it " + json.length );
+
+  var min = Number.MAX_VALUE;
+  var max = Number.MIN_VALUE;
+
+  var minutes = [];
+  json.slice( 0, 120 ).forEach( function( minuteArray ) { 
+    minutes.push( getMinute( minuteArray ) );
+  });
+  minutes.reverse();
+
+  minutes.forEach( function( m ) { 
+    min = Math.min( min, m.low );
+    max = Math.max( max, m.high );
+  });
+  var avg = ( min + max ) / 2.0;
+  var del = ( max - min );
+
+  minutes.forEach( function( m ) {
+    var price = (parseFloat(m.open) + parseFloat(m.close) ) / 2.0;
+    var clazz = price > avg ? 'up' : 'down';
+    var percentHeight = price > avg ?
+      ( (m.high - avg) / del ) :
+      ( (avg - m.low ) / del );
+    percentHeight = (percentHeight*100).toFixed( 2 );
+    $( '#bod' ).append( '<div class="'+clazz+'" style="height:'+percentHeight+'%"></div>' );
+  });
+
+};
+
+function getMinute( sixArray ) {
+  return {
+    "time": sixArray[0], /*millisecond timestamp MTS */
+    "open": sixArray[1].toPrecision( 5 ),
+    "close": sixArray[2].toPrecision( 5 ),
+    "high": sixArray[3].toPrecision( 5 ),
+    "low": sixArray[4].toPrecision( 5 ),
+    "vol": sixArray[5]
+  };
+}
+
+console.log( 'fetching json...' );
+var dat;
+$.getJSON( "https://api.bitfinex.com/v2/candles/trade:1m:tBTCUSD/hist?limit=120", processData );
+</script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="theme-color" content="#3e2"/>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<script src="https://ajax.googleapis.com/ajax/libs/threejs/r84/three.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="JDLoader.min.js"></script>
+<script type="text/javascript" src="OrbitControls.js"></script>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+  }
+</style>
+</head>
+
+<!-- Thanks to  http://www.cgdev.net/json/demo/basic_anim.html -->
+<body>
+<script>
+        var meshes = [], mixers = [], hemisphereLight, camera, scene, renderer, controls;
+        var clock = new THREE.Clock;
+
+        init();
+        animate();
+
+        function init()
+        {
+            container = document.createElement('div');
+            document.body.appendChild(container);
+            scene = new THREE.Scene();                            
+
+            //remove 3 lines for no ambient light 
+            hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x222222, 0.9); //( skyColor, groundColor, intensity )
+            hemisphereLight.position.set(0, 10000, 0);
+            scene.add(hemisphereLight);
+
+            scene.add(new THREE.AmbientLight(0x161616, 1));
+
+//shadow
+                var canvas = document.createElement( 'canvas' );
+                canvas.width = 128;
+                canvas.height = 128;
+
+                var context = canvas.getContext( '2d' );
+                var gradient = context.createRadialGradient(
+                    canvas.width / 2,
+                    canvas.height / 2,
+                    0,
+                    canvas.width / 2,
+                    canvas.height / 2,
+                    canvas.width / 2
+                );
+                gradient.addColorStop( .1, 'rgba(210,210,210,1)' );
+                gradient.addColorStop( 1, 'rgba(255,255,255,.01)' );
+
+                context.fillStyle = gradient;
+                context.fillRect( 0, 0, canvas.width, canvas.height );
+
+                var texture = new THREE.CanvasTexture( canvas );
+                var geometry = new THREE.PlaneBufferGeometry( 120, 120, 3, 3 );
+                var material = new THREE.MeshBasicMaterial( { map: texture, overdraw: 0.5 } );
+
+                var mesh = new THREE.Mesh( geometry, material );
+                mesh.position.y = - 90;
+                mesh.rotation.x = - Math.PI / 2;
+                scene.add( mesh );
+//end shadow
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor( 0xffffff, 1 );
+            container.appendChild(renderer.domElement);
+
+            window.addEventListener('resize', onWindowResize, false);
+
+            var loader = new THREE.JDLoader();
+            loader.load("acorn.jd",
+                        function (data)
+                        {
+                            var multiMaterial = new THREE.MultiMaterial(data.materials);
+                            for (var i = 0; i < data.geometries.length; ++i)
+                            {
+                                var mesh = new THREE.SkinnedMesh(data.geometries[i], multiMaterial);
+                                mesh.position.set( 0, 0, 0 );
+                                meshes.push(mesh);
+                                scene.add(mesh);
+
+                                if (mesh.geometry.animations)
+                                {
+                                    var mixer = new THREE.AnimationMixer(mesh);
+                                    mixers.push(mixer);
+                                    mixer.clipAction(mesh.geometry.animations[0]).play();
+                                }
+                            }
+
+                            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10 * data.boundingSphere.radius);
+                            camera.position.z = data.boundingSphere.center.z + 2.5 * data.boundingSphere.radius;
+                            camera.lookAt(data.boundingSphere.center);        
+                            scene.add(camera);  //mainLight.position.copy(camera.position);
+                            camera.add(new THREE.DirectionalLight(0xFFFFFF, 1));                            
+                            if (!controls)
+                               controls = new THREE.OrbitControls(camera, renderer.domElement);
+                            controls.target.copy(data.boundingSphere.center);
+                        });
+
+        }
+
+        function animate()
+        {
+            var delta = clock.getDelta();
+            for (var i = 0; i < mixers.length; ++i) mixers[i].update(delta);
+
+            if (controls) controls.update();
+
+            if (camera) renderer.render(scene, camera);
+
+            if(meshes[0])
+            meshes[0].rotation.y += Math.PI / 360 ;
+
+            requestAnimationFrame(animate);
+        }
+
+        function onWindowResize()
+        {
+            if (camera)
+            {
+              camera.aspect = window.innerWidth / window.innerHeight;
+              camera.updateProjectionMatrix();
+            }
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+    </script>
+</body>
+</html>
