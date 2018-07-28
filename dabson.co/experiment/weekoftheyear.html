@@ -1,0 +1,14 @@
+<h1 style="font-family:sans-serif;font-size:300px;text-align:center;margin-top:20%">
+<script>
+function getWeekNumber(d) {
+  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+  var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+  return [d.getUTCFullYear(), weekNo];
+}
+
+var result = getWeekNumber(new Date()); // result 0 is year ie 2018
+document.write(result[1]);
+</script>
+</h1>

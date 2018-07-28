@@ -1,0 +1,134 @@
+<html>
+<head>
+<title>Twist</title>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+}
+#stage {
+  width:100%;
+  height:100%;
+  background-image: url('gridLine.svg');
+  background-repeat: repeat;
+}
+#char{
+  position: absolute;
+  top:100px;
+  left:100px;
+  width:25px;
+  height:25px;
+  background-color:#2d2;
+
+  -webkit-transition: transform 0.2s ease;
+  -moz-transition:    transform 0.2s ease;
+  -o-transition:      transform 0.2s ease;
+  transition:         transform 0.2s ease;
+}
+
+.upL     { transform-origin: top left;}
+.upR     { transform-origin: top right;}
+.downL   { transform-origin: bottom right;}
+.downR   { transform-origin: bottom left;}
+.leftL   { transform-origin: top left;}
+.leftR   { transform-origin: bottom left;}
+.rightL  { transform-origin: bottom right;}
+.rightR  { transform-origin: top right;}
+.rotated { transform: rotate(270deg);}
+
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <div id="char"></div>
+</div>
+<script>
+var char = document.getElementById('char');
+var squareSize = 25;
+var charBound;
+var isRight = false;
+var isAnimating = false;
+
+function initTransition(endCallback, move) { //endDown, 'down'
+  charBound = char.getBoundingClientRect();
+  char.addEventListener('transitionend', endCallback );
+
+  char.classList.add(move+(isRight?'R':'L'));
+  if(isRight) {
+    char.classList.remove('rotated');
+  } else {
+    char.classList.add('rotated');
+  }
+  isRight=!isRight;
+}
+
+function clearAndReset() {
+  console.log('cleared & reset');
+  clear();
+  isAnimating=false;
+  //char.style.left = '25px';
+}
+
+function clear() {
+  char.classList.remove('upL');
+  char.classList.remove('upR');
+
+  char.classList.remove('downL');
+  char.classList.remove('downR');
+
+  char.classList.remove('leftL');
+  char.classList.remove('leftR');
+
+  char.classList.remove('rightL');
+  char.classList.remove('rightR');
+}
+
+function up() { if(isAnimating)return; isAnimating=true;
+  initTransition(endUp, 'up');
+  char.style.top = (charBound.top - squareSize)+'px';
+}
+function down() { if(isAnimating)return; isAnimating=true;
+  initTransition(endDown, 'down');
+  char.style.top = (charBound.top + squareSize)+'px';
+}
+function left() { if(isAnimating)return; isAnimating=true; 
+  initTransition(endLeft, 'left');
+  char.style.left = (charBound.left - squareSize)+'px';
+}
+function right() {if(isAnimating)return; isAnimating=true;
+  initTransition(endRight, 'right');
+  char.style.left = (charBound.left + squareSize)+'px';
+}
+
+function endUp()    { 
+  console.log('ended up'); 
+  char.removeEventListener('transitionend', this); // removing listeners may not be neccessary?
+  clearAndReset();
+}
+function endDown()  { 
+  console.log('ended down'); 
+  char.removeEventListener('transitionend', this); //endDown
+  clearAndReset();
+}
+function endLeft()  { 
+  console.log('ended left'); 
+  char.removeEventListener('transitionend', this);
+  clearAndReset();
+}
+function endRight() { 
+  console.log('ended right'); 
+  char.removeEventListener('transitionend', this);
+  clearAndReset();
+}
+
+document.addEventListener('keydown', function(event){
+  console.log(event.key);
+       if(event.key=='w' || event.key=='ArrowUp')       up();
+  else if(event.key=='s' || event.key=='ArrowDown')   down();
+  else if(event.key=='a' || event.key=='ArrowLeft')   left();
+  else if(event.key=='d' || event.key=='ArrowRight') right();
+});
+</script>
+</body>
+</html>

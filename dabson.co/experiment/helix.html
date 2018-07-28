@@ -1,0 +1,83 @@
+<!-- forked from http://codepen.io/anon/pen/oZWxeL-->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body{
+  margin:10px 0;
+  overflow:hidden;
+  background:#333;
+}
+canvas{
+	display:block; 
+	margin:0 auto;
+	background:#333;
+}
+</style>
+
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="text/javascript">
+var c = document.getElementById("c");
+var ctx = c.getContext("2d");
+var lineWidth = 12;
+var cw = c.width = 300;
+var ch = c.height = 200;
+
+var w = cw;
+var h = ch - lineWidth;
+var amplitude = h;
+var frequency = .02;
+var phi = 0;
+var frames = 0;
+var speed = .05;
+ctx.lineWidth = lineWidth;
+requestId = window.requestAnimationFrame(Draw);
+
+function Draw() {
+  frames++
+  phi+=speed;
+  ctx.clearRect(0, 0, cw, ch);
+
+  drawHalfWave( ctx, frequency, phi, amplitude );
+  drawFullWave( ctx, frequency, phi, amplitude );
+  drawHalfWave( ctx, frequency, phi, amplitude, false );
+
+
+  requestId = window.requestAnimationFrame(Draw);
+}
+
+function drawHalfWave( ctx, frequency, phi, amplitude, isFirst) {
+  isFirst = typeof isFirst !== 'undefined' ? isFirst : true;
+  ctx.beginPath();
+  for (var x2 = 0, last = -2; x2 < w; x2++) {
+	y = -Math.sin(x2 * frequency + phi) * amplitude / 2 + amplitude / 2;
+	y2 = -Math.cos(x2 * frequency + phi) * amplitude / 2 + amplitude / 2;
+  	if( isFirst ? y2<ch/2 : y2>=ch/2 ) {
+ 		if( last != x2-1) {
+			ctx.beginPath();
+			ctx.moveTo(x2, y);
+ 		}
+
+	    ctx.lineTo(x2, y + lineWidth / 2);
+		ctx.strokeStyle = '#eee';
+		ctx.stroke();
+		last = x2;
+	}
+  }
+}
+
+function drawFullWave( ctx, frequency, phi, amplitude ) {
+  ctx.beginPath();
+  ctx.moveTo(0, x);
+  for (var x = 0; x < w; x++) {
+    y = Math.sin(x * frequency + phi) * amplitude / 2 + amplitude / 2;
+    ctx.lineTo(x, y + lineWidth / 2);
+  }
+  ctx.strokeStyle = "hsl(" + frames + ",100%,50%)";
+  ctx.stroke();
+}
+</script>
+</body>
+</html>

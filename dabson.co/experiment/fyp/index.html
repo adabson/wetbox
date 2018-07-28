@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<!-- library courtesy of http://mathmed.blox.pl/resource/plot.js (open source)-->
+<html><head>
+<meta name="theme-color" content="#111"/>
+    <title>The inner machinations of my mind are an enigma</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<style>body{margin:0;padding:0;font-family:Helvetica,Arial,sans-serif;font-size:16px;}
+#highlighter{position:absolute;z-index:2;width:50px;height:370px;margin-left:54px;background:rgba(128,128,255,0.5);}
+#ykey{font-size:16px;font-weight:bold;}
+.status{display:block;font-size:11px;overflow:none;}
+a{color:#fff;text-decoration:none;margin:10px 0 0 0px;
+font-size:30px;display:list-item;list-style:none;
+background:#337;border-radius:7px;width:150px;height:35px;padding:5px;text-align:center;}
+a:hover{background:#0af;color:#fff;}
+ul{margin:0;padding:0 5px;float:left;}
+input[type="text"], input[type="submit"]{display:list-item;border-radius:7px;width:160px;height:44px;text-align:center;
+font-size:28px;margin-top:10px;display:block;background:#fff;border:1px solid #aaa;}
+#stockinput{height:40px;font-weight:bold;color:#aaa;}
+canvas, #thetextview {float:left;}
+#thetextview{background:#eee;display:inline-block;padding-left:70px;width:930px;height:400px;}
+#thetextview2{float:left;background:#eee;display:inline-block;padding-left:70px;width:430px;height:400px;}
+
+#tvcontainer{
+    float:left;
+}
+#algoutput{
+    width:400px;
+    height:380px;
+    margin-left:140px;
+    margin-top:5px;
+    display:block-inline;
+    float:left;
+}
+
+.gogo{margin:5px 0 0 5px;width:325px;height:45px;background:#fff;border:1px solid #aaa;border-radius:7px;}
+.goo-goo-ma-boo-boo{text-align:left;vertical-align:center;width:310px;height:25px;padding:10px;font-size:24px;font-weight:bold;}
+.goo-goo-ma-poo-poo{padding-left:5px;width:325px;}
+.reccomendation{float:right;text-align:center;z-index:3;font-size:16px;font-weight:bold;border:3px solid #a00;background:#e66;border-radius:5px;color:#500;padding:5px;width:100px;}
+.good {border:3px solid #0a0;background:#6e6;color:#050;}
+#reccomendation{visibility:hidden;}
+@media screen and (max-width: 1024px) { /* mobile displays */
+    #thetextview {
+        width:100%;
+        height:auto;
+        background-color:#000;
+        padding:0;
+    } 
+    #algoutput{
+        display:none;
+    }
+    #tvcontainer {
+        width:100%;
+    }
+    #canv, #c2 {
+        width:100%;
+    }
+    #highlighter {
+        height:37vw;
+    }
+    .goo-goo-ma-boo-boo {
+        width: auto;
+        margin:5px;
+        height:auto;
+        padding-top:5vw;
+        padding-bottom:5vw;
+        font-size:2.4em;
+        text-align:center;
+        vertical-align:center;
+    }
+    .goo-goo-ma-poo-poo{
+        width: auto;
+        margin:5px;
+        height:auto;
+    }
+    #ykey {
+        font-size:1.7em;
+    }
+    .status {
+        font-size:1.2em;
+        margin-top:2vw;
+    }
+    #reccomendation {
+        font-size:1.6em;
+    }
+    #reccomendation .status {
+        font-size:0.5em;
+    }
+    input[type="text"], input[type="submit"] {
+        display:none;
+    }
+    a {
+        width:auto;
+        margin:5px;
+        height:auto;
+        padding-top:2vw;
+        padding-bottom:2vw;
+        font-size:2.5em;
+    }
+    ul {
+        width:100%;
+        margin:0;
+        margin-top:-5px;
+        padding:0;
+    }
+}
+</style></head><body>
+    <div id="highlighter">&nbsp;</div>
+    <canvas width="1000" height="400" id="c2"></canvas>
+    <canvas width="1000" height="400" id="canv"></canvas>
+
+	<form action="/" method="get">
+    <div id="thetextview">
+        <div id="tvcontainer">
+
+    	    <div id="prof" class="gogo goo-goo-ma-boo-boo">(Assessing the market)</div>
+    	    <div class="gogo goo-goo-ma-poo-poo">
+                <div id="reccomendation" class="reccomendation">SELL<span class="status">(recommended)</span></div>
+    		    <div id="ykey">$US Price of </div>
+    		    <div id="status" class="status">&nbsp;</div>
+    		    <div class="status">Momentum on $1M. Trades: <span id="trades">0</span></div>
+    	    </div>
+
+    	    <ul>
+    		    <input type="text" id="stockinput" name="stock" maxlength="4" value="QUOTE" onfocus="this.value=''">
+    		    <a href="?stock=INDEX_SPY">S&amp;P 500</a>
+    		    <a href="?stock=AAPL">Apple</a>
+    		    <a href="?stock=IBM">IBM</a>
+                <a href="?stock=ORCL">Oracle</a>
+    		</ul>
+    		<ul>
+    		    <input type="submit" value="Go!">
+    		    <a href="?stock=DIS">Disney</a>
+    		    <a href="?stock=HAL">Halliburton</a>
+    		    <a href="?stock=XRX">Xerox</a>
+                <a href="?stock=GE">GE</a>
+    		</ul>
+        </div>
+        <textarea id="algoutput"></textarea> 
+	</div>
+	</form>
+
+    <script src="jquery214min.js"></script>
+    <script src="plot.js"></script>
+    <script src="vars.js"></script>
+    <script src="algos.js"></script>
+    <script src="sprintf.js"></script>
+    <script>
+
+
+    var queryDict = {}
+    location.search.substr(1).split("&").forEach(function(item) {queryDict[item.split("=")[0]] = item.split("=")[1]})
+    var stock = typeof queryDict['stock'] === 'undefined' ? 'INDEX_SPY' : queryDict['stock'].toUpperCase();
+    var invalidstock = false;
+    var invs = '';
+    if(nyseTickers.indexOf(stock) < 0) {//will yield -1 if not in array
+        console.log('Invalid stock!');//ensure the stock is valid!
+    	invs = stock;
+    	stock='INDEX_SPY';
+    	invalidstock = true;
+    }
+    else 
+        console.log('Valid ticker: '+stock+' ('+(nyseTickers.indexOf(stock)+1)+' of 947)')
+    $('#ykey').html('$US Price of '+stock+(invalidstock&&invs!=''?' ('+invs+' invalid)':''));
+
+        var persistindex=0; // ew, a global... 
+        var principle = 1000000;
+        var kitty = principle; 
+        var currentlyheld=0;
+        var m1=0.;
+        var m2=0.;
+        var m3=0.;
+        var momentumperiods = [50,100,200]; //ensure whatever they are, there are 3 and they are kept in ascending order
+        var trades=0;
+        var ticks=0;
+
+        function truffleShuffle(len, plot, data) { //truffleShuffle is the event loop
+            var minus = data.length-len; // ==4000-200 = 3800
+            if(minus <= persistindex) //do nothing on the last case
+                return; // short-circuit analysis data.slice(minus, data.length-1);
+            var ind = persistindex + momentumperiods[2]; //stay ~200steps ahead for making the algo decision
+            ticks++;
+
+            var price = data[ind];
+            var x = data.slice(persistindex, persistindex+len);
+            plot.data = x;
+            plot.plot();
+            //var udc  = 'aa0'; //up down color
+            //if(persistindex>=200) //200 is the moving average
+            //    udc = price > data[persistindex-1] ? '010' : '100';
+            //<span style="color:#'+udc+'"
+
+            if(persistindex == 0) { //momentumperiods[2]) { //initialise the momentums
+                m1 = mAvg(data, momentumperiods[0], ind);
+                m2 = mAvg(data, momentumperiods[1], ind);
+                m3 = mAvg(data, momentumperiods[2], ind);
+            }
+            else { //update the index
+
+                //more efficient, but results in floating point discrepencies to the python algorithm
+                //m1 = updateAvg(m1, data, momentumperiods[0], ind);
+                //m2 = updateAvg(m2, data, momentumperiods[1], ind);
+                //m3 = updateAvg(m3, data, momentumperiods[2], ind);
+
+                m1 = mAvg(data, momentumperiods[0], ind);
+                m2 = mAvg(data, momentumperiods[1], ind);
+                m3 = mAvg(data, momentumperiods[2], ind);
+            }
+
+
+            var tm = tripleMomentum(price, m1, m2, m3);
+            var rw = randomWalk();
+            var bh = buyAndHold();
+
+            var algo = tm;
+            var algoistm = true; //used for suppresing blank output
+
+            if(algo=='buy' && currentlyheld==0) {    // buy some stocks
+                var amountToBuy = Math.floor(kitty / price);
+                kitty          -= amountToBuy * price;
+                currentlyheld  += amountToBuy;
+                trades++;
+                //console.log(persistindex + '\tBUY \t' + price + '\t' + m1 + '\t' + m2 + '\t' + m3);
+                console.log(sprintf("%4d\t%s\t%8.4f\t%8.4f\t%8.4f\t%8.4f", ind, 'BUY ', price, m1, m2, m3));
+                $('#algoutput').prepend(sprintf("%s %s %2d at $%08.4f\n", dates[ind], 'BUY ', amountToBuy, price));
+
+            } else if(algo=='sell' && currentlyheld!=0) { //sell
+                kitty          += currentlyheld * price;
+                var formerlyHeld = currentlyheld;
+                currentlyheld  = 0;
+                trades++;
+                //console.log(persistindex + '\tSELL\t' + price + '\t' + m1 + '\t' + m2 + '\t' + m3);
+                console.log(sprintf("%4d\t%s\t%8.4f\t%8.4f\t%8.4f\t%8.4f", ind, 'SELL', price, m1, m2, m3));
+                $('#algoutput').prepend(sprintf("%s %s %2d at $%08.4f\n", dates[ind], 'SELL', formerlyHeld, price));
+            }
+
+            var xpos = 54. + (persistindex/4.23); //would be just 4 if not for the 54 offset for x title
+            $('#highlighter').css('margin-left', xpos+'px'); //persistindex+'px');
+            $('#status').html('<span>'+stock+' '+dates[persistindex+len-1]+': $'+data[persistindex]+'</span>');
+            if(!algoistm || persistindex >= momentumperiods[2])
+            $('#prof').html('PROFIT: ' + formatProfit(calcProfit(principle, kitty, currentlyheld, price)) );
+            $('#trades').html(trades+' / '+ticks);
+
+            if(persistindex == minus-1) { //on the very last (index 3799th tick)
+                if(algo=='buy') {
+                    $('#reccomendation').html('BUY<span class="status">(recommended)</span>');
+                    $('#reccomendation').addClass('good');
+                }
+
+                $('#reccomendation').css('visibility', 'visible'); //there's probably a .show() or something...
+            }
+
+            persistindex++;
+        }
+
+        function fetchData(ticker) {
+            return $.getJSON("nyse_minmin/"+ticker+".json").then(function(data){
+                return data; /*{ //because we're returning a PROMISE, we get to return twice. Js is weird (and cool, but still mostly weird) like that...
+                  //somedata:data, somemoredata:moredata
+                }; //*/
+            });
+        }
+
+        var npoints=200;
+        var myp = new MakeDraw();
+        myp.id="canv";
+        myp.plotColor  = 'rgba(232,64,64,1)';
+        myp.gridColor  = 'rgba(128,128,128,.2)';
+        myp.fSize      = 15;   // font size
+        myp.enumerateP = 0;    // number points
+        myp.enumerateH = 0;
+        myp.enumerateV = 1;    // vertical axis numeration
+        myp.adjustTrimmer = 0; // setting to 500 crashes lightable and chrome :(
+
+        var p2 = new MakeDraw();
+        p2.id = "c2";
+        p2.plotColor  = 'rgba(232,64,64,1)';
+        //p2.bgColor    = 'rgba(220,220,220,0)';
+        p2.fSize      = 15;   // font size
+        p2.adjustTrimmer = 0;
+        p2.enumerateP = 0;
+        p2.enumerateV = 1;
+        p2.enumerateH = 0;
+        p2.gridColor  = 'rgba(255,255,255,.05)';
+
+        var data = fetchData(stock).then(function(returndata){
+            p2.data = returndata;
+            p2.plot();
+            setInterval(function() { 
+                truffleShuffle(npoints, myp, returndata); 
+                //console.log('a'); 
+            }, 10); //interval as 10ms - it seems a bit delayed though
+        });
+
+    </script>
+</body></html>
+

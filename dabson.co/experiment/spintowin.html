@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+@keyframes roteight {
+  0%    { transform: rotate(0deg);   }
+  12.5% { transform: rotate(45deg);  }
+  25%   { transform: rotate(90deg);  }
+  37.5% { transform: rotate(135deg); }
+  50%   { transform: rotate(180deg); }
+  62.5% { transform: rotate(225deg); }
+  75%   { transform: rotate(270deg); }
+  87.5% { transform: rotate(315deg); }
+  100%  { transform: rotate(360deg); }
+}
+
+.spinner {
+  width: 1000px;
+  height: 1000px;
+  background: transparent url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle fill="%23222" cx="50" cy="10" r="10"/><circle fill="%23444" cx="78.284" cy="21.716" r="10"/><circle fill="%23666" cx="90" cy="50" r="10"/><circle fill="%23888" cx="78.284" cy="78.284" r="10"/><circle fill="%23aaa" cx="50" cy="90" r="10"/><circle fill="%23ccc" cx="21.716" cy="78.284" r="10"/><circle fill="%23eee" cx="10" cy="50" r="10"/><circle fill="%23fff" cx="21.716" cy="21.716" r="10"/></svg>') no-repeat center center;
+  background-size: 100%;
+  animation-name: roteight; 
+  animation-duration: 1s; 
+  animation-iteration-count: infinite;
+  animation-timing-function: step-start;
+}
+
+</style>
+</head>
+<body>
+<div class="spinner"></div>
+</body>
+</html>

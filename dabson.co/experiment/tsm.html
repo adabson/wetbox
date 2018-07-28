@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<head><style>
+html{font-family:"Ubuntu Mono";
+-webkit-user-select: none; /* Safari */        
+-moz-user-select: none; /* Firefox */
+-ms-user-select: none; /* IE10+/Edge */
+user-select: none; /* Standard */
+}
+</style></head>
+<body>
+<canvas id="c" style="border:1px solid #000000;"></canvas>
+<div id="status">Nodes:</div>
+<script> 
+var c = document.getElementById("c");
+var width = 600;
+var height = 600;
+document.getElementById('c').width=width;
+document.getElementById('c').height=height;
+
+var points = [];
+var n = 32;
+
+var connect = function connect(i1,i2,graph) {
+  line(graph[i1].x,graph[i1].y,graph[i2].x,graph[i2].y);
+}
+
+var line = function line(x1,y1,x2,y2) {
+  var ctx = c.getContext("2d");
+  ctx.moveTo(x1,y1);
+  ctx.lineTo(x2,y2);
+  ctx.lineWidth=.5;
+  ctx.stroke();
+};
+
+function wipe() {
+  var ctx = c.getContext("2d");
+  ctx.clearRect(0, 0, width, height);
+}
+
+function reset() {
+  wipe();
+  drawNodes();
+}
+
+function node(x,y) {
+  var radius = 3;
+  var ctx = c.getContext("2d");
+  ctx.beginPath();
+  ctx.arc(x,y,radius,0, 2 * Math.PI );
+  ctx.fill();
+}
+
+function randPoint() {
+  return {
+    x: Math.floor( Math.random() * (width  + 1) ), 
+    y: Math.floor( Math.random() * (height + 1) )
+  };
+};
+
+function write(txt) { 
+  document.getElementById('status').innerHTML += '<br/>' + txt;
+}
+
+//line(0,0,200,200);
+//node(50,50);
+
+function genNodes() {
+  points=[];
+  for(var i=0;i<n;i++) {
+    point = randPoint();
+    points.push( point )
+  }
+}
+
+// generate points
+function drawNodes() {
+  for(var i=0;i<n;i++) {
+    node(points[i].x, points[i].y)
+
+    //draw labels also
+    var ctx = c.getContext("2d");
+    ctx.font='14px "Ubuntu Mono"';
+    ctx.fillText(i,7+points[i].x,4+points[i].y);
+
+  }
+}
+
+function solveBad() { 
+  /** 
+   * the initial permutation
+   */
+  reset();
+  for(var i=0;i<n;i++) {
+    var j = n == i + 1 ? 0 : i + 1;
+    line(points[i].x,points[i].y,points[j].x,points[j].y);
+  }
+}
+
+// calculate edge length, upper triangular []
+var edges = [];
+function genEdgeLengths() {
+  for(var i=0;i<n-1;i++) {
+    var arr = [];
+    for(var j=i+1;j<n;j++) { 
+      var x = points[i].x - points[j].x;
+      var y = points[i].y - points[j].y;
+      arr.push( Math.sqrt( x * x + y * y ).toFixed(2) );
+    }
+    edges.push(arr);
+  }
+}
+
+function getEdgeLen(i1, i2) {
+  // 0 : (5) ["66.89", "207.51", "386.00", "322.57", "155.71"]
+  // 1 : (4) ["269.76", "451.98", "344.57", "216.21"]
+  // 2 : (3) ["246.07", "415.39", "173.11"]
+  // 3 : (2) ["390.22", "245.35"]
+  // 4 : ["242.55"]
+  iA = Math.min(i1,i2);
+  iB = Math.max(i1,i2);
+  return Number.parseFloat( edges[iA][iB-iA-1] );
+}
+
+function solveGloop() { reset();
+  /** 
+   * consider every (n-1 choose 2) 3-point paths for every node, 
+   * get the largest minimum, remove those edges, and that node, work your way down
+   */
+  var smallestPairwise = infs(n); //smallest pairwise length at reference node i (ref being middle)
+  var smallestPairwiseTriplet = zeros(n);
+  genEdgeLengths();
+  // so 6 nodes turns into a 6*5*20 dimension length array: 
+
+  biEdges = initArray(n, initArray(n-1, [])); //3d array //needless - only an upper 2dtrix 0ref, 1ref,2ref
+  //biEdges[n][n-1][n-2] = [];
+
+  for(var i=0;i<n;i++) { //i is reference node
+	  for(var j=0;j<n-1;j++) { // n choose 2 :: so for 2 edges you need 3 points
+      if(j===i){
+        continue; //id say refactor, but this is actually a pretty understandable way of expressing what its doing
+      }
+      var innerArr = [];
+		  for(var k=j+1;k<n;k++) {
+        if(k===i || k===j) {
+          continue;
+        }
+        // console.log( i + '' + j + '' + k );
+		    var len = Number.parseFloat((getEdgeLen(i,j)+getEdgeLen(i,k)).toFixed(2));
+        if(len < smallestPairwise[i]) {
+          smallestPairwise[i] = len;
+          smallestPairwiseTriplet[i] = {
+            at: i,
+            in: j,
+            out: k, 
+          };
+        }
+		    var o = {
+		    	at: i,
+		    	in: j,
+		    	out: k, 
+		    	len: len,
+		    	calc:getEdgeLen(i,j) +'+'+ getEdgeLen(i,k)+'='+len
+		    };
+			  sortedInsertion(innerArr, o); //@todo:::::: this genning 20 els in the innermost dim instead of 4 (for n=6)
+		  }
+      biEdges[i][j] = innerArr;
+	  }
+	}
+  // console.log( smallestPairwise );
+  // console.log( smallestPairwiseTriplet );
+
+  var noAdjacent = zeros(n); //for constructing our circuit, each node can have only 0, 1 or 2 adjacent edges
+  var maxMinIndex = indexOfMax( smallestPairwise );
+  var maxMinTriplet = smallestPairwiseTriplet[maxMinIndex];
+
+  connect(maxMinTriplet.at, maxMinTriplet.in,points);
+  connect(maxMinTriplet.at, maxMinTriplet.out,points); //so its already clear this isnt going to work, its good you tried
+}
+
+function sortedInsertion(arr, obj) { //uses obj.len as key
+	if( arr.length < 1 ) {
+		arr.push( obj ); //console.log( 'pushed ' + obj.len);
+		return;
+	}
+
+	var index = 0;
+	for(;index<arr.length;index++) {
+		if(index==arr.length-1) { //console.log(obj.len+' broke expired index:'+index);
+			if(obj.len>arr[index].len) {
+				index++;
+			}
+			break;
+		} else if( obj.len <= arr[index].len ) { //console.log( 'index:'+index+', obj.len:'+obj.len+', a[i+1]:'+arr[index+1].len);
+			break;
+		}
+	}
+	arr.splice(index, 0, obj);
+}
+
+//solveGloop();
+//console.log( biEdges );
+
+function distinctCircuits(n) { // = (n-1)! / 2 //calculates #,not permutes
+  var ret = 1;
+  if(n>1) {
+    for(var i=1;i<n;i++) {
+      ret *= i;
+    }
+    ret /= 2;
+  }
+  return ret;
+}
+
+function zeros(len) {
+  return initArray(len, 0);
+}
+
+function infs(len) {
+  return initArray(len, Infinity);
+}
+
+function initArray(len, filler) {
+  return new Array(len).fill(filler);
+}
+
+function indexOfMax(arr) {
+    if (arr.length === 0) {
+      return -1;
+    }
+
+    var max = arr[0];
+    var maxIndex = 0;
+
+    for (var i = 1; i < arr.length; i++) {
+      if (arr[i] > max) {
+        maxIndex = i;
+        max = arr[i];
+      }
+    }
+
+    return maxIndex;
+}
+
+function indexOfMin(arr) {
+    if (arr.length === 0) {
+      return -1;
+    }
+
+    var min = arr[0];
+    var minIndex = 0;
+
+    for (var i = 1; i < arr.length; i++) {
+      if (arr[i] < min) {
+        minIndex = i;
+        min = arr[i];
+      }
+    }
+
+    return minIndex;
+}
+
+function indexOfLowestVertical(arr) { //lowest vertical = highest y
+    if (arr.length === 0) {
+      return -1;
+    }
+
+    var topIndex=0;
+    /* //if we accept a graph with null avlues again
+    for(;topIndex<n;topIndex++) {
+      if(arr[topIndex]!=null) {
+        break;
+      }
+    }
+    */
+    var max = arr[topIndex];
+
+
+    for (var i = topIndex+1; i < arr.length; i++) {
+      if(arr[i]==null || !arr[i] || !arr[i].y) {
+        continue;
+      } else if (arr[i].y > max.y) {
+        topIndex = i;
+        max = arr[i];
+      }
+    }
+
+    return topIndex;
+}
+
+function indexOfLowestTheta(graph, thetas, minbound, wrtIndex) { //lowest theta >= greater or equal to minbound (in radians)
+    if (thetas.length < 2) {
+      return -1;
+    }
+    var min = Infinity; //thetas[initIndex];
+    var lowestThetaIndex = -1; //initIndex;
+
+    for (var i = 0; i < graph.length; i++) {
+      if(thetas[i] < minbound || i===wrtIndex || thetas[i]==-1) { //last 2 checks should be the same thing.
+        continue;
+      } else if (thetas[i] < min) {
+        lowestThetaIndex = i;
+        min = thetas[i];
+      }
+    }
+
+    return lowestThetaIndex;
+}
+
+function drawOuterBound(graph) {
+  rings(graph, false)
+}
+
+function drawTreeRings(graph) {
+  rings(graph, true)
+}
+
+function rings(graph, recurse) { //graph is a set of points, returns a subgraph of all enclosed points
+  if(!graph || graph.length<3) {
+    return;
+  }
+
+  var theta = 0;
+  var lowestPointIndex = indexOfLowestVertical(graph); //start at the lowest point and go around clockwise
+  var pointAindex = lowestPointIndex;
+  var pointBindex = lowestPointIndex;
+  var subGraph = graph.slice(); //deep copy
+
+  for(var i=0;i<graph.length;i++) { //upper bound for loop
+    pointAindex = pointBindex;
+    pointBindex = getNextPointIndex(graph, theta, pointAindex);
+    theta=getThetas(graph, pointAindex)[pointBindex];
+    connect(pointAindex, pointBindex,graph);
+
+    subGraph[pointAindex] = null;
+    //subGraph[pointBindex] = null;
+    if(pointBindex==lowestPointIndex) {
+      break; 
+    }
+  }
+  //return subGraph;
+  //var cleanSubGraph = subGraph.filter(function(x){return x != null;});
+  //return cleanSubGraph;
+
+  //console.log(subGraph);
+  //return subGraph.filter(function(x){return x != null;});
+  
+  if(recurse) {
+    rings( subGraph.filter(function(x){return x != null;}), recurse ); //recursiveTreeRings
+  }
+}
+
+function getThetas(graph, index) { //with respect to index
+  var thetas = zeros(n);
+  var relX = 0;
+  var relY = 0;
+  for(var i=0;i<graph.length;i++) {
+    if(i===index) {
+      thetas[i] = -1;
+      continue;
+    }
+    relX = graph[i].x - graph[index].x;
+    relY = graph[i].y - graph[index].y;
+    relY *= -1; //down is up in canvas land
+    thetas[i] = Math.PI - Math.atan2(relY, relX); //returns theta between [0,2pi] starting -x axis, going CW
+  }
+  //console.log('thetas wrt ',index,':',thetas);
+  return thetas;
+}
+
+function getNextPointIndex(graph, theta, pointAindex) {
+  var thetas = getThetas(graph, pointAindex);
+  var iNext = indexOfLowestTheta(graph, thetas, theta, pointAindex);
+  return iNext;
+}
+
+window.addEventListener("load", function() { //document.addEventListener("mousemove"
+  refresh();
+});
+
+
+document.addEventListener("click", function() { //document.addEventListener("mousemove"
+  refresh();
+});
+
+function refresh() {
+  genNodes();
+  reset();
+  drawTreeRings(points);
+}
+
+//points.push({x:points[0].x,y:points[0].y});
+
+/*
+for(var i=0;i<n;i++) {
+  //var j = n == i + 1 ? 0 : i + 1;
+  //line(points[i].x,points[i].y,points[j].x,points[j].y);
+
+  for(var j=i+1;j<i+2;j++) {
+    line(points[i].x,points[i].y,points[j].x,points[j].y);
+  }
+}
+*/
+write( 'n = ' + n + ' (zero is reference)');
+write( '# distinct circuits = ' + distinctCircuits(n) );
+
+//no idea how to generate a distict list of circuit orderings off the bat (non-distinct would probably be a good start)
+/*
+for(var i=1;i<distinctCircuits(n);i++) {
+  var x = '';
+  for(var j=1;j<n;j++) {
+    x+=''+j;
+  }
+  write(x);
+}
+*/
+
+// there's n(n-1)(n-2)/2 = 3n!/(k!(n-k)!) = 3*(n choose 3)*3 = 3n!/(6*(n-3)!) = n!/(2(n-3)!) = n(n-1)(n-2)/2 bi-edges (3 points can make 3 bi-edges) 
+// there's n(n-1)/2 edges
+// and (n-1)!/2 distinct circuits
+
+/* olderfail
+  biEdges = initArray(n-1, []); //implicit refernce node zero
+
+  //ok so the list of biEdges is going to be a triangular trix
+  //
+
+  // cant just have biedges going through zero ref node
+  for(var i=1;i<n-1;i++) { // n choose 2 :: so for 2 edges you need 3 points
+	  for(var j=i+1;j<n;j++) {
+	    var len = Number.parseFloat((getEdgeLen(0,i)+getEdgeLen(0,j)).toFixed(2));
+	    var o = {
+	    	in: i,
+	    	out: j, 
+	    	len: len,
+	    	calc:getEdgeLen(0,i) +'+'+ getEdgeLen(0,j)+'='+len
+	    };
+
+		  sortedInsertion(biEdges[i], o);
+	  }
+  }
+*/
+</script>
+</body>
+</html>

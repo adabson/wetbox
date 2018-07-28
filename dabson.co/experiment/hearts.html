@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body{
+  margin: 0 0 0 300px;
+  padding: 0;
+}
+
+.beepboop{
+  z-index:1;
+  margin-left:-200px;
+  width:400px;
+  height:400px;
+  cursor:pointer;
+  -webkit-transform: scale(0.5, 0.5);
+}
+
+.beepboop:hover {
+  z-index:64 !important;
+  -webkit-animation: heartbeat 2000ms ease-out;
+  -webkit-animation-iteration-count: infinite;
+}
+
+.beepboop path {
+  z-index:1;
+  fill: #ff7fc6;
+  transition:1.5s;
+}
+
+.beepboop:hover path {
+  z-index:64 !important;
+  fill: #cc00ff;
+}
+
+@-webkit-keyframes heartbeat {
+  0%  {-webkit-transform: scale(0.5, 0.5);}
+  10% {-webkit-transform: scale(0.8, 0.8);}
+  20% {-webkit-transform: scale(0.6, 0.6);}
+  30% {-webkit-transform: scale(1.0, 1.0);}
+  40% {-webkit-transform: scale(0.5, 0.5);}
+  100%{-webkit-transform: scale(0.5, 0.5);}
+}
+</style>
+<script type="text/javascript" src="jquery-3.1.1.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+  $('img[src$=".svg"]').each(function(){
+    var img      = $(this);
+    var imgID    = img.attr('id');
+    var imgClass = img.attr('class');
+    var imgURL   = img.attr('src');
+    var imgText  = img.attr('text');      // Custom attribute
+
+    jQuery.get(imgURL, function(data) {
+      var svg = jQuery(data).find('svg'); // Get the SVG tag, ignore the rest
+      var svgTxt = svg.find('text')[0];
+      if(typeof imgID !== 'undefined')    // Add replaced image's ID to the new SVG
+        svg = svg.attr('id', imgID);
+      if(typeof imgClass !== 'undefined') // Add replaced image's classes to the new SVG
+        svg = svg.attr('class', imgClass+' replaced-svg');
+      if(typeof imgText !== 'undefined')
+        svgTxt.innerHTML = imgText
+      svg = svg.removeAttr('xmlns:a');    // Remove any invalid XML tags as per http://validator.w3.org
+      img.replaceWith(svg);               // Replace image with new SVG
+    }, 'xml');
+  });
+});
+</script>
+</head>
+<body>
+  <img src="aih.svg" alt="heart" class="beepboop" text="D">
+  <img src="aih.svg" alt="heart" class="beepboop" text="A">
+  <img src="aih.svg" alt="heart" class="beepboop" text="B">
+  <img src="aih.svg" alt="heart" class="beepboop" text="S">
+  <img src="aih.svg" alt="heart" class="beepboop" text="O">
+  <img src="aih.svg" alt="heart" class="beepboop" text="N">
+</body>
+</html>
