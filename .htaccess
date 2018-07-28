@@ -1,10 +1,11 @@
 RewriteEngine on
-# Force SSL
-# RewriteCond %{HTTP_HOST} !^158\.140\.212\.236$
-# RewriteCond %{HTTPS} off
-# RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L,NE]
 
-# Force www (unless ip url of 158.140.212.236, 192.168.64 or wetbox/*)
+# Force SSL
+RewriteCond %{HTTP_HOST} !^158\.140\.212\.236$
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L,NE]
+
+# Force www (unless ip url of 158\.140\.212\.236, 192\.168\.1.* or wetbox/*)
 RewriteCond %{HTTP_HOST} !^158\.140\.212\.236$
 RewriteCond %{HTTP_HOST} !^192\.168\.1.*$
 RewriteCond %{HTTP_HOST} !^wetbox$
@@ -22,11 +23,13 @@ ErrorDocument 500   /error.php
 ErrorDocument 502   /error.php
 ErrorDocument 504   /error.php
 
-# Disable directory browsing
+# Disable directory browsing: only applies to root dir
 Options -Indexes
-#AllowOverride All
 
-#this is the 2.4 version of apache, equivilent to apache 2.2 order Deny, Allow \n Deny from all
+# Half solution: hides files, but still shows directory browse page :/
+IndexIgnore *
+
+# This is the 2.4 version of apache, equivilent to apache 2.2 order Deny, Allow \n Deny from all
 <Files "wetbox/minutly.php">
 Require all denied
 </Files>

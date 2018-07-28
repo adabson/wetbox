@@ -9,7 +9,7 @@
   */
 
   $isUp = @fsockopen("www.google.com", 80) ? 1 : 0;
-  //$conn = new mysqli( 'localhost', 'user', 'pass', 'base' ); //@todo fill with real values
+  $conn = new mysqli( 'localhost', 'username', 'password', 'base' );
   if( $conn->connect_error ) { die(); }
 
   $sql = 'insert into uptime (isup) values ('.$isUp.');';
