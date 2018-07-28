@@ -1,0 +1,168 @@
+    #fb {
+      position: absolute;
+      left:50%;
+      margin-left:-240px;
+      border:none; 
+      overflow:hidden; 
+      width:200px; 
+      height:21px;
+    }
+    #legal {
+      position:absolute;
+      left:50%;
+      margin-left:-154px;
+      padding-top:4px;
+      width:131px;
+      height:17px;
+      text-align:center;
+      color:#000;
+      background-color:#c7c7c7;
+    }
+    #contact {
+      position: absolute;
+      left:50%;
+      margin-left:-11px;
+    }
+    #resume {
+      position: absolute;
+      left:50%;
+      margin-left:76px;
+    }
+    #max {
+      position: absolute;
+      left:50%;
+      margin-left:163px;
+    }
+    body {
+      color:#fff;
+      margin:0px;
+      background:#000 url(../images/stars.gif);
+      font:11px Verdana, Verdana, Geneva, Arial, Arial, Helvetica, sans-serif;
+    }
+    .sun {
+      position:absolute;
+      left:50%;
+      margin-left:-375px;
+      top:0px;
+      width:750px;
+      height:750px;
+      background:transparent url(../images/sun.png) no-repeat center 0px;
+    }
+    img.lb {
+      padding:0px;
+      border:1px solid #000;
+      margin:0px 16px 16px 0px;
+    }
+    img.lbl {
+      padding:0px;
+      border:1px solid #000;
+      margin:0px 0px 16px 4px;
+    }
+    a {
+      text-decoration:none;
+      color:#00f;
+    }
+    h1 {
+      margin:0px;
+      padding:0px;
+      color:#fff;
+      font-size:19px;
+      line-height:19px;
+      letter-spacing:2.4px;
+    }
+    h2 {
+      margin:0px;
+      padding:0px;
+      color:#fff;
+      font-size:13px;
+      font-weight:bold;
+      line-height:23px;
+      letter-spacing:1.4px;
+    }
+    h3 {
+      margin:0px;
+      padding:0px;
+      color:#fff;
+      font-size:11px;
+      font-weight:normal;
+      line-height:13px;
+      letter-spacing:1.6px;
+    }
+    button {
+      cursor:pointer;
+      width:77px;
+      height:21px;
+      background-color:#fff;
+      color:#00f;
+      font-family:"verdana",sans-serif;
+      font-size:11px;
+      border:none;
+      padding-top:0px;
+      margin-top:0px;
+      padding-left:3px;
+      padding-right:6px;
+      white-space:nowrap;
+    }
+    .button {
+      background-color:#fff;
+    }
+    .buttonhover {
+      background-color:#f63;
+    }
+
+    div.cbg {
+      position:absolute;
+      left:50%;
+      margin-left:-250px;
+      top:125px;
+      width:480px;
+      height:480px;
+      padding:10px;
+      background-color:#600;
+      opacity:0.0;
+    }
+    div.header {
+      position:absolute;
+      left:50%;
+      top:135px;
+
+      margin-left:-240px;
+      width:460px;
+
+      height:82px;
+      padding:10px;
+      text-align:center;
+      background:#000 url(../images/stars.gif);
+      opacity:0.85;
+    }
+    div.content {
+      position:absolute;
+      left:50%;
+      margin-left:-230px;
+      top:237px;
+      width:220px;
+      padding:8px 130px 0px;
+      height:217px;
+      text-align:left;
+      color:#000;
+
+    }
+    .gallery {
+      position:absolute;
+      left:50%;
+      margin-left:-250px;
+      top:474px;
+      padding:0px 10px;
+      text-align:left;
+    }
+    div.footer {
+      position:absolute;
+      left:50%;
+      top:594px;
+      margin-left:-250px;
+      padding:0px 10px 10px 10px;
+      width:480px;
+      height:21px;
+      text-align:center;
+      color:#000;
+    }
