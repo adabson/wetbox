@@ -85,7 +85,7 @@ while($row = $results->fetch_assoc()) {
   $niceTime = date( 'h:ia', strtotime( $row["date"] ) );
   if( $onTheHour ) {
     echo '</div><div class="col"><span class="nicetime">'.$niceTime.'</span>';
-  } else [
+  } else {
     echo 'is not on the hour';
   }
   echo "<div class='box $onoff'></div>";
