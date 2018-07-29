@@ -1,14 +1,13 @@
 ##!/usr/bin
-#if using windows/putty, simply run cmd: 
-#`plink root@wetbox -m setup.sh`
-# enter password
-# profit.
-
-#add crontab
-# `crontab -` means replace crontab with standard input.
 echo "Writing cron entry (run php minutely.php every minute)..." 
-#(crontab -l 2>/dev/null; echo "* * * * * php /volume1/Web/config/cron/minutly.php")
-(crontab -l ; echo "* * * * * php /volume1/Web/.config/cron/minutly.php") | crontab -
+CRONTAB="* * * * * php /volume1/Web/.config/cron/minutly.php"
+if crontab -l | grep -q "$CRONTAB";
+then
+  echo 'Entry exists';
+else
+  #echo 'entry not exists';
+  (crontab -l ; echo "* * * * * php /volume1/Web/.config/cron/minutly.php") | crontab -
+fi
 echo "done!"
 
 # install git 

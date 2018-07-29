@@ -1,3 +1,6 @@
+# Fuck all the shit below, that's for nerds. Be a chad. Run: # 
+Windows/putty: `setup.bat`
+
 ### How to setup a git repo on the server ###
 First setup 2 repos on the server: 
  * a bare (what we commit to) and..
