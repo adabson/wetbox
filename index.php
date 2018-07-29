@@ -72,10 +72,12 @@ while($row = $results->fetch_assoc()) {
   } elseif( $lastUnixTime != -1 && $lastUnixTime != $expected ) {
     //ensure that both are on-the-minute stamps and delta does not exceed 100 blackout minutes (6000 seconds)
     $del = $expected -$lastUnixTime;
-    $coli++;
-    if( $coli % 60 == 0 ) { echo '</div><div class="col"><span class="nicetime"></span>'; }
+    newcol( ++$coli );
+
+
     if( $del < 6000 ) {
       for( $i = 0; $i < floor($del/60); $i++ ) {
+        newCol( ++$coli );
         echo "<div class='box'></div>";
       }
     } else {
@@ -83,12 +85,18 @@ while($row = $results->fetch_assoc()) {
     }
   }
   $lastUnixTime = $unixTime;
-  $coli++;
+  newCol( ++$coli );
 
   $onoff = $row["isup"] == 1 ? 'g' : 'r';
   $niceTime = date( 'h:ia', strtotime( $row["date"] ) );
-  if( $coli % 60 == 0 ) { echo '</div><div class="col"><span class="nicetime"></span>'; }
   echo "<div class='box $onoff'></div>";
+}
+
+function newCol( $coli ) {
+  $cond = $coli % 60 == 0;
+  if ( $cond ) {
+    echo '</div><div class="col"><span class="nicetime"></span>';
+  }
 }
 ?>
 </div>
