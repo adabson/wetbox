@@ -2,12 +2,17 @@
 First setup 2 repos on the server: 
  * a bare (what we commit to) and..
  * a working copy (the actual checked out files on master branch, pulls from the bare)
+
 (alternatively we can do `git init --bare` for a fresh new repo)
 
 `ssh admin@wetbox`
+
 `cd /volume1/Public`
+
 `git clone --bare https://github.com/Onitz/wetbox.git`
+
 `cd /volume1`
+
 `git clone Public/wetbox.git Web`
 
 ### How to auto-deploy master branch ###
