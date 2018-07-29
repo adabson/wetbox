@@ -39,12 +39,12 @@ Require all denied
 Require all denied
 </Files>
 
-<Directory "^/.*/\.git/">
+<Directory "^\.git">
 Order deny,allow
 Deny from all
 </Directorymatch>
 
-<Directory "^/.*/\.config/">
+<Directory "^\.config">
 Order deny,allow
 Deny from all
 </Directorymatch>
