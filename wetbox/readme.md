@@ -35,4 +35,4 @@ you should be able test run the hook like a regular sh script, also ensure the r
 
 `chmod +x post-receive` 
 
-Wow! Amaze 
+Wow! Amaze!
