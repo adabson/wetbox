@@ -5,15 +5,13 @@ First setup 2 repos on the server:
 
 (alternatively we can do `git init --bare` for a fresh new repo)
 
-`ssh admin@wetbox`
-
-`cd /volume1/Public`
-
-`git clone --bare https://github.com/Onitz/wetbox.git`
-
-`cd /volume1`
-
-`git clone Public/wetbox.git Web`
+```
+ssh admin@wetbox
+cd /volume1/Public
+git clone --bare https://github.com/Onitz/wetbox.git
+cd /volume1
+git clone Public/wetbox.git Web
+```
 
 ### How to auto-deploy master branch ###
 In your servers bare repo, wetbox.git/hooks/post-receive 
