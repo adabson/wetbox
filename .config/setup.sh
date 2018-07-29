@@ -3,7 +3,7 @@
 CRONTAB="* * * * * php /volume1/Web/.config/cron/minutly.php"
 BARE="/volume1/Public/wetbox.git"
 POSTRECEIVEHOOK="/volume1/Public/wetbox.git/hooks/post-receive"
-POSTRECEIVE="TARGET=\"/volume1/Web\" GIT_DIR=\"/volume1/Public/wetbox.git\" BRANCH="master" while read oldrev newrev ref do if [[ $ref = refs/heads/$BRANCH ]]; then echo \"Ref $ref received. Deploying ${BRANCH} branch to production...\" git --work-tree=$TARGET --git-dir=$GIT_DIR checkout -f else echo \"Ref $ref received. Doing nothing: only the ${BRANCH} branch may be deployed on this server.\" fi done"
+POSTRECEIVE="TARGET=\"/volume1/Web\" GIT_DIR=\"/volume1/Public/wetbox.git\" BRANCH=\"master\" while read oldrev newrev ref do if [[ $ref = refs/heads/$BRANCH ]]; then echo \"Ref $ref received. Deploying ${BRANCH} branch to production...\" git --work-tree=$TARGET --git-dir=$GIT_DIR checkout -f else echo \"Ref $ref received. Doing nothing: only the ${BRANCH} branch may be deployed on this server.\" fi done"
 
 # install git 
 # clone bare repo 
