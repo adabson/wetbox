@@ -42,9 +42,9 @@ Require all denied
 <Directory "^\.git">
 Order deny,allow
 Deny from all
-</Directorymatch>
+</Directory>
 
 <Directory "^\.config">
 Order deny,allow
 Deny from all
-</Directorymatch>
+</Directory>
