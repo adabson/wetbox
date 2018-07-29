@@ -1,4 +1,4 @@
-# Fuck the nerd shit below, be a Chad and just `cd .config` <br/> `setup` # 
+# Fuck the nerd shit below, be a Chad and run `setup` # 
 
 ### How to setup a git repo on the server ###
 First setup 2 repos on the server: 
