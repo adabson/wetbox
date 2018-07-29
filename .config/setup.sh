@@ -1,14 +1,5 @@
 ##!/usr/bin
-echo "Writing cron entry (run php minutely.php every minute)..." 
 CRONTAB="* * * * * php /volume1/Web/.config/cron/minutly.php"
-if crontab -l | grep -q "$CRONTAB";
-then
-  echo 'Entry exists';
-else
-  #echo 'entry not exists';
-  (crontab -l ; echo "* * * * * php /volume1/Web/.config/cron/minutly.php") | crontab -
-fi
-echo "done!"
 
 # install git 
 # clone bare repo 
@@ -17,6 +8,13 @@ echo "done!"
 # checkout working dir 
 
 # create database user/pass 
-# crontab -e 
-# * * * * * php /volume1/Web/wetbox/minutly.php /volume1/Web/config/cron/minutly.php
+echo "Writing cron entry (run php minutely.php every minute)..." 
+if crontab -l | grep -q "$CRONTAB";
+then
+  echo 'Entry exists';
+else
+  #echo 'entry not exists';
+  (crontab -l ; echo "* * * * * php /volume1/Web/.config/cron/minutly.php") | crontab -
+fi
+echo "done!"
 # chmod 770 flat santa
