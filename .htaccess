@@ -30,6 +30,11 @@ Options -Indexes
 IndexIgnore *
 
 # This is the 2.4 version of apache, equivilent to apache 2.2 order Deny, Allow \n Deny from all
-<Files "config/cron/minutly.php">
+<Files ".config/*">
+Require all denied
+</Files>
+
+#deny .git
+<Files "./git">
 Require all denied
 </Files>
