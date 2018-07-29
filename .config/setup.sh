@@ -46,14 +46,14 @@ else
   #git clone --bare https://github.com/Onitz/wetbox.git $BARE
   #echo $POSTRECEIVE >> $POSTRECEIVEHOOK
 
-
-  cat > $POSTRECEIOVEHOOK << EOL
-  line 1, ${kernel}
-  line 2,
-  line 3, ${distro}
-  line 4
-  line ...
-  EOL
+  echo $POSTRECEIVE
+  # cat << EOL > $POSTRECEIVEHOOK
+  # line 1, ${kernel}
+  # line 2,
+  # line 3, ${distro}
+  # line 4
+  # line ...
+  # EOL
 
   echo "  Added post-receive (auto-deploy) hook at $POSTRECEIVEHOOK"
 fi

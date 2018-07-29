@@ -23,7 +23,6 @@ GIT_DIR="/volume1/Public/wetbox.git"
 BRANCH="master"
 while read oldrev newrev ref
 do
-  # only checking out the master (or whatever branch you would like to deploy)
   if [[ $ref = refs/heads/$BRANCH ]];
   then
     echo "Ref $ref received. Deploying ${BRANCH} branch to production..."
