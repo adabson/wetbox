@@ -7,6 +7,27 @@ CRONTAB="* * * * * php /volume1/Web/.config/cron/minutly.php"
 BARE="/volume1/Public/wetbox.git"
 POSTRECEIVEHOOK="/volume1/Public/wetbox.git/hooks/post-receive"
 
+MAKEUPTIME='CREATE TABLE `uptime` (
+  `date` datetime NOT NULL DEFAULT NOW(),
+  `isup` int(1) DEFAULT NULL,
+  PRIMARY KEY (`date`),
+  UNIQUE KEY `date_UNIQUE` (`date`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;'
+
+MAKEHOOK='TARGET="/volume1/Web"
+GIT_DIR="/volume1/Public/wetbox.git"
+BRANCH="master"
+while read oldrev newrev ref
+do
+  if [[ $ref = refs/heads/$BRANCH ]];
+  then
+    echo "Ref $ref received. Deploying ${BRANCH} branch to production..."
+    git --work-tree=$TARGET --git-dir=$GIT_DIR checkout -f
+  else
+    echo "Ref $ref received. Doing nothing: only the ${BRANCH} branch may be deployed on this server."
+  fi
+done
+'
 # 1. Verify SQL exists, -eq equal, -ne not equal
 mysql --version 2>&1 >/dev/null
 SQL_IS_AVAILABLE=$?
@@ -25,13 +46,13 @@ then
    exit 1
 fi
 
-# 3. Setup SQL
+# 3. Setup Database
 echo -e "\nSetting up database..."
 mysql -uroot -padmin -e "CREATE DATABASE ${DB} /*\!40100 DEFAULT CHARACTER SET utf8 */;"
 mysql -uroot -padmin -e "CREATE USER ${DBUSER}@localhost IDENTIFIED BY '${DBPASS}';"
 mysql -uroot -padmin -e "GRANT ALL PRIVILEGES ON ${DB}.* TO '${DBUSER}'@'localhost';"
 mysql -uroot -padmin -e "FLUSH PRIVILEGES;"
-mysql -uroot -padmin -e "use ${DB};" #execute uptime creation query here
+mysql -uroot -padmin -e "USE ${DB};$MAKEUPTIME" #execute uptime creation query here
 
 # 4. Checkout bare to host repo on the server 
 echo -e "\nChecking out bare repo..."
@@ -49,20 +70,7 @@ if [ -f $POSTRECEIVEHOOK ];
 then
    echo "  Hook exists."
 else
-  echo -e 'TARGET="/volume1/Web"
-GIT_DIR="/volume1/Public/wetbox.git"
-BRANCH="master"
-while read oldrev newrev ref
-do
-  if [[ $ref = refs/heads/$BRANCH ]];
-  then
-    echo "Ref $ref received. Deploying ${BRANCH} branch to production..."
-    git --work-tree=$TARGET --git-dir=$GIT_DIR checkout -f
-  else
-    echo "Ref $ref received. Doing nothing: only the ${BRANCH} branch may be deployed on this server."
-  fi
-done
-' >> $POSTRECEIVEHOOK
+  echo -e $MAKEHOOK >> $POSTRECEIVEHOOK
   echo "  Added post-receive (auto-deploy) hook at $POSTRECEIVEHOOK"
 fi
 

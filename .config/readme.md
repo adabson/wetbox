@@ -1,4 +1,5 @@
 # Fuck the nerd shit below, be a Chad and run `setup` # 
+hook.
 
 ### How not be a time-wasting nerd ### 
  * install putty (windows)
