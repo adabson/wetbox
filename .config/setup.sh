@@ -3,23 +3,7 @@
 CRONTAB="* * * * * php /volume1/Web/.config/cron/minutly.php"
 BARE="/volume1/Public/wetbox.git"
 POSTRECEIVEHOOK="/volume1/Public/wetbox.git/hooks/post-receive"
-#POSTRECEIVE="TARGET=\"/volume1/Web\" GIT_DIR=\"/volume1/Public/wetbox.git\" BRANCH=\"master\" while read oldrev newrev ref do if [[ $ref = refs/heads/$BRANCH ]]; then echo \"Ref $ref received. Deploying ${BRANCH} branch to production...\" git --work-tree=$TARGET --git-dir=$GIT_DIR checkout -f else echo \"Ref $ref received. Doing nothing: only the ${BRANCH} branch may be deployed on this server.\" fi done"
 
-POSTRECEIVE='TARGET="/volume1/Web"
-GIT_DIR="/volume1/Public/wetbox.git"
-BRANCH="master"
-while read oldrev newrev ref
-do
-  # only checking out the master (or whatever branch you would like to deploy)
-  if [[ $ref = refs/heads/$BRANCH ]];
-  then
-    echo "Ref $ref received. Deploying ${BRANCH} branch to production..."
-    git --work-tree=$TARGET --git-dir=$GIT_DIR checkout -f
-  else
-    echo "Ref $ref received. Doing nothing: only the ${BRANCH} branch may be deployed on this server."
-  fi
-done
-'
 
 # install git 
 # clone bare repo 
@@ -43,18 +27,20 @@ if [ -f $POSTRECEIVEHOOK ];
 then
    echo "  Hook exists."
 else
-  #git clone --bare https://github.com/Onitz/wetbox.git $BARE
-  #echo $POSTRECEIVE >> $POSTRECEIVEHOOK
-
-  echo $POSTRECEIVE
-  # cat << EOL > $POSTRECEIVEHOOK
-  # line 1, ${kernel}
-  # line 2,
-  # line 3, ${distro}
-  # line 4
-  # line ...
-  # EOL
-
+  echo -e 'TARGET="/volume1/Web"
+GIT_DIR="/volume1/Public/wetbox.git"
+BRANCH="master"
+while read oldrev newrev ref
+do
+  if [[ $ref = refs/heads/$BRANCH ]];
+  then
+    echo "Ref $ref received. Deploying ${BRANCH} branch to production..."
+    git --work-tree=$TARGET --git-dir=$GIT_DIR checkout -f
+  else
+    echo "Ref $ref received. Doing nothing: only the ${BRANCH} branch may be deployed on this server."
+  fi
+done
+' >> $POSTRECEIVEHOOK
   echo "  Added post-receive (auto-deploy) hook at $POSTRECEIVEHOOK"
 fi
 
