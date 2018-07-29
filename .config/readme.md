@@ -1,5 +1,4 @@
-# Fuck the nerd shit below, be a Chad and run (windows/putty) 
-`.config/setup.bat` # 
+# Fuck the nerd shit below, be a Chad and run (windows/putty) `.config/setup.bat` # 
 
 ### How to setup a git repo on the server ###
 First setup 2 repos on the server: 
