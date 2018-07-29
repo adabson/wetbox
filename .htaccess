@@ -29,31 +29,7 @@ Options -Indexes
 # Half solution: hides files, but still shows directory browse page :/
 IndexIgnore *
 
-
-# disable 
+# Disable access to .git and .config folders
 RedirectMatch 404 /\.git
 RedirectMatch 404 /\.config
-# This is the 2.4 version of apache, equivilent to apache 2.2 order Deny, Allow \n Deny from all
-# <Files ".config/*">
-# Require all denied
-# </Files>
 
-# <Files ".config/cron">
-# Require all denied
-# Options -Indexes
-# </Files>
-
-# #deny .git
-# <Files ".git/*">
-# Require all denied
-# </Files>
-
-# <Directory "^\.git">
-# Order deny,allow
-# Deny from all
-# </Directory>
-
-# <Directory "^\.config">
-# Order deny,allow
-# Deny from all
-# </Directory>
