@@ -31,6 +31,7 @@ mysql -uroot -padmin -e "CREATE DATABASE ${DB} /*\!40100 DEFAULT CHARACTER SET u
 mysql -uroot -padmin -e "CREATE USER ${DBUSER}@localhost IDENTIFIED BY '${DBPASS}';"
 mysql -uroot -padmin -e "GRANT ALL PRIVILEGES ON ${DB}.* TO '${DBUSER}'@'localhost';"
 mysql -uroot -padmin -e "FLUSH PRIVILEGES;"
+mysql -uroot -padmin -e "use ${DB};" #execute uptime creation query here
 
 # 4. Checkout bare to host repo on the server 
 echo -e "\nChecking out bare repo..."

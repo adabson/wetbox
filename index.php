@@ -48,7 +48,7 @@ h1{
   transform:rotate(-45deg);
 }
 </style>
-<link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+<link rel="shortcut icon" href=".config/img/favicon.ico" type="image/x-icon"/>
 </head>
 <body>
 
