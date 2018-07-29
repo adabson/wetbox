@@ -34,6 +34,11 @@ IndexIgnore *
 Require all denied
 </Files>
 
+<Files ".config/cron">
+Require all denied
+Options -Indexes
+</Files>
+
 #deny .git
 <Files ".git/*">
 Require all denied
