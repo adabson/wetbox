@@ -27,7 +27,7 @@ done
 # chmod +x post-receive
 # checkout working dir
 
-# Checkout bare to host repo on the server
+# Checkout bare to host repo on the server 
 echo "Checking out bare repo..."
 if [ -d $BARE ]; 
 then
