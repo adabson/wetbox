@@ -3,9 +3,9 @@ CRONTAB="* * * * * php /volume1/Web/.config/cron/minutly.php"
 BARE="/volume1/Public/wetbox.git"
 POSTRECEIVEHOOK="/volume1/Public/wetbox.git/hooks/post-receive"
 
-# Setup SQL database (zero user security, just lockout external access)
+# 1. Setup SQL
 
-# Verify git exists
+# 2. Verify git exists
 git --version 2>&1 >/dev/null
 GIT_IS_AVAILABLE=$?
 if [ $GIT_IS_AVAILABLE -ne 0 ]; # -eq equal, -ne not equal
@@ -14,7 +14,7 @@ then
    exit 1
 fi
 
-# Checkout bare to host repo on the server 
+# 3. Checkout bare to host repo on the server 
 echo -e "\nChecking out bare repo..."
 if [ -d $BARE ]; 
 then
@@ -24,7 +24,7 @@ else
   echo "  Checked out bare git repo at $BARE"
 fi
 
-# Add auto-deploy hook to bare. No luck storing this in a file or variable, ensure to use the -e flag for newlines
+# 4. Add auto-deploy hook to bare
 echo -e "\nAdding auto-deploy hook to bare repo..."
 if [ -f $POSTRECEIVEHOOK ]; 
 then
@@ -47,7 +47,7 @@ done
   echo "  Added post-receive (auto-deploy) hook at $POSTRECEIVEHOOK"
 fi
 
-# Checkout working dir
+# 5. Checkout working dir
 echo -e "\nChecking out working dir repo..."
 if [ -d "/volume1/Web/.git" ]; 
 then
@@ -57,7 +57,7 @@ else
   echo "  Checked out working dir repo at /volume1/Web"
 fi
 
-# Add the minutely cron entry
+# 6. Add the minutely cron entry
 echo -e "\nWriting cron entry (run php minutely.php every minute)..." 
 if crontab -l | grep -q "$CRONTAB";
 then
@@ -67,7 +67,7 @@ else
   echo "  Wrote cron entry"
 fi
 
-# Permit writing to flatfile db
+# 7. Permit writing to flatfile db
 echo -e "\nPermit writing to santa flatfile..." 
 chmod 770 /volume1/Web/dabson.co/santa/phatFile.dat
 echo "  Permitted santa."
