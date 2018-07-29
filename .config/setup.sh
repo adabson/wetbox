@@ -1,18 +1,14 @@
 ##!/usr/bin
-# Requires git
 CRONTAB="* * * * * php /volume1/Web/.config/cron/minutly.php"
 BARE="/volume1/Public/wetbox.git"
 POSTRECEIVEHOOK="/volume1/Public/wetbox.git/hooks/post-receive"
 
+# @todo: verify git exists
 
-# install git 
-# clone bare repo 
-# add auto-deploy hook: bare/hooks/post-receive 
-# chmod +x post-receive
-# checkout working dir
+# @todo: sql shizz
 
 # Checkout bare to host repo on the server 
-echo "Checking out bare repo..."
+echo -e "\nChecking out bare repo..."
 if [ -d $BARE ]; 
 then
    echo "  Bare exists."
@@ -21,8 +17,8 @@ else
   echo "  Checked out bare git repo at $BARE"
 fi
 
-# Add auto-deploy hook to bare
-echo "Adding auto-deploy hook to bare repo..."
+# Add auto-deploy hook to bare. No luck storing this in a file or variable, ensure to use the -e flag for newlines
+echo -e "\nAdding auto-deploy hook to bare repo..."
 if [ -f $POSTRECEIVEHOOK ]; 
 then
    echo "  Hook exists."
@@ -44,13 +40,27 @@ done
   echo "  Added post-receive (auto-deploy) hook at $POSTRECEIVEHOOK"
 fi
 
+# Checkout working dir
+echo -e "\nChecking out working dir repo..."
+if [ -d "/volume1/Web/.git" ]; 
+then
+   echo "  Working dir exists."
+else
+  git clone /volume1/Public/wetbox.git /volume1/Web
+  echo "  Checked out working dir repo at /volume1/Web"
+fi
+
 # Add the minutely cron entry
-echo "Writing cron entry (run php minutely.php every minute)..." 
+echo -e "\nWriting cron entry (run php minutely.php every minute)..." 
 if crontab -l | grep -q "$CRONTAB";
 then
   echo "  Cron entry exists.";
 else
   (crontab -l ; echo "* * * * * php /volume1/Web/.config/cron/minutly.php") | crontab -
-  echo "  Wrote cron entry!"
+  echo "  Wrote cron entry"
 fi
-# chmod 770 flat santa
+
+# Permit writing to flatfile db
+echo -e "\nWriting cron entry (run php minutely.php every minute)..." 
+chmod 770 /volume1/Web/dabson.co/santa/phatFile.dat
+echo "  Chmoded santa"
