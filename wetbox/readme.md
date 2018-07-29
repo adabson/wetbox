@@ -34,3 +34,6 @@ try with adding execute permission to script
 dos2unix?
 pull, not checkout?
 manually specify master
+cannot run hooks/post-receive: No such file or directory 
+cool
+k remove that #!/bin/bash line
