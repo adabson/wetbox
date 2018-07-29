@@ -1,4 +1,3 @@
-# hi hi ho
 # create database user/pass 
 # crontab -e 
 # * * * * * php /volume1/Web/wetbox/minutly.php

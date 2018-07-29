@@ -31,12 +31,12 @@ do
   fi
 done
 ```
-you should be able test run the hook like a regular sh script, also ensure the right permissions are set via 
+you should be able test run the hook like a regular sh script `./post-receive`, also ensure the right permissions are set via 
 
 `chmod +x post-receive` 
 
 ### How to push to multiple git repos at once ###
-In your local working copy (the place you're pushing from) .git/config...
+In your local working copy (the place you're pushing from, not the server one) .git/config...
 ```
 [remote "origin"]
   url = git@github.com:Onitz/wetbox.git
