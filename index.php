@@ -54,7 +54,7 @@ h1{
 <body>
 
 <div style="margin-bottom:50px;">
-  <h1 style="float:left;margin-right:10px">eServer Status (24hr)</h1>
+  <h1 style="float:left;margin-right:10px">Server Status (24hr)</h1>
   <div class="box" style="float:left;"></div> = blackout<br>
   <div class="box g" style="float:left;"></div> = online<br>
   <div class="box r" style="float:left;"></div> = offline

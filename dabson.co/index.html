@@ -56,40 +56,43 @@ body{
 <div id="windmill"></div>
 <script>
 var thumbs = [
-  {thumb: '01conway', url:'experiment/conway.html'},
-  {thumb: '02week', url:'experiment/weekoftheyear.html'},
-  {thumb: '03spin', url:'experiment/spintowin.html'},
-  {thumb: '04frog', url:'experiment/frog/'},
-
-  {thumb: '05stocks', url:'fyp/'},
-  {thumb: '06snek', url:'experiment/snek/'},
-  {thumb: '07draw', url:'experiment/draw/'},
-  {thumb: '08helix', url:'experiment/helix.html'},
-
-  {thumb: '09shaders', url:'experiment/shader.html'},
-  {thumb: '10noderings', url:'experiment/tsm.html'},
-  {thumb: '11star', url:'andrew/'},
-  {thumb: '12btc', url:'experiment/btc/index.html'},
-
-  {thumb: '13d', url:'experiment/three/index.html'},
-  {thumb: '14qv1', url:'qvalent/'},
-  {thumb: '15qv3', url:'qvalent3/'},
-  {thumb: '16battleship', url:'experiment/battleship'},
+  {show: true, thumb: '01conway', url:'experiment/conway.html'},
+  {show: true, thumb: '02week', url:'experiment/weekoftheyear.html'},
+  {show: false, thumb: '03spin', url:'experiment/spintowin.html'},
+  {show: true, thumb: '04frog', url:'experiment/frog/'},
+  {show: true, thumb: '05stocks', url:'fyp/'},
+  {show: true, thumb: '06snek', url:'experiment/snek/'},
+  {show: true, thumb: '07draw', url:'experiment/draw/'},
+  {show: true, thumb: '08helix', url:'experiment/helix.html'},
+  {show: true, thumb: '09shaders', url:'experiment/shader.html'},
+  {show: true, thumb: '10noderings', url:'experiment/tsm.html'},
+  {show: true, thumb: '11star', url:'andrew/'},
+  {show: true, thumb: '12btc', url:'experiment/btc/index.html'},
+  {show: true, thumb: '13d', url:'experiment/three/index.html'},
+  {show: true, thumb: '14qv1', url:'qvalent/'},
+  {show: true, thumb: '15qv3', url:'qvalent3/'},
+  {show: true, thumb: '16battleship', url:'experiment/battleship'},
+  {show: true, thumb: '17rainbowTurbine', url:'experiment/three/turbine_v3.html'},
 ];
 
 var domain = 'http://www.dabson.co/';
 var parent = document.getElementById('windmill');
+let j=0;
 for(var i=0;i<thumbs.length;i++) {
   var lank = thumbs[i];
+  if(!lank.show) {
+    continue;
+  }
   var newLink = document.createElement('a');
   var newImg = document.createElement('img');
-  newLink.style.cssText='left:50%;top:50%;margin:-64px 0 0 400px;transform-origin:-400px 64px;transform:rotate('+(22.5*i)+'deg)';
+  newLink.style.cssText='left:50%;top:50%;margin:-64px 0 0 400px;transform-origin:-400px 64px;transform:rotate('+(22.5*j)+'deg)';
   newLink.appendChild(newImg);
   newLink.classList.add('lank');
   newLink.href=domain+lank.url;
   newImg.src='img/thumb/'+(i+1)+'.png';
 
   parent.appendChild(newLink);
+  j++;
 }
 </script>
 </body>
