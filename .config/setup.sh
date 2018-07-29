@@ -1,11 +1,18 @@
-##!/usr/bin
+#!/usr/bin
 CRONTAB="* * * * * php /volume1/Web/.config/cron/minutly.php"
 BARE="/volume1/Public/wetbox.git"
 POSTRECEIVEHOOK="/volume1/Public/wetbox.git/hooks/post-receive"
 
-# @todo: verify git exists
+# Setup SQL database (zero user security, just lockout external access)
 
-# @todo: sql shizz
+# Verify git exists
+git --version 2>&1 >/dev/null
+GIT_IS_AVAILABLE=$?
+if [ $GIT_IS_AVAILABLE -ne 0 ]; # -eq equal, -ne not equal
+then
+   echo "Please install git."
+   exit 1
+fi
 
 # Checkout bare to host repo on the server 
 echo -e "\nChecking out bare repo..."
@@ -61,6 +68,6 @@ else
 fi
 
 # Permit writing to flatfile db
-echo -e "\nWriting cron entry (run php minutely.php every minute)..." 
+echo -e "\nPermit writing to santa flatfile..." 
 chmod 770 /volume1/Web/dabson.co/santa/phatFile.dat
-echo "  Chmoded santa"
+echo "  Permitted santa."
