@@ -76,13 +76,8 @@ var thumbs = [
   {show:  true, thumb: '18serverUptime', fullUrl:'http://158.140.212.236'},
 ];
 
-function getDomainName(hostName) {
-  return hostName.substring(hostName.lastIndexOf(".", hostName.lastIndexOf(".") - 1) + 1);
-}
-console.log('aa',window.location.hostname);
-console.log('cc',getDomainName(window.location.hostname));
-
-var domain = 'http://www.dabson.co/';
+var domain = 'https://' + window.location.hostname + '/'; //'www.dabson.co/';
+console.log('domain',domain);
 var parent = document.getElementById('windmill');
 
 for(let i=0,j=0;i<thumbs.length;i++) {
