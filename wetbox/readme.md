@@ -28,6 +28,7 @@ do
 done
 ```
 you should be able test run the hook like a regular sh script, also ensure the right permissions are set via 
+
 `chmod +x post-receive` 
 
 Wow! Amaze 
