@@ -31,5 +31,6 @@ IndexIgnore *
 
 # This is the 2.4 version of apache, equivilent to apache 2.2 order Deny, Allow \n Deny from all
 <Files "config/cron/minutly.php">
-Require all denied
+#Require all denied
+Deny from all
 </Files>
