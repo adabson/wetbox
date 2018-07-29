@@ -9,7 +9,7 @@ In your .git/config...
   pushurl = ssh://admin@wetbox/share/Public/wetbox.git
 ```
 
-To push seamlessly with no password prompt, add your machines public key to the servers authorised keys ie
+To push seamlessly with no password prompt, add your machines public key to the servers authorized keys ie
 
 Copy [local] `id_rsa.pub` to [wetbox] `~/.ssh/authorized_keys`
 
