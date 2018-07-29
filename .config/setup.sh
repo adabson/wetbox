@@ -1,5 +1,5 @@
 #!/usr/bin
-# ASSUMPTIONS: have putty(windows), have git, have mysql(root:admin)
+# SERVER ASSUMPTIONS: have git + mysql(root:admin)
 DB="base"
 DBUSER="username"
 DBPASS="password"
@@ -37,7 +37,7 @@ mysql -uroot -padmin -e "CREATE DATABASE ${DB} /*\!40100 DEFAULT CHARACTER SET u
 mysql -uroot -padmin -e "CREATE USER ${DBUSER}@localhost IDENTIFIED BY '${DBPASS}';"
 mysql -uroot -padmin -e "GRANT ALL PRIVILEGES ON ${DB}.* TO '${DBUSER}'@'localhost';"
 mysql -uroot -padmin -e "FLUSH PRIVILEGES;"
-mysql -uroot -padmin -e "USE ${DB};$MAKEUPTIME" #execute uptime creation query here
+mysql -uroot -padmin -e "USE ${DB};$MAKEUPTIME"
 
 # 4. Checkout bare to host repo on the server 
 echo -e "\nChecking out bare repo..."
