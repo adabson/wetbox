@@ -1,17 +1,14 @@
-### How to push to multiple git repos at once ###
+### How to setup a git repo on the server ###
+First setup 2 repos on the server: 
+ * a bare (what we commit to) and..
+ * a working copy (the actual checked out files on master branch, pulls from the bare)
+(alternatively we can do `git init --bare` for a fresh new repo)
 
-In your .git/config...
-```
-[remote "origin"]
-  url = git@github.com:Onitz/wetbox.git
-  fetch = +refs/heads/*:refs/remotes/origin/*
-  pushurl = git@github.com:Onitz/wetbox.git
-  pushurl = ssh://admin@wetbox/share/Public/wetbox.git
-```
-
-To push seamlessly with no password prompt, add your machines public key to the servers authorized keys ie
-
-Copy [local] `id_rsa.pub` to [wetbox] `~/.ssh/authorized_keys`
+`ssh admin@wetbox`
+`cd /volume1/Public`
+`git clone --bare https://github.com/Onitz/wetbox.git`
+`cd /volume1`
+`git clone Public/wetbox.git Web`
 
 ### How to auto-deploy master branch ###
 In your servers bare repo, wetbox.git/hooks/post-receive 
@@ -35,4 +32,16 @@ you should be able test run the hook like a regular sh script, also ensure the r
 
 `chmod +x post-receive` 
 
-Wow! Amaze!
+### How to push to multiple git repos at once ###
+In your local working copy (the place you're pushing from) .git/config...
+```
+[remote "origin"]
+  url = git@github.com:Onitz/wetbox.git
+  fetch = +refs/heads/*:refs/remotes/origin/*
+  pushurl = git@github.com:Onitz/wetbox.git
+  pushurl = ssh://admin@wetbox/share/Public/wetbox.git
+```
+
+To push seamlessly with no password prompt, add your machines public key to the servers authorized keys ie
+
+Copy [local] `id_rsa.pub` to [wetbox] `~/.ssh/authorized_keys`
