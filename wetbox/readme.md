@@ -12,7 +12,6 @@ In your .git/config...
 ### How to auto-deploy master branch ###
 In your servers bare repo, wetbox.git/hooks/post-receive 
 `
-#!/bin/bash
 TARGET="/volume1/Web"
 GIT_DIR="/volume1/Public/wetbox.git"
 BRANCH="master"
@@ -28,12 +27,7 @@ do
   fi
 done
 `
+you should be able test run the hook like a regular sh script, also ensure the right permissions are set via 
+`chmod +x post-receive` 
 
 Wow! Amaze 
-try with adding execute permission to script
-dos2unix?
-pull, not checkout?
-manually specify master
-cannot run hooks/post-receive: No such file or directory 
-cool
-k remove that #!/bin/bash line
