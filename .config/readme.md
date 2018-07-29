@@ -1,5 +1,11 @@
 # Fuck the nerd shit below, be a Chad and run `setup` # 
 
+### How not be a time-wasting nerd ### 
+ * install putty (windows)
+ * install git (server)
+ * `cd .config`
+ * `setup`
+
 ### How to setup a git repo on the server ###
 First setup 2 repos on the server: 
  * a bare (what we commit to) and..
