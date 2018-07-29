@@ -33,3 +33,4 @@ Wow! Amaze
 try with adding execute permission to script
 dos2unix?
 pull, not checkout?
+manually specify master
