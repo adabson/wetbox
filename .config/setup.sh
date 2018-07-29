@@ -1,5 +1,5 @@
 #!/usr/bin
-# ASSUMPTIONS: have git, have mysql(root:admin)
+# ASSUMPTIONS: have putty(windows), have git, have mysql(root:admin)
 DB="base"
 DBUSER="username"
 DBPASS="password"
