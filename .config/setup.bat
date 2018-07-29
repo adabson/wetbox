@@ -1,0 +1,1 @@
+plink root@wetbox -m setup.sh

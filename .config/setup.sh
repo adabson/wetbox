@@ -8,7 +8,7 @@
 # `crontab -` means replace crontab with standard input.
 echo "Writing cron entry (run php minutely.php every minute)..." 
 #(crontab -l 2>/dev/null; echo "* * * * * php /volume1/Web/config/cron/minutly.php")
-(crontab -l ; echo "* * * * * php /volume1/Web/config/cron/minutly.php") | crontab -
+(crontab -l ; echo "* * * * * php /volume1/Web/.config/cron/minutly.php") | crontab -
 echo "done!"
 
 # install git 

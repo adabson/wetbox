@@ -1,4 +1,4 @@
-<?php
+<?php 
 $conn = new mysqli( 'localhost', 'username', 'password', 'base' );
 if ( $conn->connect_error ) {
   die();
@@ -39,6 +39,7 @@ h1{
 }
 .col {
   width:25px;
+  display:inline-block;
   float:left;
 }
 .nicetime {
@@ -61,6 +62,7 @@ h1{
 <div class="col">
 <?
 $lastUnixTime = -1;
+$coli = 0;
 while($row = $results->fetch_assoc()) {
   $unixTime = strtotime( $row["date"] ); //current unix time should be 60secs less than last entry cause its desc
   $expected = $unixTime - 60;
@@ -70,6 +72,8 @@ while($row = $results->fetch_assoc()) {
   } elseif( $lastUnixTime != -1 && $lastUnixTime != $expected ) {
     //ensure that both are on-the-minute stamps and delta does not exceed 100 blackout minutes (6000 seconds)
     $del = $expected -$lastUnixTime;
+    $coli++;
+    if( $coli % 60 == 0 ) { echo '</div><div class="col"><span class="nicetime"></span>'; }
     if( $del < 6000 ) {
       for( $i = 0; $i < floor($del/60); $i++ ) {
         echo "<div class='box'></div>";
@@ -79,15 +83,11 @@ while($row = $results->fetch_assoc()) {
     }
   }
   $lastUnixTime = $unixTime;
+  $coli++;
 
   $onoff = $row["isup"] == 1 ? 'g' : 'r';
-  $onTheHour = $unixTime % 3600 == 0;
   $niceTime = date( 'h:ia', strtotime( $row["date"] ) );
-  if( $onTheHour ) {
-    echo '</div><div class="col"><span class="nicetime">'.$niceTime.'</span>';
-  } else {
-    echo 'is not on the hour';
-  }
+  if( $coli % 60 == 0 ) { echo '</div><div class="col"><span class="nicetime"></span>'; }
   echo "<div class='box $onoff'></div>";
 }
 ?>
