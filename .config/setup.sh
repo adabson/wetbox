@@ -1,20 +1,38 @@
 #!/usr/bin
+# ASSUMPTIONS: have git, have mysql(root:admin)
+DB="base"
+DBUSER="username"
+DBPASS="password"
 CRONTAB="* * * * * php /volume1/Web/.config/cron/minutly.php"
 BARE="/volume1/Public/wetbox.git"
 POSTRECEIVEHOOK="/volume1/Public/wetbox.git/hooks/post-receive"
 
-# 1. Setup SQL
+# 1. Verify SQL exists, -eq equal, -ne not equal
+mysql --version 2>&1 >/dev/null
+SQL_IS_AVAILABLE=$?
+if [ $SQL_IS_AVAILABLE -ne 0 ];
+then
+   echo "Please install mysql."
+   exit 1
+fi
 
 # 2. Verify git exists
 git --version 2>&1 >/dev/null
 GIT_IS_AVAILABLE=$?
-if [ $GIT_IS_AVAILABLE -ne 0 ]; # -eq equal, -ne not equal
+if [ $GIT_IS_AVAILABLE -ne 0 ];
 then
    echo "Please install git."
    exit 1
 fi
 
-# 3. Checkout bare to host repo on the server 
+# 3. Setup SQL
+echo -e "\nSetting up database..."
+mysql -uroot -padmin -e "CREATE DATABASE ${DB} /*\!40100 DEFAULT CHARACTER SET utf8 */;"
+mysql -uroot -padmin -e "CREATE USER ${DBUSER}@localhost IDENTIFIED BY '${DBPASS}';"
+mysql -uroot -padmin -e "GRANT ALL PRIVILEGES ON ${DB}.* TO '${DBUSER}'@'localhost';"
+mysql -uroot -padmin -e "FLUSH PRIVILEGES;"
+
+# 4. Checkout bare to host repo on the server 
 echo -e "\nChecking out bare repo..."
 if [ -d $BARE ]; 
 then
@@ -24,7 +42,7 @@ else
   echo "  Checked out bare git repo at $BARE"
 fi
 
-# 4. Add auto-deploy hook to bare
+# 5. Add auto-deploy hook to bare
 echo -e "\nAdding auto-deploy hook to bare repo..."
 if [ -f $POSTRECEIVEHOOK ]; 
 then
@@ -47,7 +65,7 @@ done
   echo "  Added post-receive (auto-deploy) hook at $POSTRECEIVEHOOK"
 fi
 
-# 5. Checkout working dir
+# 6. Checkout working dir
 echo -e "\nChecking out working dir repo..."
 if [ -d "/volume1/Web/.git" ]; 
 then
@@ -57,7 +75,7 @@ else
   echo "  Checked out working dir repo at /volume1/Web"
 fi
 
-# 6. Add the minutely cron entry
+# 7. Add cron entry minutely
 echo -e "\nWriting cron entry (run php minutely.php every minute)..." 
 if crontab -l | grep -q "$CRONTAB";
 then
@@ -67,7 +85,7 @@ else
   echo "  Wrote cron entry"
 fi
 
-# 7. Permit writing to flatfile db
+# 8. Permit writing to flatfile db
 echo -e "\nPermit writing to santa flatfile..." 
 chmod 770 /volume1/Web/dabson.co/santa/phatFile.dat
 echo "  Permitted santa."
