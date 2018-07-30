@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html><head><title>2048 - use arrow keys</title><style>
+html, body {
+  margin:0;
+}
+#canvas{
+  width:600px;
+  height:600px;
+  background: #eee;
+  position:absolute;
+  top:50%;
+  left:50%;
+  margin:-300px 0 0 -300px;
+  border-radius:3px;
+  border:2px solid #eee;
+}
+</style></head><body><canvas id="canvas"></canvas></body><script>
+const canvasEl = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const cssCanvasPixelWidth = parseInt(window.getComputedStyle(canvasEl).getPropertyValue('width').slice(0,-2));
+const cssCanvasPixelHeight = parseInt(window.getComputedStyle(canvasEl).getPropertyValue('height').slice(0,-2));
+if(cssCanvasPixelWidth && cssCanvasPixelHeight) {
+  canvasEl.width = cssCanvasPixelWidth;
+  canvasEl.height = cssCanvasPixelHeight;
+}
+
+const gameDim = 4;
+const gameSize = gameDim * gameDim;
+const boxMargin = 2 * parseInt(window.getComputedStyle(canvasEl).getPropertyValue('border-width').slice(0,-2));
+const boxWidth = canvasEl.width / gameDim;
+const boxHeight = canvasEl.height / gameDim;
+const spawnCount = 2;
+const winCondition = 2048;
+const fps = 50;
+const transitionTicks = 7;
+const millisecs = 1000/fps;
+const isAnimationEnabled = true;
+
+var gameInterval;
+var gameIterator = 0;
+var isEnded = false;
+var gameState = [ 
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0 
+]; // aka zeros(16)
+var oldState;
+var animateState;
+
+function setupGame() {
+  repopulate();
+  oldState = gameState.slice();
+}
+
+function isPlaying() {
+  return !isEnded && !isTransitioning(); 
+}
+
+function isTransitioning() {
+  return isAnimationEnabled && gameIterator < 0;
+}
+
+function drawBox(ctx,xPos,yPos,boxWidth,boxHeight,val) {
+  let fillColor = val ? "#f93" : "#aaa";
+  let textColor = "#333";
+       if(val===   4) { textColor = "#333"; fillColor = "#f93"; }
+  else if(val===   8) { textColor = "#333"; fillColor = "#ecb45d"; }
+  else if(val===  16) { textColor = "#333"; fillColor = "#cd4f4f"; }
+  else if(val===  32) { textColor = "#333"; fillColor = "#eed64e"; }
+  else if(val===  64) { textColor = "#333"; fillColor = "#f95b9a"; }
+  else if(val=== 128) { textColor = "#333"; fillColor = "#b12a36"; }
+  else if(val=== 256) { textColor = "#333"; fillColor = "#ff81f5"; }
+  else if(val=== 512) { textColor = "#333"; fillColor = "#fb2d3c"; }
+  else if(val===1024) { textColor = "#333"; fillColor = "#fe7404"; }
+  else if(val===2048) { textColor = "#333"; fillColor = "#ffe617"; }
+  else if(val>= 4096) { textColor = "#eee"; fillColor = "#000"; }
+
+  roundRect(ctx, xPos+boxMargin,yPos+boxMargin,boxWidth-boxMargin*2,boxHeight-boxMargin*2, fillColor);
+
+  if(val) {
+    ctx.fillStyle = textColor;
+    ctx.font = "bold " + ( 90 - val.toString().length * 10 ) + "px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(val,xPos+75,yPos+105);
+  }
+}
+
+function updateFrame() {
+  ctx.fillStyle="#eee";
+  ctx.fillRect(0,0,canvasEl.width,canvasEl.height);
+  for(let i=0;i<gameSize;i++) {
+    let xPos = boxWidth * ( i % gameDim );
+    let yPos = boxHeight * ( Math.floor( i / gameDim ) % gameDim );
+    drawBox(ctx,xPos,yPos,boxWidth,boxHeight,gameState[i] * !isTransitioning());
+  }
+
+  //if transitioning, draw transition boxes
+  if( isTransitioning() ) {
+
+    //draw
+
+    for(let i=0;i<gameSize;i++) {
+      let cur = oldState[i];
+
+      if( cur && animateState[i]===i) {
+        pos = stateIndexToCoord( i );
+        drawBox(ctx,pos.x,pos.y,boxWidth,boxHeight,oldState[i],cur);
+      } else if(cur && animateState[i]!==i) {
+
+        let from = stateIndexToCoord( i );
+        let to = stateIndexToCoord( animateState[i] );
+
+        let proportionAlong = 1-(Math.abs(gameIterator) / transitionTicks);
+        let delx = to.x - from.x;
+        let dely = to.y - from.y;
+        let x =  from.x + delx * proportionAlong;
+        let y = from.y + dely * proportionAlong;
+
+        drawBox(ctx,x,y,boxWidth,boxHeight,oldState[i],cur);
+      } 
+    }
+  }
+
+  gameIterator++;
+}
+
+function stateIndexToCoord( index ) {
+  return {
+    x: (index % gameDim) * boxWidth,
+    y: ( Math.floor( index / gameDim ) % gameDim ) * boxHeight
+  };
+}
+
+window.onkeydown = function(e) {
+  if( !isPlaying() ) {
+    return;
+  }
+  var key = e.which;
+  var left = 37;
+  var up = 38;
+  var right = 39;
+  var down = 40;
+  var space = 32;
+  var w = 87;
+  var a = 65;
+  var s = 83;
+  var d = 68;
+
+  if( key===up || key===w ) {
+    moveUp()
+  } else if( key===down || key===s ) {
+    moveDown();
+  } else if( key===left || key===a ) {
+    moveLeft();
+  } else if( key===right || key===d ) {
+    moveRight();
+  } else if( key===space ) {
+    undo();
+  }
+};
+
+(function gameLoop() {
+  document.addEventListener('DOMContentLoaded', x => {
+    setupGame();
+    gameInterval = setInterval( updateFrame, millisecs );
+  }, false);
+})();
+
+function undo() {
+  gameState = oldState.slice();
+}
+
+function roundRect(ctx, x, y, width, height, fillStyle, radius) { // Thanks Juan Mendes stackO/1255512
+  if (typeof radius === 'undefined') {
+    radius = 5;
+  }
+  if (typeof radius === 'number') {
+    radius = {tl: radius, tr: radius, br: radius, bl: radius};
+  } else {
+    var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+    for (var side in defaultRadius) {
+      radius[side] = radius[side] || defaultRadius[side];
+    }
+  }
+  ctx.beginPath();
+  ctx.moveTo(x + radius.tl, y);
+  ctx.lineTo(x + width - radius.tr, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+  ctx.lineTo(x + width, y + height - radius.br);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+  ctx.lineTo(x + radius.bl, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+  ctx.lineTo(x, y + radius.tl);
+  ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+  ctx.closePath();
+
+  ctx.fillStyle = fillStyle;
+  ctx.fill();
+}
+
+function moveUp() {
+  mapIndexAndStack( (i,j,k) => { return i + k * gameDim } );
+  repopulate();
+}
+function moveDown() {
+  mapIndexAndStack( (i,j,k) => { return i + j * gameDim } );
+  repopulate();
+}
+function moveLeft() {
+  mapIndexAndStack( (i,j,k) => { return k + i * gameDim } );
+  repopulate();
+}
+function moveRight() {
+  mapIndexAndStack( (i,j,k) => { return j + i * gameDim } );
+  repopulate();
+}
+
+function repopulate() {
+  let zeroIndex = new Array();
+  for(i in gameState) {
+    if(!gameState[i]) {
+      zeroIndex.push(i);
+    } else if( gameState[i] >= winCondition ) {
+      endGame('You won!');
+    }
+  }
+
+  if(zeroIndex.length<spawnCount) {
+    endGame('Game over!');
+  }
+
+  for(let i=0;i<spawnCount;i++) {
+    let randIndex = randInt( zeroIndex.length );
+    let val = gameState[zeroIndex[randIndex]];
+    val = val === 0 ? 2 : val * 2;
+    gameState[zeroIndex[randIndex]] = val;
+  }
+}
+
+function endGame(status) {
+  isEnded=true;
+  clearInterval(gameInterval);
+
+  let fillStyle="#e00";
+  if(status==='You won!') {
+    fillStyle="#0e0"
+  }
+  roundRect(ctx, 0, 0, canvasEl.width, canvasEl.height, fillStyle);
+
+  ctx.font = "bold 90px Arial";
+  ctx.fillStyle = "#fff";
+  ctx.textAlign = "center";
+  ctx.fillText(status, canvasEl.width/2, canvasEl.height/2);
+}
+
+/* 
+ * Expected: lambda(i, j, jInverse)
+ * for each i iteration, it does a full shiftCombine
+ */
+function mapIndexAndStack(lambda) {
+  oldState = gameState.slice();
+  animateState = sequence(gameSize);
+
+  //console.log('---');
+  for(let i=0;i<gameDim;i++) {
+    let indexMap = new Array();
+    for(let j=0;j<gameDim;j++) {
+      let jInv = gameDim - j - 1;
+      indexMap.push( lambda( i, j, jInv ) );
+    }
+    shiftCombine(gameState, indexMap);
+  }
+  gameIterator = -transitionTicks; //flag for transition
+}
+
+/*
+ * The core game function. Given a row or column defined by indexMap, 
+ * move, combine and move all elements to next state transition
+ */
+function shiftCombine(arr, indexMap) {
+  if(indexMap.length != gameDim ) {
+    throw 'Bad shiftCombine() call. IndexMap size must match gameDim';
+  }
+
+  let row = indexMap.slice().map( i => arr[i] );
+  let animateRow = getTransitionMap( row );
+  let ret = leSquash(row);
+
+  for( i in ret ) {
+    let x = indexMap[i];
+    arr[x] = ret[i];
+  }
+
+  for(let i=0;i<animateRow.length;i++) {
+    if(row[i]) {
+      animateState[indexMap[i]] = indexMap[ animateRow[i] ];
+    }
+  }
+}
+
+function leSquash( row ) {
+  let transMap = getTransitionMap( row );
+  let result = zeros(gameDim);
+  for(let i=0;i<gameDim;i++) {
+    result[transMap[i]]+=row[i]; 
+  }
+  return result;
+}
+
+function getTransitionMap( row ) {
+  if(row.length===4 && row[0]===row[2] && !row[1] && !row[3]) { //this is dirty, but neeccesary (would be nice to find an alternative)
+    return [3,1,3,3];
+  }
+  let transMap = sequence(gameDim);
+  let lastNonZeroIndex = gameDim-1;
+  let wasMerged = false;
+
+  for(let i=gameDim-2;i>=0;i--) {
+    let cur = row[i];
+    let next = row[lastNonZeroIndex];
+
+    if(cur && !wasMerged && cur===next) {
+      transMap[i] = lastNonZeroIndex;
+      lastNonZeroIndex = i;
+      wasMerged = true;
+      continue;
+    }
+
+    if(cur) {      
+      lastNonZeroIndex = i;
+    }
+
+    wasMerged = false;
+  }
+
+  let result = zeros(gameDim);
+  for(let i=0;i<gameDim;i++) {
+    result[transMap[i]]+=row[i]; 
+  }
+
+  let noZeros = 0;
+  for(let i=gameDim-1;i>=0;i--) {
+    if(result[i]===0) {
+      if(row[i]!==0 && result[i+1]===2*row[i]) {
+        transMap[i]+=noZeros;
+      }
+      noZeros++;
+      continue;
+    }
+
+    transMap[i]+=noZeros;
+  }
+
+  return transMap;
+}
+
+function zeros(len) {
+  if(typeof len === 'undefined' || len < 1 ) {
+    return [];
+  }
+  return new Array(len+1).join('0').split('').map(parseFloat);
+}
+
+// Generates a sequence from 0..n-1
+function sequence(n) {
+  return Array.apply(null, {length: n}).map(Number.call, Number);
+}
+
+//can be up to, but not including n
+function randInt(n) {
+  return Math.floor(Math.random() * n);
+}
+
+//remove all zero & falsy values from an array
+function compress(arr) {
+  let ret = new Array();
+  for( i in arr ) {
+    if( arr[i] ) {
+      ret.push(arr[i]);
+    }
+  }
+  return ret;
+}
+
+/* This was the first iteration of the game which didnt calculate a transition map, 
+ * although its arguably better programed cause it doesnt have the dodgy hardcoded edgecase.
+ * I would trust this over leSqaush at higher dimensions.
+ */
+function squash(row) {
+  let unsquashed = compress(row);
+
+  for(let i=unsquashed.length-1;i>0;i--){
+    let cur = unsquashed[i];
+    let prev= unsquashed[i-1];
+
+    if(cur!=0 && cur===prev){ 
+      unsquashed[i] = cur * 2;
+      unsquashed[i-1] = 0;
+    }
+  }
+  unsquashed = compress(unsquashed);
+  return leftPad(unsquashed, gameDim-unsquashed.length);
+}
+
+function leftPad( arr, amount ) {
+  if(!amount || amount<1) {
+    return arr;
+  }
+  return zeros( amount ).concat( arr );
+}
+
+function test() {
+  console.log('filthyboi test');
+  let passCount=failCount=0;
+
+  for(let i=0;i<256;i++) {
+    let a = Math.floor(i/64)%4;
+    let b = Math.floor(i/16)%4;
+    let c = Math.floor(i/4)%4;
+    let d = i%4;
+    let testInput = [a,b,c,d].map(x=>{return x==0?0:Math.pow(2,x)});
+
+    let squashOutput = squash(testInput);
+    let transOutput = leSquash(testInput);
+
+    if( arraysEqual(squashOutput,transOutput) ) {
+      console.log('input PASSED ',testInput.join('-'),' :: ',squashOutput.join('-'),'===',transOutput.join('-'));
+      passCount++;
+    } else {
+      console.error('input failed',testInput.join('-'),' :: s/t =',squashOutput.join('-'),'!==',transOutput.join('-'));
+      failCount++;
+    }
+  }
+  console.log('-----')
+  console.log('passed',passCount);
+  console.log('failed',failCount);
+}
+
+function arraysEqual(a, b) {
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (a.length != b.length) return false;
+
+  for (var i = 0; i < a.length; ++i) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+}
+
+function traceLine( fromX, fromY, toX, toY ) {
+  let delx = boxWidth/2;
+  let dely = boxHeight/2;
+
+  ctx.beginPath();
+  ctx.moveTo( fromX+delx, fromY+dely);
+  ctx.lineTo( toX+delx, toY+dely );
+  ctx.stroke();
+
+  ctx.fillStyle="#000";
+  ctx.fillRect(toX+delx-5,toY+dely-5,10,10);
+}
+
+</script>
+</html>
