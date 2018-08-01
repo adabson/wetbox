@@ -68,7 +68,7 @@ $shift = 1399 - $nowTick;
 $firstrow = $results->fetch_assoc()["date"];
 $firstTick = (strtotime( $firstrow )/60 + $shift) % 1440;
 
-for($expected=0;$row=$results->fetch_assoc();$expected++) {
+for($expected=1;$row=$results->fetch_assoc();$expected++) {
   $tock = (strtotime( $row["date"] )/60 + $shift) % 1440; //rounded to the nearest minute //1440 mins in a day
   $onoff = $row["isup"] == 1 ? 'g' : 'r';
 
