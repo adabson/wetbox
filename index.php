@@ -54,7 +54,7 @@ h1{
 <body>
 
 <div style="margin-bottom:50px;">
-  <h1 style="float:left;margin-right:10px">Server Status (24hr)</h1>
+  <h1 style="float:left;margin-right:10px">Server Status 24hr</h1>
   <div class="box" style="float:left;"></div> = blackout<br>
   <div class="box g" style="float:left;"></div> = online<br>
   <div class="box r" style="float:left;"></div> = offline
@@ -67,15 +67,16 @@ $nowTick = (time()/60) % 1440;
 $shift = 1399 - $nowTick;
 $firstrow = $results->fetch_assoc()["date"];
 $firstTick = (strtotime( $firstrow )/60 + $shift) % 1440;
-
-for($expected=0;$row=$results->fetch_assoc();$expected++) {
+$first = true;
+for($expected=1380;$row=$results->fetch_assoc();$expected++) {
   $tock = (strtotime( $row["date"] )/60 + $shift) % 1440; //rounded to the nearest minute //1440 mins in a day
   $onoff = $row["isup"] == 1 ? 'g' : 'r';
 
   for(;$expected<$tock-1;$expected++) {
     newCol($expected);
-    echo '<div class="box"></div>';
+    echo '<div class="box'.($first ? ' w' : '' ).'"></div>';
   }
+  $first=false;
 
   echo "<div class='box $onoff'></div>";
   newCol($tock);
