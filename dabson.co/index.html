@@ -4,6 +4,19 @@
 <title>Slight of focus</title>
 <link rel="icon" href="img/favv.png" type="image/png">
 <style>
+.biggestBox {
+  width:100vw; 
+  height:100vw;
+  background:red;
+  max-height:100vh;
+  max-width:100vh;
+  margin:auto;
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+}
 .wiz{
   width:auto;
   height:100%;
@@ -47,7 +60,6 @@ body{
     -webkit-transform: rotate(360deg);
   }
 }
-
 @media only screen and (max-width: 1200px) {
   .lank {
     width:20vw;
@@ -80,7 +92,8 @@ let thumbs = [
   {show:  true, thumb: '16battleship', url:'experiment/battleship'},
   {show:  true, thumb: '17rainbowTurbine', url:'experiment/three/turbine_v3.html'},
   {show:  true, thumb: '18serverUptime', fullUrl:'http://158.140.212.236'},
-  {show:  true, thumb: '19twenty48', url:'experiment/twenty48.html'},
+  {show:  true, thumb: '192048', url:'experiment/2048.html'},
+  {show: false, thumb: '20responsiveScaling', url:'experiment/responsiveScaling.html'},
 ];
 
 function regenWindmill() {
