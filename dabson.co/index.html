@@ -98,8 +98,9 @@ let thumbs = [
 
 function regenWindmill() {
   parent.innerHTML = '';
+  let iShow = 16;
 
-  for(let i=0,j=0;i<thumbs.length;i++) {
+  for(let i=0,j=0;i<Math.min(thumbs.length,iShow);i++) {
     let lank = thumbs[i];
     let v = window.innerWidth < 1200 ? 'w' : 'h'; //if mobile, scale by width, else desktop by height
     if(!lank.show) {
@@ -109,7 +110,7 @@ function regenWindmill() {
     let newImg = document.createElement('img');
     newLink.style.cssText = 'left:50%;top:50%;margin:-4v' + v + 
         ' 0 0 30v' + v  + ';transform-origin:-30v' + v + 
-        ' 4v' + v + ';transform:rotate(' + ( 22.5 * j ) + 'deg)';
+        ' 4v' + v + ';transform:rotate(' + ( (360/iShow) * j ) + 'deg)';
     newLink.appendChild(newImg);
     newLink.classList.add('lank');
     newLink.href = lank.fullUrl ? lank.fullUrl : domain+lank.url;
