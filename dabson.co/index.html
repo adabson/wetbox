@@ -4,13 +4,7 @@
 <title>Slight of focus</title>
 <link rel="icon" href="img/favv.png" type="image/png">
 <style>
-#windmill/*{
-  position:absolute;
-  top:50%;
-  left:50%;
-  -webkit-animation: rotation 15s infinite linear;
-}
-.biggestBox*/{
+#windmill{
   width:100vw; 
   height:100vw;
   max-height:100vh;
@@ -42,7 +36,8 @@ body{
 .lank{
   position:absolute;
   overflow:hidden;
-  width:16vh;
+  width:16vw;
+  max-width:16vh;
   opacity:0.6;
 }
 .lank img {
@@ -58,11 +53,6 @@ body{
   }
   to {
     -webkit-transform: rotate(360deg);
-  }
-}
-@media only screen and (max-width: 1200px) {
-  .lank {
-    width:20vw;
   }
 }
 </style>
@@ -100,9 +90,9 @@ function regenWindmill() {
   parent.innerHTML = '';
   let iShow = 16;
 
-  for(let i=0,j=0;i<thumbs.length;i++) {
+  for(let i=0,j=0;i<thumbs.length && j < iShow;i++) {
     let lank = thumbs[i];
-    let v = window.innerWidth < 1200 ? 'w' : 'h'; //if mobile, scale by width, else desktop by height
+    let v = window.innerWidth < window.innerHeight ? 'w' : 'h'; // omg so sexy
     if(!lank.show) {
       continue;
     }
