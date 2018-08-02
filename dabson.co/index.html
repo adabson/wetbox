@@ -4,7 +4,13 @@
 <title>Slight of focus</title>
 <link rel="icon" href="img/favv.png" type="image/png">
 <style>
-.biggestBox {
+#windmill/*{
+  position:absolute;
+  top:50%;
+  left:50%;
+  -webkit-animation: rotation 15s infinite linear;
+}
+.biggestBox*/{
   width:100vw; 
   height:100vw;
   background:red;
@@ -32,12 +38,6 @@ body, html {
 body{
   background: #511 url('img/4wiz.svg') no-repeat center;
   background-size:45% 45%;
-}
-#windmill{
-  position:absolute;
-  top:50%;
-  left:50%;
-  -webkit-animation: rotation 15s infinite linear;
 }
 .lank{
   position:absolute;
@@ -100,7 +100,7 @@ function regenWindmill() {
   parent.innerHTML = '';
   let iShow = 16;
 
-  for(let i=0,j=0;i<Math.min(thumbs.length,iShow);i++) {
+  for(let i=0,j=0;i<thumbs.length;i++) {
     let lank = thumbs[i];
     let v = window.innerWidth < 1200 ? 'w' : 'h'; //if mobile, scale by width, else desktop by height
     if(!lank.show) {
