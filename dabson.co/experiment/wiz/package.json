@@ -1,0 +1,17 @@
+{
+  "name": "wiz",
+  "version": "1.0.0",
+  "description": "wizard",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "wiz"
+  ],
+  "author": "Dabson",
+  "license": "ISC",
+  "dependencies": {
+    "serve": "^9.4.0"
+  }
+}
