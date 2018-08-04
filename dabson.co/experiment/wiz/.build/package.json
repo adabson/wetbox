@@ -5,7 +5,8 @@
     "dev": "webpack-dev-server --env.NODE_ENV=development"
   },
   "dependencies": {
-    "babel-polyfill": "^6.26.0"
+    "babel-polyfill": "^6.26.0",
+    "three": "^0.95.0"
   },
   "devDependencies": {
     "css-loader": "^1.0.0",
