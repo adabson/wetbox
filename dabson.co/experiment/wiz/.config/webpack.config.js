@@ -4,16 +4,13 @@ const HtmlWebpackInlineSourcePlugin = require("html-webpack-inline-source-plugin
 const WebpackShellPlugin = require("webpack-shell-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-// pass in environment by running (requires webpack-cli installed globally):
-// webpack --env.NODE_ENV=development
 module.exports = args => {
   const env = args.NODE_ENV;
   const defaultEnv = "development";
   const configIndex = settings[env] != null ? env : defaultEnv;
   const envSettings = settings[configIndex];
   console.log( "\n\t\tRunning webpack with config set to:",configIndex,"\n\n");
-
-  return envSettings; // environment-specific settings
+  return envSettings;
 }
 
 var settings = {
@@ -44,7 +41,7 @@ var settings = {
     },
     plugins: [
       new HtmlWebpackPlugin({
-        template:"./index.html"
+        template:"./page.html"
       })
     ]
   }, 
@@ -57,10 +54,10 @@ var settings = {
   "production": {
     mode: "production",
     entry: {
-      main: [ "./src/app.js", "./src/stylesheet.scss" ]
+      main: [ "./app.js", "./style.scss" ]
     },
     output: {
-      path: path.resolve(__dirname, "dist"),
+      path: path.resolve(__dirname, "../"),
       filename: "bundled_app.js"
     },
     module: {
@@ -84,7 +81,7 @@ var settings = {
         filename: "compiled_stylesheet.css"
       }),
       new HtmlWebpackPlugin({
-        template: "./src/page.html",
+        template: "./page.html",
         minify: {
           collapseInlineTagWhitespace: true,
           collapseWhitespace: true
@@ -92,7 +89,7 @@ var settings = {
         inlineSource: ".(js|css)$" // Embed all javascript and css inline
       }),
       new HtmlWebpackInlineSourcePlugin(),
-      new WebpackShellPlugin({onBuildEnd:["rm dist/bundled_app.js", "rm dist/compiled_stylesheet.css"]}), // cleanup external file(s) (now that we have them inline)
+      new WebpackShellPlugin({onBuildEnd:["rm ../bundled_app.js", "rm ../compiled_stylesheet.css"]}), // cleanup external file(s) (now that we have them inline)
     ]
   }
 };
