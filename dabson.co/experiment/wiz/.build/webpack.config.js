@@ -17,7 +17,7 @@ var settings = {
   "development": {
     mode: "development",
     entry: {
-      main: [ "./app.js", "./style.scss" ]
+      main: [ "./app.js", "./style.css" ]
     },
     output: {
       path: path.resolve(__dirname, "./dev"),
@@ -30,11 +30,10 @@ var settings = {
           use: "svg-url-loader"
         },
         {
-          test: /\.scss$/,
+          test: /\.css$/,
           use: [ 
             "style-loader", 
-            "css-loader", 
-            "sass-loader"
+            "css-loader"
           ]
         }
       ]
@@ -49,12 +48,11 @@ var settings = {
   /*
    * In prod, we want to:
    *   Optimize and minify all the js/css/html
-   *   Compile & minify sass to css (decrease dependence on loaders)
    */
   "production": {
     mode: "production",
     entry: {
-      main: [ "./app.js", "./style.scss" ]
+      main: [ "./app.js", "./style.css" ]
     },
     output: {
       path: path.resolve(__dirname, "../"),
@@ -67,11 +65,10 @@ var settings = {
           use: "svg-url-loader"
         },
         {
-          test: /\.scss$/,
+          test: /\.css$/,
           use: [ 
             MiniCssExtractPlugin.loader, 
-            "css-loader", 
-            "sass-loader" 
+            "css-loader"
           ]
         }
       ]
