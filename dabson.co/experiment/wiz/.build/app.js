@@ -4,6 +4,4 @@ try {
   WET = require( 'wetbox' )
 }
 THREE = require( 'three' )
-let game = new WET.Game( THREE )
-
-document.title = 'Wizzy boi'
+game = new WET.Game( THREE, 'Wizzy boi' )
