@@ -31,7 +31,7 @@
   var windowHalfY = window.innerHeight / 2;
 
   var fShader,startTime,loader = new THREE.FileLoader();
-  loader.load('frag.glsl',function ( data ) {
+  loader.load('rainbow.glsl',function ( data ) {
     fShader =  data;
     init();
     startTime = Date.now();
