@@ -2,7 +2,7 @@ uniform float time;
 uniform vec2 resolution;
 void main() {
     vec2 uv = gl_FragCoord.xy / resolution.xy;
-    uv -= .5; //dvds
+    uv -= .5;
     uv.x *= resolution.x / resolution.y;
     float d = length(uv);
     float r = .3;
