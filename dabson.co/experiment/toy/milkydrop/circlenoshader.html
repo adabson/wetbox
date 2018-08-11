@@ -103,19 +103,12 @@ window.onload = function () {
   function yCoord( n, len ) {
     return Math.sin( Math.PI * 2 * n / nBars ) * len;
   }
-
   let soundNotAllowed = function (error) {
-    h.innerHTML = "You must allow your microphone.";
+    h.innerHTML = "Please allow microphone and set to system sound for music visualizer.";
     console.log(error);
   }
 
-  /*window.navigator = window.navigator || {};
-  /*navigator.getUserMedia =  navigator.getUserMedia     ||
-                            navigator.webkitGetUserMedia ||
-                            navigator.mozGetUserMedia    ||
-                            null;*/
   navigator.getUserMedia({audio:true}, soundAllowed, soundNotAllowed);
-
 };
 </script>
 </body>
