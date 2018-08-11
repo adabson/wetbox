@@ -74,13 +74,25 @@ window.onload = function () {
       analyser.getByteFrequencyData(frequencyArray);
       let len,from,to;
       const r = 40;
+      const rotateOffset = (ticker % (nBars*2))/2;
+
+      let min = Number.MAX_SAFE_INTEGER;
+      let max = Number.MIN_SAFE_INTEGER;
+      let ttl = 0;
       for( let i = 0; i < nBars; i+=2 ) {
-        len = Math.max(0, frequencyArray[i] / 3);
-        from = (128+xCoord(i, r))+','+(128+yCoord(i, r));
-        to = xCoord(i, len) + ',' + yCoord(i, len);
+        min = Math.min(min,frequencyArray[i]);
+        max = Math.max(max,frequencyArray[i]);
+        ttl += frequencyArray[i];
+      }
+
+      for( let i = 0; i < nBars; i+=2 ) {
+        let x = rotateOffset + i * 256/255;
+        len = (frequencyArray[i] - min) / 2;
+        from = (128+xCoord(x, r))+','+(128+yCoord(x, r));
+        to = xCoord(x, len) + ',' + yCoord(x, len);
         paths[i].setAttribute('d', 'M ' + from + ' l ' + to );
       }
-      ticker++;
+      ticker+=ttl/(nBars*nBars/4);
     }
     doDraw();
   }
