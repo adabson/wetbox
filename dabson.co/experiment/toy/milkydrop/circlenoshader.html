@@ -87,6 +87,7 @@ window.onload = function () {
       }
       let avg = ttl / nBars;
 
+      //console.log(frequencyArray);
       for( let i = 0; i < nBars; i+=3 ) {
         let x = rotateOffset + i * 256/255;
         len = (frequencyArray[i] - min);

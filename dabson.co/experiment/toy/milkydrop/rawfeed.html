@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Vampire potbelly goblins</title>
+<style>
+html, body {
+  margin:0;
+  padding:0;
+  height:100%;
+  background-color:#333;
+  font-family:consolas,sans-serif;
+  color:#fff;
+  font-weight:bold;
+  font-size:14px;
+  letter-spacing:2px;
+}
+#canv {
+  width:1024px;
+  height:512px;
+  margin:auto;
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:#555;
+}
+div{
+}
+</style> 
+</head>
+<body>
+fps: <span id="fps"></span>
+<canvas id="canv" width="1024" height="512"></canvas>
+
+<script>
+window.onload = function () {
+  let canvasEl = document.getElementById('canv');
+  let fpsEl = document.getElementById('fps');
+  let ctx = canvasEl.getContext('2d');
+
+  let r=g=b=a=255;
+  let x=y=100;
+
+  ctx.fillStyle = "rgba("+r+","+g+","+b+","+(a/255)+")";
+  ctx.fillRect( x, y, 1, 1 )
+  
+
+  let soundAllowed = function (stream) {
+    window.persistAudioStream = stream;
+    let audioContent = new AudioContext();
+    let audioStream = audioContent.createMediaStreamSource( stream );
+    let analyser = audioContent.createAnalyser();
+    audioStream.connect(analyser);
+    analyser.fftSize = 1024;
+
+    let frequencyArray = new Uint8Array(analyser.frequencyBinCount);
+    let tick=0;
+
+    let fps=0;
+    let second=(new Date()).getSeconds();
+
+    let doDraw = function () {
+      requestAnimationFrame(doDraw);
+      analyser.getByteFrequencyData(frequencyArray);
+
+      leftShift();
+      let x = 1023;
+      let y = 511;
+      let thisSec = (new Date()).getSeconds();
+
+      if( thisSec !== second ) {
+        fpsEl.innerText = fps;
+        second = thisSec;
+        fps=0;
+      }
+
+      frequencyArray.forEach(v=>{
+        let shade = v;// < y ? 255 : 0;
+        ctx.fillStyle = "rgba("+shade+","+shade/2+","+shade+",1)";
+        ctx.fillRect(x,y,1,1);
+        y--;
+      });
+      tick++;
+      fps++;
+    }
+
+    doDraw();
+  }
+
+  function leftShift() {
+    var imageData = ctx.getImageData(1, 0, ctx.canvas.width-1, ctx.canvas.height);
+    ctx.putImageData(imageData, 0, 0);
+  }
+
+  let soundNotAllowed = function (error) {
+    h.innerHTML = "Please allow mic input and set it to system sound.";
+    console.log(error);
+  }
+
+  navigator.getUserMedia({audio:true}, soundAllowed, soundNotAllowed);
+};
+</script>
+</body>
+</html>
