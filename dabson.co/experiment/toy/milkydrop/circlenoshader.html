@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Vampire potbelly goblins</title>
+<style>
+html, body, svg {
+  margin:0;
+  padding:0;
+  background-color:#333;
+}
+svg {
+  display:block;
+  width:100%;
+  height:100%;
+  position:absolute;
+}
+path {
+  stroke-linecap:square;
+  stroke:white;
+  stroke-width:2px;
+}
+</style> 
+</head>
+<body>
+
+<svg preserveAspectRatio="none" id="visualizer" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <mask id="mask"></mask>
+    <radialGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="25%" style="stop-color:#050d61;stop-opacity:1" />
+        <stop offset="50%" style="stop-color:#d923b9;stop-opacity:1" />
+        <stop offset="75%" style="stop-color:#f1ff0a;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#ff0a0a;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+  <rect x="0" y="0" width="100%" height="100%" fill="url(#gradient)" mask="url(#mask)"></rect>
+</svg>
+
+<script>
+window.onload = function () {
+  let paths = document.getElementsByTagName('path');
+  let visualizer = document.getElementById('visualizer');
+  let mask = visualizer.getElementById('mask');
+  let path;
+  let report = 0;
+    
+  let soundAllowed = function (stream) {
+    window.persistAudioStream = stream;
+    let audioContent = new AudioContext();
+    let audioStream = audioContent.createMediaStreamSource( stream );
+    let analyser = audioContent.createAnalyser();
+    audioStream.connect(analyser);
+    analyser.fftSize = 1024;
+
+    let frequencyArray = new Uint8Array(analyser.frequencyBinCount);
+    visualizer.setAttribute('viewBox', '0 0 255 255');
+        
+    for( let i = 0; i < 255; i++ ) {
+      path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('stroke-dasharray', '4,6'); //4=bar height, 2= height margin
+      mask.appendChild(path);
+    }
+    let doDraw = function () {
+      requestAnimationFrame(doDraw);
+      analyser.getByteFrequencyData(frequencyArray);
+      let adjustedLength,from,to;
+      for( let i = 0; i < 250; i+=10 ) {
+        adjustedLength = Math.floor(frequencyArray[i]) - (Math.floor(frequencyArray[i]) % 5);
+
+        from = '128,128';
+        to = (Math.cos(Math.PI*2*i/250)*adjustedLength)+','+(Math.sin(Math.PI*2*i/250)*adjustedLength);
+        paths[i].setAttribute('d', 'M ' + from + ' l ' + to );
+      }
+    }
+    doDraw();
+  }
+
+  let soundNotAllowed = function (error) {
+    h.innerHTML = "You must allow your microphone.";
+    console.log(error);
+  }
+
+  /*window.navigator = window.navigator || {};
+  /*navigator.getUserMedia =  navigator.getUserMedia     ||
+                            navigator.webkitGetUserMedia ||
+                            navigator.mozGetUserMedia    ||
+                            null;*/
+  navigator.getUserMedia({audio:true}, soundAllowed, soundNotAllowed);
+
+};
+</script>
+</body>
+</html>
