@@ -4,9 +4,9 @@ module.exports = {
   output: {},
   mode: "development",
   plugins: [ 
-    new HtmlWebpackPlugin({template:"./index.html"}),
     new HtmlWebpackPlugin({template:"./milkydrop/circlenoshader.html"}),
     new HtmlWebpackPlugin({template:"./milkydrop/rawfeed.html"}),
     new HtmlWebpackPlugin({template:"./milkydrop/rawestfeed.html"}),
+    new HtmlWebpackPlugin({template:"./index.html"}),
   ]
 };
