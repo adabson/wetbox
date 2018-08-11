@@ -15,8 +15,8 @@ html, body {
   letter-spacing:2px;
 }
 #canv {
-  width:1024px;
-  height:512px;
+  width:512px;
+  height:256px;
   margin:auto;
   position:absolute;
   top:0;
@@ -31,7 +31,7 @@ div{
 </head>
 <body>
 fps: <span id="fps"></span>
-<canvas id="canv" width="1024" height="512"></canvas>
+<canvas id="canv" width="512" height="512"></canvas>
 
 <script>
 window.onload = function () {
@@ -52,20 +52,21 @@ window.onload = function () {
     let frequencyArray = new Uint8Array(analyser.frequencyBinCount);
     let tick=0;
 
+
     let doDraw = function () {
       requestAnimationFrame(doDraw);
       analyser.getByteFrequencyData(frequencyArray);
 
-      leftShift();
+      wipe();
       measureFps();
 
-      let x = 1023;
-      let y = 511;
+      let x = 0;
+      let y = 0;
       frequencyArray.forEach(v=>{
-        let shade = v;// < y ? 255 : 0;
-        ctx.fillStyle = "rgba("+shade+","+shade/2+","+shade+",1)";
-        ctx.fillRect(x,y,1,1);
-        y--;
+        y = canvasEl.height - v;
+        ctx.fillStyle = "rgba(80,255,80,1)";
+        ctx.fillRect(x,y,1,v);
+        x++;
       });
       tick++;
       fps++;
@@ -74,9 +75,9 @@ window.onload = function () {
     doDraw();
   }
 
-  function leftShift() {
-    var imageData = ctx.getImageData(1, 0, ctx.canvas.width-1, ctx.canvas.height);
-    ctx.putImageData(imageData, 0, 0);
+  function wipe() {
+    ctx.fillStyle = "rgba(0,0,0,1)";
+    ctx.fillRect( 0,0,canvasEl.width,canvasEl.height )
   }
 
   function measureFps() {
