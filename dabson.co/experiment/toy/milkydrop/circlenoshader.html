@@ -76,6 +76,7 @@ window.onload = function () {
       const r = 40;
       const rotateOffset = (ticker % (nBars*2))/2;
 
+      let sift = 4; //how often we sample, must be int, ie 1, 2
       let min = Number.MAX_SAFE_INTEGER;
       let max = Number.MIN_SAFE_INTEGER;
       let ttl = 0;
@@ -84,10 +85,12 @@ window.onload = function () {
         max = Math.max(max,frequencyArray[i]);
         ttl += frequencyArray[i];
       }
+      let avg = ttl / nBars;
 
-      for( let i = 0; i < nBars; i+=2 ) {
+      for( let i = 0; i < nBars; i+=3 ) {
         let x = rotateOffset + i * 256/255;
-        len = (frequencyArray[i] - min) / 2;
+        len = (frequencyArray[i] - min);
+        len /= 5 + (1-i%(10*sift)*.1)
         from = (128+xCoord(x, r))+','+(128+yCoord(x, r));
         to = xCoord(x, len) + ',' + yCoord(x, len);
         paths[i].setAttribute('d', 'M ' + from + ' l ' + to );
