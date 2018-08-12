@@ -23,7 +23,7 @@ let loader = new THREE.FileLoader()
 let scene = new THREE.Scene()
 
 let fullscreenShader = false
-loader.load( 'frag.glsl', init )
+loader.load( './milkydrop/frag.glsl', init )
 
 function init( fShader ) {
   addAxesHelper()
@@ -132,8 +132,8 @@ function updateReactiveShaderResolution() {
 }
 
 function updateBoxVFResolution() {
-  boxVFUniforms.u_resolution.value.x = window.innerWidth
-  boxVFUniforms.u_resolution.value.y = window.innerHeight
+  boxVFUniforms.resolution.value.x = window.innerWidth
+  boxVFUniforms.resolution.value.y = window.innerHeight
 }
 
 function updateVertFragCube() {
@@ -186,16 +186,16 @@ function addVertFragCube() {
     }`
 
   boxFShader = `
-    uniform vec2 u_resolution;
-    uniform float u_time;
+    uniform vec2 resolution;
+    uniform float time;
     void main() {
-        vec2 st = gl_FragCoord.xy/u_resolution.xy;
+        vec2 st = gl_FragCoord.xy/resolution.xy;
         gl_FragColor=vec4(st.x,st.y,0.0,1.0);
     }`
 
   boxVFUniforms = {
-    u_time: {type: 'f', value: 0.2},
-    u_resolution: {type: 'v2', value: new THREE.Vector2()},
+    time: {type: 'f', value: 0.2},
+    resolution: {type: 'v2', value: new THREE.Vector2()},
   }
 
   let boxVFShader = new THREE.ShaderMaterial({
