@@ -13,40 +13,26 @@ body, html {
 <body>
 <script>
 
-let canvasEl, renderer, camera, box
-let uniforms, fragMaterial, mesh, fShader
+let canvasEl, renderer, camera, simpleCube
+let vertFragCube, boxVShader, boxFShader, boxVFUniforms, vertFragCubeAdded = false
+let reactiveShaderPlane, reactiveShaderUniforms, reactiveShaderMaterial, fShader, reactiveShaderPlaneAdded = false
 let mouseNormX, mouseNormY, prevMouseNormX, prevMouseNormY, mouseDelX, mouseDelY
 
 let startTime = Date.now()
 let loader = new THREE.FileLoader()
 let scene = new THREE.Scene()
 
-loader.load( 'frag.glsl', init ) // load the fragment shader and kick off the program
+let fullscreenShader = false
+loader.load( 'frag.glsl', init )
 
 function init( fShader ) {
-
-  vShader = `uniform float time; uniform vec2 resolution; void main() { gl_Position = vec4( position, 1.0 ); }`
-  uniforms = {
-    time:       { type:  "f", value: 1.0 },
-    resolution: { type: "v2", value: new THREE.Vector2() },
-} //   mouse:      { type: "v2", value: new THREE.Vector2( mouseNormX, mouseNormY ) },
-  //   mouseDelta: { type: "v2", value: new THREE.Vector2( mouseDelX, mouseDelY ) },
-  //   audio:      { value: [1,2,3,4,5,6,7,8] }
-  // }
-  fragMaterial = new THREE.ShaderMaterial({
-    uniforms: uniforms,
-    vertexShader: vShader,
-    fragmentShader: fShader
-  })
-
-  //custom fragShader
-  //mesh = new THREE.Mesh( new THREE.PlaneGeometry( 2, 2 ), fragMaterial );
-  //scene.add( mesh );
-
-  addBox()
+  addAxesHelper()
+  addSimpleCube()
+  addVertFragCube()
+  addReactiveShaderPlane( fShader )
 
   addLights()
-  addCamera( 10, 10, 10 )
+  addCamera( 1.5, 1.5, 1.5 )
   addAction()
 }
 
@@ -68,7 +54,7 @@ function addListeners() {
 }
 
 function addCamera( posX, posY, posZ ) {
-  camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 10000 )
+  camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 0.2, 1000 )
   camera.position.set( posX, posY, posZ )
   camera.lookAt( 0, 0, 0 )
 }
@@ -80,17 +66,25 @@ function addLights() {
   scene.add( light )
 }
 
-function addBox() {
-  let boxGeometry = new THREE.BoxGeometry( 10, 10, 10 )
+function addSimpleCube() {
+  let boxGeometry = new THREE.BoxGeometry( 1, 1, 1 )
   let boxMaterial = new THREE.MeshLambertMaterial( { color: 0x666666, flatShading: THREE.SmoothShading } )
-  box = new THREE.Mesh( boxGeometry, boxMaterial )
-  scene.add( box )
+  simpleCube = new THREE.Mesh( boxGeometry, boxMaterial )
+  simpleCube.position.set( -1.4,0,1.4)
+  scene.add( simpleCube )
+}
+
+function addAxesHelper() {
+  let worldAxis = new THREE.AxesHelper( 25 )
+  scene.add( worldAxis )
 }
 
 function doResize() {
   camera.aspect = window.innerWidth / window.innerHeight
   camera.updateProjectionMatrix()
-  renderer.setSize( window.innerWidth, window.innerHeight )  
+  renderer.setSize( window.innerWidth, window.innerHeight )
+  reactiveShaderUniforms.resolution.value.x = window.innerWidth;
+  reactiveShaderUniforms.resolution.value.y = window.innerHeight;
 }
 
 function animate() {
@@ -99,8 +93,8 @@ function animate() {
 }
 
 function render() {
-  let elapsedMilliseconds = Date.now() - startTime
-  uniforms.time.value = elapsedMilliseconds
+  updateVertFragCube()
+  updateReactiveShaderPlane( Date.now() - startTime )
   renderer.render( scene, camera )
 }
 
@@ -120,6 +114,87 @@ function mouseHandler( e ) {
   mouseDelY = mouseNormY - prevMouseNormY
   prevMouseNormX = mouseNormX
   prevMouseNormY = mouseNormY
+}
+
+function updateReactiveShaderPlane( elapsedMS ) {
+  if(!reactiveShaderPlaneAdded) return;
+  reactiveShaderUniforms.time.value = elapsedMS
+}
+
+function updateVertFragCube() {
+  if(!vertFragCubeAdded) return;
+  vertFragCube.rotation.x += .01
+  vertFragCube.rotation.y += .02
+  vertFragCube.rotation.z += .03
+  boxVFUniforms.u_resolution.value.x = window.innerWidth;
+  boxVFUniforms.u_resolution.value.y = window.innerHeight;
+}
+
+function addReactiveShaderPlane( fShader ) {
+  vShader = `
+    uniform vec2 resolution; 
+    void main() { 
+        if( `+fullscreenShader+` ) {
+            gl_Position = vec4( position, 1.0 );
+        } else {
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+        }
+    }`
+
+  reactiveShaderUniforms = {
+    time:       { type:    "f", value: 1.0 },
+    resolution: { type:   "v2", value: new THREE.Vector2() },
+    mouse:      { type:   "v2", value: new THREE.Vector2( mouseNormX, mouseNormY ) },
+    mouseDelta: { type:   "v2", value: new THREE.Vector2( mouseDelX, mouseDelY ) },
+    audio:      { value: [1,2,3,4,5,6,7,8] }
+  }
+
+  reactiveShaderMaterial = new THREE.ShaderMaterial({
+    uniforms: reactiveShaderUniforms,
+    vertexShader: vShader,
+    fragmentShader: fShader
+  })
+
+  let geo = new THREE.PlaneGeometry( 2, 2 )
+  let boxMaterial = new THREE.MeshLambertMaterial( { color: 0x666666, flatShading: THREE.SmoothShading } )
+
+  reactiveShaderPlane = new THREE.Mesh( geo, reactiveShaderMaterial )
+  reactiveShaderPlane.rotation.set( -Math.PI/6, Math.PI/6, Math.PI/10 )
+  reactiveShaderPlane.position.set( 1.5, 0, -1.5 )
+  scene.add( reactiveShaderPlane )
+
+  reactiveShaderPlaneAdded = true
+}
+
+function addVertFragCube() {
+  boxVShader = `
+    void main() {
+        gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+    }`
+
+  boxFShader = `
+    uniform vec2 u_resolution;
+    uniform float u_time;
+    void main() {
+        vec2 st = gl_FragCoord.xy/u_resolution.xy;
+        gl_FragColor=vec4(st.x,st.y,0.0,1.0);
+    }`
+
+  boxVFUniforms = {
+    u_time: {type: 'f', value: 0.2},
+    u_resolution: {type: 'v2', value: new THREE.Vector2()},
+  }
+
+  let boxVFShader = new THREE.ShaderMaterial({
+    uniforms: boxVFUniforms,
+    vertexShader: boxVShader,
+    fragmentShader: boxFShader
+  })
+
+  let geo = new THREE.BoxGeometry( 1, 1, 1 );
+  vertFragCube = new THREE.Mesh( geo, boxVFShader )
+  scene.add( vertFragCube )
+  vertFragCubeAdded = true;
 }
 </script>
 </body>
