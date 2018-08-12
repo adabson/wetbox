@@ -75,7 +75,7 @@ function addCamera( posX, posY, posZ ) {
 
 function addLights() {
   scene.add( new THREE.AmbientLight( 0xffffff ) )
-  let light = new THREE.PointLight( 0xff4000, 10 )
+  let light = new THREE.PointLight( 0xffffff, 2 )
   light.position.set( 20, 15, -15 )
   scene.add( light )
 }
