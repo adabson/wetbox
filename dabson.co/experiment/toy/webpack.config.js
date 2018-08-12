@@ -1,6 +1,4 @@
 let HtmlWebpackPlugin = require('html-webpack-plugin');
-//require('webpack-glsl!./milkydrop/frag.glsl');
-let WebpackGLSL = require('webpack-glsl-loader');
 
 module.exports = {
   entry: ['./milkydrop/frag.glsl'],
