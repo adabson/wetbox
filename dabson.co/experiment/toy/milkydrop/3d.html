@@ -83,8 +83,8 @@ function doResize() {
   camera.aspect = window.innerWidth / window.innerHeight
   camera.updateProjectionMatrix()
   renderer.setSize( window.innerWidth, window.innerHeight )
-  reactiveShaderUniforms.resolution.value.x = window.innerWidth;
-  reactiveShaderUniforms.resolution.value.y = window.innerHeight;
+  updateReactiveShaderResolution()  
+  updateBoxVFResolution()
 }
 
 function animate() {
@@ -121,13 +121,26 @@ function updateReactiveShaderPlane( elapsedMS ) {
   reactiveShaderUniforms.time.value = elapsedMS
 }
 
+function updateReactiveShaderResolution() {
+  if( fullscreenShader ) {
+    reactiveShaderUniforms.resolution.value.x = window.innerWidth
+    reactiveShaderUniforms.resolution.value.y = window.innerHeight
+  } else {
+    reactiveShaderUniforms.resolution.value.x = 985 //@todo: make this local
+    reactiveShaderUniforms.resolution.value.y = 985
+  }
+}
+
+function updateBoxVFResolution() {
+  boxVFUniforms.u_resolution.value.x = window.innerWidth
+  boxVFUniforms.u_resolution.value.y = window.innerHeight
+}
+
 function updateVertFragCube() {
   if(!vertFragCubeAdded) return;
   vertFragCube.rotation.x += .01
   vertFragCube.rotation.y += .02
   vertFragCube.rotation.z += .03
-  boxVFUniforms.u_resolution.value.x = window.innerWidth;
-  boxVFUniforms.u_resolution.value.y = window.innerHeight;
 }
 
 function addReactiveShaderPlane( fShader ) {
