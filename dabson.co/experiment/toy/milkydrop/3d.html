@@ -2,7 +2,7 @@
 <html>
 <head>
 <style>
-body,html {
+body, html {
   margin:0;
   padding:0;
   height:100%;
@@ -13,32 +13,65 @@ body,html {
 <body>
 <script>
 
-let renderer, canvasEl, scene, camera, box
-window.addEventListener( 'resize', doResize )
-init()
-renderFrame()
+let canvasEl, renderer, scene, camera, box
+let uniforms, fragMaterial, mesh, startTime, fShader
+let mouseNormX, mouseNormY, prevMouseNormX, prevMouseNormY, mouseDelX, mouseDelY
+let loader = new THREE.FileLoader()
 
-function init() {
+loader.load( 'frag.glsl', init ) // load the fragment shader and kick off the program
+
+function init( fShader ) {
+  startTime = Date.now()
+  vShader = `uniform float time; uniform vec2 resolution; void main() { gl_Position = vec4( position, 1.0 ); }`
+  uniforms = {
+    time:       { type:  "f", value: 1.0 },
+    resolution: { type: "v2", value: new THREE.Vector2() },
+} //   mouse:      { type: "v2", value: new THREE.Vector2( mouseNormX, mouseNormY ) },
+  //   mouseDelta: { type: "v2", value: new THREE.Vector2( mouseDelX, mouseDelY ) },
+  //   audio:      { value: [1,2,3,4,5,6,7,8] }
+  // }
+  fragMaterial = new THREE.ShaderMaterial({
+    uniforms: uniforms,
+    vertexShader: vShader,
+    fragmentShader: fShader
+  })
+
   scene = new THREE.Scene()
   camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 10000 )
-  camera.position.set( 20, 20, -40 )
+  camera.position.set( 10, 10, 10 )
   camera.lookAt( 0, 5, 0 )
 
-  scene.add( new THREE.AmbientLight( 0xffffff ) )
-  let light = new THREE.PointLight( 0xff4000, 10 )
-  light.position.set( 20, 15, -15 )
-  scene.add( light )
+  //custom fragShader
+  //mesh = new THREE.Mesh( new THREE.PlaneGeometry( 2, 2 ), fragMaterial );
+  //scene.add( mesh );
 
-  let boxGeometry = new THREE.BoxGeometry( 10, 10, 10 )
-  let material = new THREE.MeshLambertMaterial( { color: 0x666666, flatShading: THREE.SmoothShading } )
-  box = new THREE.Mesh( boxGeometry, material )
-  scene.add( box )
+  addLights();
+  addBox();
 
   renderer = new THREE.WebGLRenderer()
   renderer.setClearColor( 0x444444, 1 )
   canvasEl = document.body.appendChild( renderer.domElement )
   canvasEl.style.display = 'block'
+
+  window.addEventListener( 'mousemove', mouseHandler )
+  window.addEventListener( 'touchmove', mouseHandler )
+  window.addEventListener( 'resize', doResize )
   doResize()
+  animate()
+}
+
+function addLights() {
+  scene.add( new THREE.AmbientLight( 0xffffff ) )
+  let light = new THREE.PointLight( 0xff4000, 10 )
+  light.position.set( 20, 15, -15 )
+  scene.add( light )
+}
+
+function addBox() {
+  let boxGeometry = new THREE.BoxGeometry( 10, 10, 10 )
+  let boxMaterial = new THREE.MeshLambertMaterial( { color: 0x666666, flatShading: THREE.SmoothShading } )
+  box = new THREE.Mesh( boxGeometry, boxMaterial )
+  scene.add( box )
 }
 
 function doResize() {
@@ -47,11 +80,34 @@ function doResize() {
   renderer.setSize( window.innerWidth, window.innerHeight )  
 }
 
-function renderFrame() {
-  window.requestAnimationFrame( renderFrame )
+function animate() {
+  window.requestAnimationFrame( animate )
+  render()
+}
+
+function render() {
+  let elapsedMilliseconds = Date.now() - startTime
+  uniforms.time.value = elapsedMilliseconds
   renderer.render( scene, camera )
 }
 
+function mouseHandler( e ) {
+  if (e.targetTouches) {
+    var touch = e.targetTouches[ 0 ]
+    mouseX = touch.pageX
+    mouseY = touch.pageY
+  } else {
+    mouseX = e.clientX
+    mouseY = e.clientY
+  }
+
+  mouseNormX = mouseX / canvasEl.innerWidth
+  mouseNormY = 1. - mouseY / canvasEl.innerHeight
+  mouseDelX = mouseNormX - prevMouseNormX
+  mouseDelY = mouseNormY - prevMouseNormY
+  prevMouseNormX = mouseNormX
+  prevMouseNormY = mouseNormY
+}
 </script>
 </body>
 </html>
