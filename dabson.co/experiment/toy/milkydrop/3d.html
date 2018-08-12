@@ -13,15 +13,18 @@ body, html {
 <body>
 <script>
 
-let canvasEl, renderer, scene, camera, box
-let uniforms, fragMaterial, mesh, startTime, fShader
+let canvasEl, renderer, camera, box
+let uniforms, fragMaterial, mesh, fShader
 let mouseNormX, mouseNormY, prevMouseNormX, prevMouseNormY, mouseDelX, mouseDelY
+
+let startTime = Date.now()
 let loader = new THREE.FileLoader()
+let scene = new THREE.Scene()
 
 loader.load( 'frag.glsl', init ) // load the fragment shader and kick off the program
 
 function init( fShader ) {
-  startTime = Date.now()
+
   vShader = `uniform float time; uniform vec2 resolution; void main() { gl_Position = vec4( position, 1.0 ); }`
   uniforms = {
     time:       { type:  "f", value: 1.0 },
@@ -36,28 +39,38 @@ function init( fShader ) {
     fragmentShader: fShader
   })
 
-  scene = new THREE.Scene()
-  camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 10000 )
-  camera.position.set( 10, 10, 10 )
-  camera.lookAt( 0, 5, 0 )
-
   //custom fragShader
   //mesh = new THREE.Mesh( new THREE.PlaneGeometry( 2, 2 ), fragMaterial );
   //scene.add( mesh );
 
-  addLights();
-  addBox();
+  addBox()
 
+  addLights()
+  addCamera( 10, 10, 10 )
+  addAction()
+}
+
+function addAction() {
   renderer = new THREE.WebGLRenderer()
   renderer.setClearColor( 0x444444, 1 )
   canvasEl = document.body.appendChild( renderer.domElement )
   canvasEl.style.display = 'block'
 
+  addListeners()
+  doResize()
+  animate()
+}
+
+function addListeners() {
   window.addEventListener( 'mousemove', mouseHandler )
   window.addEventListener( 'touchmove', mouseHandler )
   window.addEventListener( 'resize', doResize )
-  doResize()
-  animate()
+}
+
+function addCamera( posX, posY, posZ ) {
+  camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 10000 )
+  camera.position.set( posX, posY, posZ )
+  camera.lookAt( 0, 0, 0 )
 }
 
 function addLights() {
