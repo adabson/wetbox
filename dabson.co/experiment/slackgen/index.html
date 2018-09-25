@@ -1,0 +1,326 @@
+<html>
+<head>
+<title>SlackGen</title>
+<style>
+body, html {
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+  font-size:12px;
+}
+img, input[type=checkbox]{
+  width:32px;
+  height:32px;
+  opacity:0.2;
+}
+textarea {
+  width: 300px;
+  height:100px;
+}
+</style></head>
+<body>
+<textarea id="inp"></textarea><br>
+<textarea id="out" readonly></textarea><br>
+<br><br>
+<button>pogslide</button>
+<button>congaparrot</button>
+<button>aussieparrot</button><br>
+<br><br>
+
+<textarea id="slackout" onclick="copyToClipboard(this)" readonly></textarea><br>
+
+<input type="checkbox" id="isSpaced" checked><label for="isSpaced">Space letters</label><br>
+<img src="congaparrot.gif" id="congaparrot"><label for="congaparrot">:congaparrot:</label><br>
+<img src="aussieparrot.gif" id="aussieparrot"><label for="aussieparrot">:aussieparrot:</label><br>
+<img src="pogslide.gif" id="pogslide"><label for="pogslide">:pogslide:</label><br>
+</body>
+<script>
+
+function copyToClipboard(el) {
+  el.select();
+  document.execCommand( 'copy' );
+};
+
+function slackOut(emojiType, outv) {
+  let ret = outv;
+  ret = ret.replaceAll( ' ', ':blank:' );
+  ret = ret.replaceAll( '█', ':' + emojiType + ':' );
+  return ret;
+}
+
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
+
+function translate(inp) {
+  lines = ['','','','',''];
+  let alpha =[[
+' ',
+' ',
+' ',
+' ',
+' '],[
+
+'███',
+'█ █',
+'███',
+'█ █',
+'█ █'],[
+
+'█  ',
+'█  ',
+'███',
+'█ █',
+'███'],[
+
+'███',
+'█  ',
+'█  ',
+'█  ',
+'███'],[
+
+'███  ',
+'█  █ ',
+'█   █',
+'█  █ ',
+'███  '],[
+
+'███',
+'█  ',
+'██ ',
+'█  ',
+'███'],[
+
+'███',
+'█  ',
+'██ ',
+'█  ',
+'█  '],[
+
+'███',
+'█  ',
+'█ █',
+'█ █',
+'███'],[
+
+'█ █',
+'█ █',
+'███',
+'█ █',
+'█ █'],[
+
+'███',
+' █ ',
+' █ ',
+' █ ',
+'███'],[
+
+'  █',
+'  █',
+'  █',
+'█ █',
+'███'],[
+
+'█  █',
+'█ █ ',
+'██  ',
+'█ █ ',
+'█  █'],[
+
+'█  ',
+'█  ',
+'█  ',
+'█  ',
+'███'],[
+
+'█   █',
+'██ ██',
+'█ █ █',
+'█   █',
+'█   █'],[
+
+'█   █',
+'██  █',
+'█ █ █',
+'█  ██',
+'█   █'],[
+
+'███',
+'█ █',
+'█ █',
+'█ █',
+'███'],[
+
+'███',
+'█ █',
+'███',
+'█  ',
+'█  '],[
+
+'███',
+'█ █',
+'███',
+'  █',
+'  █'],[
+
+'███',
+'█ █',
+'███',
+'██ ',
+'█ █'],[
+
+'███',
+'█  ',
+'███',
+'  █',
+'███'],[
+
+'███',
+' █ ',
+' █ ',
+' █ ',
+' █ '],[
+
+'█ █',
+'█ █',
+'█ █',
+'█ █',
+'███'],[
+
+'█   █',
+'█   █',
+' █ █ ',
+' █ █ ',
+'  █  '],[
+
+'█   █',
+'█   █',
+'█ █ █',
+'██ ██',
+'█   █'],[
+
+'█   █',
+' █ █ ',
+'  █  ',
+' █ █ ',
+'█   █'],[
+
+'█   █',
+' █ █ ',
+'  █  ',
+'  █  ',
+'  █  '],[
+
+' █ ',
+'██ ',
+' █ ',
+' █ ',
+'███'],[
+
+' ███ ',
+'█   █',
+'  ██ ',
+' █   ',
+'█████'],[
+
+'███ ',
+'   █',
+' ██ ',
+'   █',
+'███ '],[
+
+'█ █ ',
+'█ █ ',
+'████',
+'  █ ',
+'  █ '],[
+
+'███',
+'█  ',
+'███',
+'  █',
+'███'],[
+
+'███',
+'█  ',
+'███',
+'█ █',
+'███'],[
+
+'███',
+'  █',
+'  █',
+'  █',
+'  █'],[
+
+'███',
+'█ █',
+'███',
+'█ █',
+'███'],[
+
+'███',
+'█ █',
+'███',
+'  █',
+'███'],[
+
+'   ',
+'███',
+'   ',
+'███',
+'   ']];
+
+  inp.split( '' ).forEach( c => {
+    let eLimit = 16;
+    let isSpaced = document.getElementById( 'isSpaced' ).checked;
+    let no = c.toLowerCase().charCodeAt( 0 ) - 96;
+    if ( no < 0 ) {
+      no = c.charCodeAt( 0 );
+      if ( no === 32 ) {
+        no = 0; // space
+      } else if ( no === 48 ) {
+        no = 15; // zero
+      } else if ( no > 48 && no < 58 ) {
+        no = no - 23; // numerals
+      } else if ( no === 61 ) {
+        no = 35; // equals
+      } else {
+        console.log( 'Unrecognised: ' + no )
+        return '';
+      }
+    }
+
+    let inLimit = ( lines[0].length + alpha[no][0].length ) <= eLimit;
+    if (inLimit) {
+      for( let i = 0; i < lines.length; i++ ) {
+        lines[i] += alpha[no][i];
+        if ( isSpaced ) {
+          lines[i] += alpha[0][i];
+        }
+      }
+    }
+  });
+
+  return lines.join( '\n' );
+}
+
+(function() {
+  let inp = document.getElementById( 'inp' );
+  let out = document.getElementById( 'out' );
+  let slackout = document.getElementById( 'slackout' );
+  let buttons = document.querySelectorAll( 'button' );
+  let defaultEmoji = 'pogslide';
+
+  inp.addEventListener('input', e => { 
+    out.value = translate( inp.value );
+    slackout.value = slackOut( defaultEmoji, out.value );
+  });
+
+  buttons.forEach( b => {
+    b.addEventListener( 'click', e => { slackout.value = slackOut( b.innerText, out.value ) } );
+  });
+})();
+</script>
+</html>
