@@ -275,7 +275,7 @@ function translate(inp) {
 '   ']];
 
   inp.split( '' ).forEach( c => {
-    let eLimit = 16;
+    let eLimit = 64;
     let isSpaced = document.getElementById( 'isSpaced' ).checked;
     let no = c.toLowerCase().charCodeAt( 0 ) - 96;
     if ( no < 0 ) {
@@ -313,7 +313,7 @@ function translate(inp) {
   let out = document.getElementById( 'out' );
   let slackout = document.getElementById( 'slackout' );
   let buttons = document.querySelectorAll( 'button' );
-  let defaultEmoji = 'pogslide';
+  let defaultEmoji = 'partyharold';
 
   inp.addEventListener('input', e => { 
     out.value = translate( inp.value );
