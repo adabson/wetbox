@@ -1,14 +1,15 @@
 <?php
-//Should only define peeps once (we want it in php to sanitise)
-$CHAR_LIMIT = 500;
+//howto:
+//1. Get list of people this year
+//2. in dev console, shuffle('peeps') & hardcode
 
-$peeps = array( "Inkeri", "Maddy", "Michael", "Chet", "Raymond", "Andra", "Somin", "David", "Andrew", "Woong", "Michaela", "Jonathan", "Timothy");
+$peeps = ["Somin", "Inkeri", "Andrew", "Jonathan", "Anna", "Maddy", "David ", "Woong", "Raymond", "Heesong", "Micahela", "Michael", "Andra", "Tim"];
 $db = json_decode( utf8_encode( file_get_contents( "phatFile.dat" ) ), true );
 
-//echo '!!'.json_encode( $peeps ); //json makes converting a php array to js array easy as 1 2 3 :)
-//echo json_encode( $db );
 
 if( $_POST[ 'name' ] ) {
+//Should only define peeps once (we want it in php to sanitise)
+$CHAR_LIMIT = 500;
   $name  = in_array( $_POST[ "name" ], $peeps ) ? $_POST[ "name" ] : "";
   $wants = preg_replace( "/[^a-zA-Z0-9 -_'\n!@#$%^&*().!?~]/", "", $_POST[ "wants" ] );
   $wants = substr( $wants, 0, $CHAR_LIMIT );
@@ -61,32 +62,6 @@ What is your name?
   echo "var peeps =   ".json_encode( $peeps ).";\n";
   echo "var desires = ".json_encode( $db ).";\n";
 ?>
-// peepsCURRENT_YEAR = shuffle ( [ 'Andrew', 'David', 'Inkeri', 'Jonathan', 'Michael', 'Michaela', 'Raymond', 'Somin', 'Timothy', 'Woong' ] );
-// append year after archiving
-
-/*
-
-$peeps2016 = array( "Michaela", "Somin", "Raymond", "David", "Timothy", "Woong", "Inkeri", "Jonathan", "Michael", "Andrew" );
-var peeps2015 = [ 'Raymond', 'Andrew', 'Jonathan', 'Anna', 'Andra', 'Inkeri', 'David', 'Michaela', 'Timothy', 'Michael', 'Somin' ]; //p[0] buys for p[1] buys for p[2] etc.
-var peeps = [ 'Michaela', 'Somin', 'Raymond', 'David', 'Timothy', 'Woong', 'Inkeri', 'Jonathan', 'Michael', 'Andrew' ];
-
-
-[ 'Raymond', 'Inkeri', 'Andrew', 'Timothy', 'Jonathan', 'Somin', 'Woong', 'Michael', 'Andra', 'Michaela', 'David', 'Maddy', 'Chet' ]
-
-var desires2015 = ["Raymond wants Chocolate / Chocolate Ginger / A Short sleeved shirt (inexpensive) / Ear Plugs to fit my iPhone 5", 
-"Andrew wants: Beach towel / Cheap backpack / Book: Rich dad poor dad / Dark choc",
-"Jonathan wants cool shirt or health and fitness book or magazine", 
-"Anna wants a CD: Ben Howard or a new set of steel guitar strings or a nice simple maybe geometric pattern table cloth( not pinks/purples etc though please)", 
-"Andra wants a cute plant - maybe a succulent (not a cactus!) / the third Hobbit DVD / yummy dried fruit", 
-"Inkeri wants anything to do with art / sketching pens, pencils, pads, books, art history dvd by BBC / pleasant fragrances, verbena, citrus, grape, floral/herbal in creams,potions lotions, candles, pillows whatever / random surprises of any kind so Santa can really do whatever but avoid super scary thriller movies",
-"David wants usb/thumb drive / CD classical/jazz or socks", 
-"Michaela wants mass quantities of raw cashews/brazils/almonds/walnuts / Alt-J's new album! / a black-paged A3 artbook.", 
-"Timothy wants a Stanley knife / Calender (maybe space/ earth/serenity) / pouch to hold phone when running 7x14cm phone / a microfiber cloth / book (maybe fantasy)", 
-"Michael wants Scottish calendar / A long sleeve shirt - 46 neck - (not slim-fit!) /Some succulent best quality super-duper,  tinned Cat food, and Dog food from the supermarket", 
-"Somin wants Hario V60 dripper ceramic (which is a coffee dripper) or super cute short pyjama pants kkk or a hand cream"];
-
-var desires = [ "", "", "", "", "", "", "", "", "", "LoL giftcard" ];
-*/
 
 function isInArray(value, array) {
   return array.indexOf(value) > -1;
