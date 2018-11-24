@@ -2,7 +2,7 @@
 //howto:
 //1. Get list of people this year
 //2. Add a phatFile.dat and unversion (contents: {})
-//3. in dev console, shuffle('peeps') & hardcode zx
+//3. in dev console, shuffle('peeps') & hardcode zxq
 
 $peeps = ["Somin", "Inkeri", "Andrew", "Jonathan", "Anna", "Maddy", "David ", "Woong", "Raymond", "Heesong", "Micahela", "Michael", "Andra", "Tim"];
 $db = json_decode( utf8_encode( file_get_contents( "phatFile.dat" ) ), true );
