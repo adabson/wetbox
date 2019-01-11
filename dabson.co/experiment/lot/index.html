@@ -32,7 +32,7 @@ td:last-child {
 }
 #besttiks{
   width:100%;
-  min-height:400px;
+  min-height:200px;
 }
 </style>
 </head>
@@ -41,6 +41,8 @@ td:last-child {
 // N CHOOSE K ----------------------------------------------------------------------------------------- 
 N = 45;
 K = 6;
+// -------- buy X tickets
+X = 200
 
 tiks = [
   [01,02,03,04,05,06]
@@ -249,8 +251,6 @@ function countState() {
   for(let i=1;i<(N+2);i++) { //row iterator
     for(let j=1;j<=i;j++) { //col iterator (init to zero to test lower bound)
       if(state[i][j]>0) ret++;
-      //let cel = document.getElementById(`r${i}`).children[j];
-      //cel.style.backgroundColor = clashOfColors[Math.min( val, clashOfColors.length - 1)];
     }
   }
   stateCoverage = ret;
@@ -261,9 +261,6 @@ function update() {
   resetState();
   computeState();
   countState();
-  //quickpickn(30); // use new tickets instead of hardcoded values
-  //drawState();
-  //console.log("%d/595 = %2.2d %",stateCoverage,((stateCoverage/595)*100).toFixed(2));
 }
 
 update();
@@ -276,7 +273,7 @@ function printBest() {
 }
 
 for(let i=0;i<999;i++){
-  quickpickn(5);
+  quickpickn(X);
   update();
   if(stateCoverage > bestStateCoverage) { // we have a new beststate 
     bestStateCoverage = stateCoverage;
@@ -284,13 +281,23 @@ for(let i=0;i<999;i++){
   }
 }
 tiks=bestTiks;
-bestpc = ((stateCoverage/595)*100).toFixed(2);
+bestpc = ((stateCoverage/choose(N,K))*100).toFixed(2);
 computeState();
 countState();
-console.log("%d/595 = %2.2d %",stateCoverage,bestpc);
 drawState();
 
 document.getElementById('bestpc').innerText = bestpc+'%';
 document.getElementById('besttiks').value = JSON.stringify(bestTiks);
+
+
+//this time its 45 Choose 6 = 45/6*44/5*43/4*42/3*41/2*40/1 = 8 145 060
+function choose(n, k) {
+  let ret = 1;
+  for(let i=1;i<=k;i++){
+    ret*=(n-k+i)/i;
+  }
+  return ret;
+}
+
 </script>
 </html>
