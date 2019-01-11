@@ -17,7 +17,7 @@ td,th{
   border:1px solid #aaa;
   background-color:#fff;
 }
-tr#r36, td:first-child{
+tr:last-child, td:first-child{
   color:#aaa;
 }
 td:last-child {
@@ -38,6 +38,13 @@ td:last-child {
 </head>
 <body><div id="bestpc"></div><textarea id="besttiks"></textarea></body>
 <script>
+// N CHOOSE K ----------------------------------------------------------------------------------------- 
+N = 45;
+K = 6;
+
+tiks = [
+  [01,02,03,04,05,06]
+];
 
 // Spawn the table
 (function proceduallyGenerateTriangle(n) {
@@ -78,7 +85,7 @@ td:last-child {
       }
     }
   }
-})(35)
+})(N)
 
 
 function shuffle(array) {
@@ -94,9 +101,9 @@ function shuffle(array) {
 }
 
 function quickpick() {
-  for (var a=[],i=0;i<35;++i) a[i]=i+1;
+  for (var a=[],i=0;i<N;++i) a[i]=i+1;
   a = shuffle(a);
-  return a.slice(0,7);
+  return a.slice(0,K);
 }
 console.log(quickpick());
 
@@ -166,36 +173,6 @@ function resetState() {
 }
 resetState();
 
-tiks = [
-  // [ 1, 2, 3, 4, 5, 6, 7],
-  // [ 8, 9,10,11,12,13,14],
-  // [29,30,31,32,33,34,35],
-  // [20,22,23,19,18,24,25],
-  // [ 1, 2, 3,20,33,34,35],
-  // [2,4,6,8,10,12,14],
-  // [0,0,0,0, 1,2,3],
-  // [7,9,10,11,12,13,14],
-  // [12,13,14,16,19,24,32],
-
-  // [1,2,3,5,8,13,21], //fiba
-  // [2,3,4,6,9,14,22],
-  // [3,4,5,7,10,15,23],
-  // [4,5,6,8,11,16,24],
-
-[01,02,03,04,05,06,07],
-[01,08,09,10,11,12,13], 
-[01,14,15,16,17,18,19], 
-[01,20,21,22,23,24,25], 
-[01,26,27,28,29,30,31],
-[01,32,33,34,35,02,08],
-
-[2,9,10,12,14,16,18],
-[2,20,22,24,26,28,30],
-[2,30,31,32,33,34,35],
-
-
-];
-
 let clashOfColors = [
   'black',
   '#0f0',
@@ -212,7 +189,7 @@ function computeState() {
     tik.sort((a,b)=>a-b); //By Default it sorts alphabetically, so will return [11,12,8,9], dumb. add lambda to fix
     // console.log(tik);
 
-    if(tik.length === 7) { //tik.length > 1 && tik.length < 8) {
+    if(tik.length === K) { //tik.length > 1 && tik.length < 8) {
       let a = tik[0];
       let b = tik[1];
       let c = tik[2];
@@ -221,7 +198,7 @@ function computeState() {
       let f = tik[5];
       let g = tik[6];
 
-      if(!a || !b || !c || !d || !e || !f || !g) {
+      if(!a || !b || !c || !d || !e || !f) {
         console.error('UH OH, ZERO TICKET ENTRY')
       }
 
@@ -229,35 +206,36 @@ function computeState() {
       state[c][a]++;
       state[d][a]++;
       state[e][a]++;
-      state[f][a]++;
-      state[g][a]++;
-
       state[c][b]++;
       state[d][b]++;
-      state[e][b]++;
-      state[f][b]++;
-      state[g][b]++;
 
       state[d][c]++;
+
+      state[e][b]++;
       state[e][c]++;
-      state[f][c]++;
-      state[g][c]++;
-
       state[e][d]++;
+
+      state[f][a]++;
+      state[f][b]++;
+      state[f][c]++;
       state[f][d]++;
-      state[g][d]++;
-
       state[f][e]++;
-      state[g][e]++;
 
-      state[g][f]++;
+      if(g) {
+        state[g][a]++;
+        state[g][b]++;
+        state[g][c]++;
+        state[g][d]++;
+        state[g][e]++;
+        state[g][f]++;
+      }
     }
   }
 
 }
 
 function drawState() { //drawstate or countstate
-  for(let i=0;i<37;i++) { //row iterator
+  for(let i=0;i<(N+2);i++) { //row iterator
     for(let j=0;j<=i;j++) { //col iterator (init to zero to test lower bound)
       let val = state[i][j];
       let cel = document.getElementById(`r${i}`).children[j];
@@ -268,7 +246,7 @@ function drawState() { //drawstate or countstate
 
 function countState() {
   let ret = 0;
-  for(let i=1;i<37;i++) { //row iterator
+  for(let i=1;i<(N+2);i++) { //row iterator
     for(let j=1;j<=i;j++) { //col iterator (init to zero to test lower bound)
       if(state[i][j]>0) ret++;
       //let cel = document.getElementById(`r${i}`).children[j];
