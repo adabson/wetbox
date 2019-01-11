@@ -38,21 +38,15 @@ td:last-child {
 </head>
 <body><div id="bestpc"></div><textarea id="besttiks"></textarea></body>
 <script>
+
+// Spawn the table
 (function proceduallyGenerateTriangle(n) {
   let table = document.createElement("table")
   table.setAttribute('cellpadding',0);
   table.setAttribute('cellspacing',0);
   document.body.prepend(table);
 
-  // let row = document.createElement("tr");
-  // let cell = document.createElement("td");
-  // let labl = document.createTextNode("hi "+n);
-  // table.appendChild(row);
-  // row.appendChild(cell);
-  // cell.appendChild(labl);
-
-
-  //create next n rows 
+  // Row generation
   for(let i=0;i<(n+2);i++) {
     let row = document.createElement("tr");
     row.setAttribute('id','r'+i)
@@ -73,8 +67,8 @@ td:last-child {
       continue;
     }
 
-
-    for(let j=0;j<=i;j++) { //colgen
+    // Regular column generation
+    for(let j=0;j<=i;j++) { 
       let cell = document.createElement("td");
       row.appendChild(cell);
 
@@ -84,9 +78,6 @@ td:last-child {
       }
     }
   }
-
-  //create lower labels
-
 })(35)
 
 
