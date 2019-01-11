@@ -896,7 +896,7 @@ This is the start of harded visuals
 <textarea id="besttiks"></textarea>
 </body>
 <script>
-(function proceduallyGenerateBoard(n) {
+(function proceduallyGenerateTriangle(n) {
   let table = document.createElement("table")
   table.setAttribute('cellpadding',0);
   table.setAttribute('cellspacing',0);
@@ -913,22 +913,22 @@ This is the start of harded visuals
   //create next n rows 
   for(let i=0;i<(n+2);i++) {
     let row = document.createElement("tr");
+    row.setAttribute('id','r'+i)
     table.appendChild(row);
 
     //r0 and rn+1 are horizontal label rows 
     if( i===0 || i===(n+1)) {
-      for(let k=0;k<i;k++) {
+      for(let k=0;k<=(n+1);k++) {
         let cell = document.createElement("td");
         row.appendChild(cell);
-        if( k!=0 ) {
-          if(k===(n+1)) {
-            cell.style.backgroundColor = '#fff';
-          } else {
-            let labl = document.createTextNode(k.toString().padStart(2,'0'));
-            cell.appendChild(labl);
-          }
+        if(k!==0 && k!==(n+1) ) {
+          let labl = document.createTextNode(k.toString().padStart(2,'0'));
+          cell.appendChild(labl);
+        } else if(i===0 && k===(n+1)) {
+          cell.style.backgroundColor ='#fff';
         }
       }
+      continue;
     }
 
 
