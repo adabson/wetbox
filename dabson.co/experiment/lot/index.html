@@ -268,10 +268,6 @@ update();
 bestTiks = JSON.parse(JSON.stringify(tiks));
 bestStateCoverage = stateCoverage();
 
-function printBest() {
-  console.log(JSON.stringify(bestTiks));
-}
-
 for(let i=0;i<ITER;i++){
   quickpickn(X);
   update();
@@ -283,9 +279,9 @@ for(let i=0;i<ITER;i++){
   }
 }
 console.log('-------best');
-tiks=bestTiks;
-bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
+tiks=JSON.parse(JSON.stringify(bestTiks));
 update();
+bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
 drawState();
 
 document.getElementById('bestpc').innerText = bestpc+'%';
