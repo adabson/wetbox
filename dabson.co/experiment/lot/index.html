@@ -32,7 +32,7 @@ td:last-child {
 }
 #besttiks{
   width:100%;
-  min-height:200px;
+  min-height:300px;
 }
 </style>
 </head>
@@ -41,8 +41,10 @@ td:last-child {
 // N CHOOSE K ----------------------------------------------------------------------------------------- 
 N = 45;
 K = 6;
-// -------- buy X tickets
-X = 200
+
+// -------- buy X tickets ----------------------------------------------------------------------------------------- 
+X = 500
+state = null;
 
 tiks = [
   [01,02,03,04,05,06]
@@ -166,12 +168,8 @@ blankSlate = [
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 ]; //border of dataset should be all zeros (visually obvious if this cond is broken)
 
-state = null;
-stateCoverage = 0; //number between 0 and 595
-
 function resetState() {
   state = JSON.parse(JSON.stringify(blankSlate));
-  stateCoverage = 0; //max is 
 }
 resetState();
 
@@ -246,23 +244,24 @@ function drawState() { //drawstate or countstate
   }
 }
 
-function countState() {
+function stateCoverage() {
   let ret = 0;
-  for(let i=1;i<(N+2);i++) { //row iterator
-    for(let j=1;j<=i;j++) { //col iterator (init to zero to test lower bound)
+  let k=0;
+  for(let i=1;i<(N+1);i++) { //row iterator
+    for(let j=1;j<i;j++) { //col iterator (init to zero to test lower bound)
       if(state[i][j]>0) ret++;
+      else console.log('NO COVERAGE AT ',i,j,'(',state[i][j],')');
+      //console.log('k',++k);
     }
   }
-  stateCoverage = ret;
+  //console.log('state coverage=',stateCoverage);
   return ret;
 }
 
 function update() { 
   resetState();
   computeState();
-  countState();
 }
-
 update();
 
 bestTiks = [];
@@ -272,18 +271,19 @@ function printBest() {
   console.log(JSON.stringify(bestTiks));
 }
 
-for(let i=0;i<999;i++){
+for(let i=0;i<1;i++){
   quickpickn(X);
   update();
-  if(stateCoverage > bestStateCoverage) { // we have a new beststate 
-    bestStateCoverage = stateCoverage;
+  let sc = stateCoverage();
+  if(sc > bestStateCoverage) { // we have a new beststate 
+    bestStateCoverage =sc;
     bestTiks = tiks;
   }
 }
 tiks=bestTiks;
-bestpc = ((stateCoverage/choose(N,K))*100).toFixed(2);
+bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
+console.log('bestpc', stateCoverage,'/',choose(N,2),'=', ((stateCoverage()/choose(N,2))*100));
 computeState();
-countState();
 drawState();
 
 document.getElementById('bestpc').innerText = bestpc+'%';
