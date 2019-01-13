@@ -49,6 +49,7 @@ button {
   <button onClick="randomAdd()">Add</button>
   <button onClick="resetTiks()">Reset</button>
   <button onClick="loadTiks()">Load</button>
+  <button onClick="randomTryNEvolve(X)">Evolve</button>
   <textarea id="besttiks"></textarea>
 </body>
 <script>
@@ -59,14 +60,14 @@ K = 7;
 // -------- buy X tickets ----------------------------------------------------------------------------------------- 
 state = null;
 X = 15; //30 = $720
-ITER = 500;
+ITER = 1000;
 
-TRY_ITER=100000; //hillclimb iters
+TRY_ITER=10000; //hillclimb iters (100iter, 1M reasonable for hillclimb | 1000x1000 reasonable for evolve)
 // 35c2 = 595
 // 595/7c2 =  595 / 21 = 28.33 = 29 powerhits lower bound for full coverage (29*24 = AU$696)
 
-//non-empty will prevent loading the pre-generation
-tiks = [];
+//non-empty will prevent loading the pre-generation for hillclimber
+tiks = [[3,7,13,15,21,22,28],[5,10,19,24,26,30,34],[8,11,12,17,18,32,35],[2,11,13,14,27,29,30],[7,8,9,20,25,31,34],[1,3,10,16,27,33,35],[4,6,9,19,22,23,33],[4,5,16,17,20,21,25],[1,8,14,21,23,24,27],[1,2,3,4,18,24,26],[12,14,15,19,25,29,31],[1,6,11,15,28,29,34],[4,8,12,13,15,30,33],[9,10,17,18,21,23,29],[2,7,10,13,16,31,32]];
 
 function randomAdd() {
   tiks.push(quickpick());
@@ -177,6 +178,41 @@ function randomTryN(n) {
   }
   let bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
   console.log('randomTryN found',bestpc,'%');
+}
+
+function randomTryNEvolve(n) {
+  if(tiks.length!==X) {
+    tiks = quickpickn(X); //initialize, BE SURE NOT TO change tiks length lol => this doesnt work too well :/
+  }
+
+  //procedure
+
+  //for each rotates --- if we wanna do multiple rotations
+  //for each X
+  //rotate array , pop last element (but keep it as candidate)
+  //for each X, randomTry TRY_ITER times (this is contained in randomTry)
+  //randomTry();
+  //compare results of randomTry to initial, keep best survivor
+
+  for(let i=0;i<X;i++) {
+    tiks.push(tiks.shift()); // rotate array by 1
+    let preBackup = JSON.parse(JSON.stringify(tiks));
+
+    update();
+    let preEvolveCoverage = stateCoverage();
+    let preEvolve = tiks.pop();
+    randomTry(); //includes TRY_ITER loop
+
+    update();
+    let postEvolveCoverage = stateCoverage();
+
+    if( preEvolveCoverage > postEvolveCoverage ) { //revert 
+      //tiks.pop();
+      //tiks.push(preEvolve);
+      tiks = preBackup;
+    }
+  }
+
 }
 
 // Spawn the table
@@ -397,8 +433,9 @@ bestTiks = JSON.parse(JSON.stringify(tiks));
 bestStateCoverage = stateCoverage();
 
 for(let i=0;i<ITER;i++){
-  // just randomly pick 30, no climbing // quickpickn(X);
-  randomTryN(X);
+  // quickpickn(X); // just randomly pick 30, no climbing
+  // randomTryN(X); //hillclimber, but dies each time
+  randomTryNEvolve(X); //hillclimb by mutating each ticket
 
   update();
   let sc = stateCoverage();
