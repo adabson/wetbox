@@ -44,6 +44,7 @@ button {
 <body>
   <div id="bestpc"></div>
   <div>Number of tickets: <span id="ntix"></span></div>
+  <button onClick="randomTry()">Try</button>
   <button onClick="randomAdd()">Add</button>
   <textarea id="besttiks"></textarea>
 </body>
@@ -57,6 +58,7 @@ state = null;
 X = 30; //30 = $720
 ITER = 0;
 
+TRY_ITER=10;
 // 35c2 = 595
 // 595/7c2 =  595 / 21 = 28.33 = 29 powerhits lower bound for full coverage (29*24 = AU$696)
 
@@ -65,6 +67,63 @@ tiks = [
 
 function randomAdd() {
   tiks.push(quickpick());
+  update();
+  drawState();
+
+  let bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
+  document.getElementById('ntix').innerText = tiks.length;
+  document.getElementById('bestpc').innerText = bestpc+'%';
+  document.getElementById('besttiks').value = JSON.stringify(tiks);
+}
+
+function randomTry() {
+  let bestCandidate=[];
+  let bestScore=0;
+  let bestPossibleScore=choose(K,2);
+
+  for(let i=0;i<TRY_ITER;i++){
+    let candidate = quickpick();
+    candidate.sort((a,b)=>b-a); //reverse order lets us index by [1][2] (ie forward-ordered indexing on reverse-ordered ticket)
+    let score = 0;
+    score += state[candidate[0]][candidate[1]] < 1 ? 1 : 0;
+    score += state[candidate[0]][candidate[2]] < 1 ? 1 : 0;
+    score += state[candidate[0]][candidate[3]] < 1 ? 1 : 0;
+    score += state[candidate[0]][candidate[4]] < 1 ? 1 : 0;
+    score += state[candidate[0]][candidate[5]] < 1 ? 1 : 0;
+    score += state[candidate[0]][candidate[6]] < 1 ? 1 : 0;
+
+    score += state[candidate[1]][candidate[2]] < 1 ? 1 : 0;
+    score += state[candidate[1]][candidate[3]] < 1 ? 1 : 0;
+    score += state[candidate[1]][candidate[4]] < 1 ? 1 : 0;
+    score += state[candidate[1]][candidate[5]] < 1 ? 1 : 0;
+    score += state[candidate[1]][candidate[6]] < 1 ? 1 : 0;
+
+    score += state[candidate[2]][candidate[3]] < 1 ? 1 : 0;
+    score += state[candidate[2]][candidate[4]] < 1 ? 1 : 0;
+    score += state[candidate[2]][candidate[5]] < 1 ? 1 : 0;
+    score += state[candidate[2]][candidate[6]] < 1 ? 1 : 0;
+
+    score += state[candidate[3]][candidate[4]] < 1 ? 1 : 0;
+    score += state[candidate[3]][candidate[5]] < 1 ? 1 : 0;
+    score += state[candidate[3]][candidate[6]] < 1 ? 1 : 0;
+
+    score += state[candidate[4]][candidate[5]] < 1 ? 1 : 0;
+    score += state[candidate[4]][candidate[6]] < 1 ? 1 : 0;
+
+    score += state[candidate[5]][candidate[6]] < 1 ? 1 : 0;
+
+    if(score > bestScore) {
+      bestCandidate = candidate;
+      bestScore = score;
+
+      if(score===bestPossibleScore) {
+        break;
+      }
+    }
+  }
+
+  console.log(bestScore);
+  tiks.push(bestCandidate);
   update();
   drawState();
 
