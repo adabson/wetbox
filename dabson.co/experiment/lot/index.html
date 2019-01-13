@@ -34,9 +34,19 @@ td:last-child {
   width:100%;
   min-height:300px;
 }
+button {
+  float:right;
+  width:200px;
+  height:50px;
+}
 </style>
 </head>
-<body><div id="bestpc"></div><textarea id="besttiks"></textarea></body>
+<body>
+  <div id="bestpc"></div>
+  <div>Number of tickets: <span id="ntix"></span></div>
+  <button onClick="randomAdd()">Add</button>
+  <textarea id="besttiks"></textarea>
+</body>
 <script>
 // N CHOOSE K ----------------------------------------------------------------------------------------- 
 N = 35;
@@ -44,15 +54,25 @@ K = 7;
 
 // -------- buy X tickets ----------------------------------------------------------------------------------------- 
 state = null;
-X = 29;
-ITER = 99999;
+X = 30; //30 = $720
+ITER = 0;
 
 // 35c2 = 595
 // 595/7c2 =  595 / 21 = 28.33 = 29 powerhits lower bound for full coverage (29*24 = AU$696)
 
-tiks = [  
-
+tiks = [
 ];
+
+function randomAdd() {
+  tiks.push(quickpick());
+  update();
+  drawState();
+
+  let bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
+  document.getElementById('ntix').innerText = tiks.length;
+  document.getElementById('bestpc').innerText = bestpc+'%';
+  document.getElementById('besttiks').value = JSON.stringify(tiks);
+}
 
 // Spawn the table
 (function proceduallyGenerateTriangle(n) {
@@ -288,6 +308,7 @@ bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
 drawState();
 
 document.getElementById('bestpc').innerText = bestpc+'%';
+document.getElementById('ntix').innerText = bestTiks.length;
 document.getElementById('besttiks').value = JSON.stringify(bestTiks);
 
 
