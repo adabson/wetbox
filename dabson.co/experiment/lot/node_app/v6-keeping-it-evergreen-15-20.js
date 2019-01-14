@@ -155,7 +155,7 @@ for(let i=0;i<ITER;i++) {
         bestTiks = JSON.parse(JSON.stringify(tiks));
         console.log('new best!--------------------------------------');
         let pcCover = (bestCoverage / choose(N,2) * 100 ).toFixed(2);
-        console.log('best: (',bestCoverage,' = '+pcCover+'%)',JSON.stringify(bestTiks));
+        console.log('best: (',bestCoverage,'/',choose(K,2)*X,'/',choose(N,2),' = '+pcCover+'%)',JSON.stringify(bestTiks));
       } else { console.log('iter',i); }
       
       initT(); //reset tiks = JSON.parse(JSON.stringify(blankSlate)); 
