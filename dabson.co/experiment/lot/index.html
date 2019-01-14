@@ -94,7 +94,7 @@ function bufferMutate() {
         let mutantCandidateScore = computePowerCoverage(betterTiks);
 
         if( mutantCandidateScore > preCoverage ) {
-          console.log('found improvement!');
+          console.log('found improvement!', mutantCandidateScore,'>',preCoverage);
           tiks = betterTiks;
           update();
           break;
