@@ -10,20 +10,22 @@ let basePool = [
 
 N = 35;
 K = 7;
-X = 20 //#no. tickets. please make it a factor of five for balanced number spreading.
+X = 16 //#no. tickets. please make it a factor of five for balanced number spreading.
 ITER = 1000000000; //1B
 ITER_RESET_EVERY = 500000; //1M
 ITER_LOG_EVERY = 100000; //100K
 ITER_INIT = 1000;
+FACTOR = basePool.length; //5 for thurs powerhit, 12 for saturday
 
 let blankSlate = [];
-for(let i=0;i<Math.floor(X/5);i+=5) {
-  blankSlate = blankSlate.concat(JSON.parse(JSON.stringify(basePool)));
+for(let i=0;i<X;i++) {
+  blankSlate = blankSlate.concat(JSON.parse(JSON.stringify( [ basePool[i%FACTOR] ])));
 }
 
 tiks = JSON.parse(JSON.stringify(blankSlate));
 
-console.log(tiks);
+console.log(basePool[0]);
+console.log('ze array',tiks);
 
 
 function coverage() {
@@ -125,7 +127,7 @@ function reportCoverage() {
 function initT() {
   tiks = JSON.parse(JSON.stringify(blankSlate)); //if no shuffle, just comment out rest
 
-  // for(let i=0;i<ITER_INIT;i++) {  // doesnt help much
+  // for(let i=0;i<ITER_INIT;i++) {  //doesnt help much
   //   let t = randomTargets();
   //   let safeA = !tiks[t[0][0]].includes(tiks[t[1][0]][t[1][1]]);
   //   let safeB = !tiks[t[1][0]].includes(tiks[t[0][0]][t[0][1]]);
