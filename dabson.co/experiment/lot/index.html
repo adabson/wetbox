@@ -51,7 +51,7 @@ button {
   <button onClick="process()">Big Evolve (broken, should not reduce %)</button>
   <button onClick="processHillclimb()">Big Hillclimb</button>
   <button onClick="randomTryNEvolve(X)">Evolve</button>
-  <button onClick="bufferMutate()">Bufer Mutate</button> <!-- the buffer mutate tries to mutate every number in every ticket, one at a time to try and improve its optimality. Should ideally be used on a cross-polenated-evolution ticket batch. You may also want to consider dual mutations, though this increases from n -> n^2 -->
+  <button onClick="bufferMutate()">Bufer Mutate</button> <!-- the buffer mutate tries to mutate every number in every ticket, one at a time to try and improve its optimality. Should ideally be used on a cross-polenated-evolution ticket batch. You may also want to consider dual mutations, though this increases from n -> n^2. Buffer mutate may do nothing (no feedback). Thats ok, just keep farming. farming. farming. -->
   <textarea id="besttiks"></textarea>
 </body>
 <script>
