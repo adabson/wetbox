@@ -48,9 +48,10 @@ button {
   <button onClick="backTik()">Remove</button>
   <button onClick="resetTiks()">Reset</button>
   <button onClick="loadTiks()">Load</button>
-  <button onClick="process()">Big Process</button>
+  <button onClick="process()">Big Evolve (broken, should not reduce %)</button>
   <button onClick="processHillclimb()">Big Hillclimb</button>
   <button onClick="randomTryNEvolve(X)">Evolve</button>
+  <button onClick="bufferMutate()">Bufer Mutate</button> <!-- the buffer mutate tries to mutate every number in every ticket, one at a time to try and improve its optimality. Should ideally be used on a cross-polenated-evolution ticket batch. You may also want to consider dual mutations, though this increases from n -> n^2 -->
   <textarea id="besttiks"></textarea>
 </body>
 <script>
@@ -62,18 +63,53 @@ K = 7;
 state = null;
 X = 30; //30 = $720
 ITER = 10000;
-
 TRY_ITER=1000; //hillclimb iters (100iter, 1M reasonable for hillclimb | 1000x1000 reasonable for evolve)
+
 // 35c2 = 595
 // 595/7c2 =  595 / 21 = 28.33 = 29 powerhits lower bound for full coverage (29*24 = AU$696)
-
 //non-empty will prevent loading the pre-generation for hillclimber
 tiks = [[3,7,13,15,21,22,28],[5,10,19,24,26,30,34],[8,11,12,17,18,32,35],[2,11,13,14,27,29,30],[7,8,9,20,25,31,34],[1,3,10,16,27,33,35],[4,6,9,19,22,23,33],[4,5,16,17,20,21,25],[1,8,14,21,23,24,27],[1,2,3,4,18,24,26],[12,14,15,19,25,29,31],[1,6,11,15,28,29,34],[4,8,12,13,15,30,33],[9,10,17,18,21,23,29],[2,7,10,13,16,31,32]];
+
+
+function bufferMutate() {
+  //for each ticket
+  //for each number
+  //iterate through all the other non-duplicate numbers 
+  //and check if the score is better. if it is, replace the number ;) (possible alternative: maybe you want to save all the improvements and make more selective mutations?)
+
+  let preState = JSON.parse(JSON.stringify(tiks)); //in case we mess up the algo defn and want a cheap way out
+  let preCoverage = stateCoverage();
+
+  let betterTiks = JSON.parse(JSON.stringify(tiks));
+
+  for(let i=0;i<tiks.length;i++) {
+    let tik = tiks[i];
+    for(let j=0;j<K;j++) { //for each number
+      for( let k=1;k<=N;k++) {
+        if(tik.includes(k)) {
+          continue;
+        } //for each possible number 
+
+        (betterTiks[i])[j] = k;
+        let mutantCandidateScore = computePowerCoverage(betterTiks);
+
+        if( mutantCandidateScore > preCoverage ) {
+          console.log('found improvement!');
+          tiks = betterTiks;
+          update();
+          break;
+        } else { //revert
+          betterTiks = JSON.parse(JSON.stringify(tiks));
+        }
+      }
+    }
+  }
+
+}
 
 function randomAdd() { //add another ticket without hillclimb
   tiks.push(quickpick());
   update();
-  drawState();
 
   let bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
   document.getElementById('ntix').innerText = tiks.length;
@@ -84,7 +120,6 @@ function randomAdd() { //add another ticket without hillclimb
 function loadTiks() {
   tiks=JSON.parse(document.getElementById('besttiks').value);
   update();
-  drawState();
 
   let bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
   document.getElementById('ntix').innerText = tiks.length;
@@ -95,7 +130,6 @@ function loadTiks() {
 function resetTiks() {
   tiks = [];
   update();
-  drawState();
 
   let bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
   document.getElementById('ntix').innerText = tiks.length;
@@ -106,7 +140,6 @@ function resetTiks() {
 function backTik() {
   tiks.pop();
   update();
-  drawState();
 
   let bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
   document.getElementById('ntix').innerText = tiks.length;
@@ -164,7 +197,6 @@ function randomTry() { //add another ticket by randomized hillclimb
     tiks.push(bestCandidate);
   }
   update();
-  drawState();
 
   let bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
   document.getElementById('ntix').innerText = tiks.length;
@@ -204,7 +236,6 @@ function randomTryNEvolve(n) { //conduct an evolution using per-ticket randomize
     let preEvolve = tiks.pop();
     randomTry(); //includes TRY_ITER loop
 
-    update();
     let postEvolveCoverage = stateCoverage();
 
     if( preEvolveCoverage > postEvolveCoverage ) { //revert 
@@ -275,7 +306,7 @@ function quickpick() {
   a = shuffle(a);
   return a.slice(0,K);
 }
-console.log(quickpick());
+//console.log(quickpick());
 
 function quickpickn(n) {
   tiks = [];
@@ -334,6 +365,91 @@ blankSlate = [
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 ]; //border of dataset should be all zeros (visually obvious if this cond is broken)
 
+//add a computeCoverage(tiks) -> that'd be a really handy, modular function!
+
+function computePowerCoverage(someTiks) { // handles a powerhit (..c35) batch of tickets
+  let myState = [
+    [0],
+    [0,0],
+    [0,0,0],
+    [0,0,0,0],
+    [0,0,0,0,0],
+    [0,0,0,0,0,0],
+    [0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+  ];
+
+  for(let i=0;i<someTiks.length;i++) {
+    let tik = someTiks[i];
+    tik.sort((a,b)=>b-a); //reverse
+
+    myState[tik[0]][tik[1]] = 1;
+    myState[tik[0]][tik[2]] = 1;
+    myState[tik[0]][tik[3]] = 1;
+    myState[tik[0]][tik[4]] = 1;
+    myState[tik[0]][tik[5]] = 1;
+    myState[tik[0]][tik[6]] = 1;
+
+    myState[tik[1]][tik[2]] = 1;
+    myState[tik[1]][tik[3]] = 1;
+    myState[tik[1]][tik[4]] = 1;
+    myState[tik[1]][tik[5]] = 1;
+    myState[tik[1]][tik[6]] = 1;
+
+    myState[tik[2]][tik[3]] = 1;
+    myState[tik[2]][tik[4]] = 1;
+    myState[tik[2]][tik[5]] = 1;
+    myState[tik[2]][tik[6]] = 1;
+
+    myState[tik[3]][tik[4]] = 1;
+    myState[tik[3]][tik[5]] = 1;
+    myState[tik[3]][tik[6]] = 1;
+
+    myState[tik[4]][tik[5]] = 1;
+    myState[tik[4]][tik[6]] = 1;
+
+    myState[tik[5]][tik[6]] = 1;
+  }
+
+  let count = 0;
+  for(let i=0;i<myState.length;i++) {
+    let row = myState[i];
+    for(let j=0;j<row.length;j++) {
+      count += row[j];
+    }
+  }
+  return count;
+}
+
+
 function resetState() {
   state = JSON.parse(JSON.stringify(blankSlate));
 }
@@ -387,7 +503,7 @@ function computeState() {
       state[f][d]++;
       state[f][e]++;
 
-      if(g) {
+      if(g) { //to account for the ..C6 saturday lotto
         state[g][a]++;
         state[g][b]++;
         state[g][c]++;
@@ -410,7 +526,10 @@ function drawState() { //drawstate or countstate
   }
 }
 
-function stateCoverage() {
+function stateCoverage(callUp=true) { //this should maybe include an update() function!!!!!!!!!!!!!!
+  if(callUp) {
+    update();
+  }
   let ret = 0;
   let k=0;
   for(let i=1;i<(N+1);i++) { //row iterator
@@ -426,7 +545,14 @@ function stateCoverage() {
 
 function update() { 
   resetState();
-  computeState();
+  computeState();  
+
+  let bestpc = ((stateCoverage(false)/choose(N,2))*100).toFixed(2);
+  document.getElementById('ntix').innerText = tiks.length;
+  document.getElementById('bestpc').innerText = bestpc+'%';
+  document.getElementById('besttiks').value = JSON.stringify(tiks);
+
+  drawState();
 }
 
 function process() {
