@@ -12,12 +12,12 @@ N = 35;
 K = 7;
 X = 20 //#no. tickets. please make it a factor of five for balanced number spreading.
 ITER = 1000000000; //1B
-ITER_RESET_EVERY = 350000; //1M
+ITER_RESET_EVERY = 500000; //1M
 ITER_LOG_EVERY = 100000; //100K
-
+ITER_INIT = 1000;
 
 let blankSlate = [];
-for(let i=0;i<Math.floor(X/5);i++) {
+for(let i=0;i<Math.floor(X/5);i+=5) {
   blankSlate = blankSlate.concat(JSON.parse(JSON.stringify(basePool)));
 }
 
@@ -122,9 +122,25 @@ function reportCoverage() {
   return 'n'+tiks.length+'=',coverN+'/'+choose(N,2),'=',pcCover+'%';
 }
 
+function initT() {
+  tiks = JSON.parse(JSON.stringify(blankSlate)); //if no shuffle, just comment out rest
+
+  for(let i=0;i<ITER_INIT;i++) {	
+	  let t = randomTargets();
+	  let safeA = !tiks[t[0][0]].includes(tiks[t[1][0]][t[1][1]]);
+	  let safeB = !tiks[t[1][0]].includes(tiks[t[0][0]][t[0][1]]);
+	  if(safeA && safeB) {
+	    let swapA = parseInt(tiks[t[0][0]][t[0][1]]);
+	    let swapB = parseInt(tiks[t[1][0]][t[1][1]]);
+	    tiks[t[0][0]][t[0][1]] = swapB;
+	    tiks[t[1][0]][t[1][1]] = swapA;
+	  }	
+  }
+}
+
 console.log(reportCoverage()); // i % 100
 
-let bestTiks = JSON.parse(JSON.stringify(tiks)); //JSON.parse(JSON.stringify(blankSlate))
+let bestTiks = JSON.parse(JSON.stringify(tiks));
 let bestCoverage = coverage();
 
 for(let i=0;i<ITER;i++) {
@@ -139,7 +155,8 @@ for(let i=0;i<ITER;i++) {
         let pcCover = (bestCoverage / choose(N,2) * 100 ).toFixed(2);
         console.log('best: (',bestCoverage,' = '+pcCover+'%)',JSON.stringify(bestTiks));
       } else { console.log('iter',i); }
-      tiks = JSON.parse(JSON.stringify(blankSlate)); //reset
+      
+      initT(); //reset tiks = JSON.parse(JSON.stringify(blankSlate)); 
     }
   }
 
