@@ -8,9 +8,9 @@ let basePool = [
 ];
 
 
-N = 20;
+N = 35;
 K = 7;
-X = 35 //#no. tickets. please make it a factor of five for balanced number spreading.
+X = 20 //#no. tickets. please make it a factor of five for balanced number spreading.
 ITER = 1000000000; //1B
 ITER_RESET_EVERY = 1000000; //1M
 ITER_LOG_EVERY = 100000; //100K
