@@ -12,7 +12,7 @@ N = 35;
 K = 7;
 X = 20 //#no. tickets. please make it a factor of five for balanced number spreading.
 ITER = 1000000000; //1B
-ITER_RESET_EVERY = 1000000; //1M
+ITER_RESET_EVERY = 350000; //1M
 ITER_LOG_EVERY = 100000; //100K
 
 
@@ -130,7 +130,7 @@ let bestCoverage = coverage();
 for(let i=0;i<ITER;i++) {
   //swap 2 random pairs and assess the coverage
   if(i%ITER_LOG_EVERY===0) {
-    //console.log('iter'+i+' @'+reportCoverage());
+    console.log('iter'+i+' @'+reportCoverage());
     if(i%ITER_RESET_EVERY===0) {
       if(coverage() >= bestCoverage) {
         bestCoverage = coverage();
