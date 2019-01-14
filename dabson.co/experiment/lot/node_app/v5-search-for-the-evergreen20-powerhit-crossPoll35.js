@@ -17,7 +17,7 @@ ITER_LOG_EVERY = 100000; //100K
 ITER_INIT = 1000;
 
 let blankSlate = [];
-for(let i=0;i<Math.floor(X/5);i+=5) {
+for(let i=0;i<Math.floor(X/5);i++) {
   blankSlate = blankSlate.concat(JSON.parse(JSON.stringify(basePool)));
 }
 
@@ -153,7 +153,7 @@ for(let i=0;i<ITER;i++) {
         bestTiks = JSON.parse(JSON.stringify(tiks));
         console.log('new best!--------------------------------------');
         let pcCover = (bestCoverage / choose(N,2) * 100 ).toFixed(2);
-        console.log('best: (',bestCoverage,' = '+pcCover+'%)',JSON.stringify(bestTiks));
+        console.log('best: (',bestCoverage,'/',choose(K,2)*X,'/',choose(N,2),' = '+pcCover+'%)',JSON.stringify(bestTiks));
       } else { console.log('iter',i); }
       
       initT(); //reset tiks = JSON.parse(JSON.stringify(blankSlate)); 
