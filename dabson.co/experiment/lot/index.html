@@ -83,7 +83,7 @@ function bufferMutate() {
   let betterTiks = JSON.parse(JSON.stringify(tiks));
 
   for(let i=0;i<tiks.length;i++) {
-    let tik = tiks[i];
+    let tik = betterTiks[i];
     for(let j=0;j<K;j++) { //for each number
       for( let k=1;k<=N;k++) {
         if(tik.includes(k)) {
@@ -95,6 +95,8 @@ function bufferMutate() {
 
         if( mutantCandidateScore > preCoverage ) {
           console.log('found improvement!', mutantCandidateScore,'>',preCoverage);
+          console.log(JSON.stringify(betterTiks));
+
           tiks = betterTiks;
           update();
           break;
