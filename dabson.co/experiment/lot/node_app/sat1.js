@@ -53,10 +53,7 @@ function coverage(tiks) {
 }
 
 console.log('Coverage',coverage(tiks),'/',maxPossible,'/',choose(N,P));
-
-
-
-
+console.log(JSON.stringify(tiks));
 
 
 

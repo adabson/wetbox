@@ -67,17 +67,19 @@ NTIX_EL = document.getElementById("ntix");
 TIKS_EL = document.getElementById("tiks");
 TIKS_EL.addEventListener('keyup', reloadState);
 
-function reloadState(e, manualTiks) {
+function reloadState(manualTiks) { //manualTiks is an event if button pushed
   let tiks;
   if(!document.getElementById(`r${ROWS-1}`)) {
     console.error('Table not yet generated, ignored reload');
     return;
   }
   try {
-    if( manualTiks || manualTiks.length ) {
+    if(manualTiks.target) {
+      tiks = JSON.parse( TIKS_EL.value );
+    } else if( manualTiks.length ) {
       tiks = manualTiks;
     } else {
-      tiks = JSON.parse( e.target.value );e.target.value
+      throw 'Ambiguous parse target.'
     }    
   } catch( ex ) {
     console.log('Incomplete data, ignored reload.')
@@ -160,20 +162,20 @@ function addTik() {
   let tiks=JSON.parse(TIKS_EL.value);
   tiks.push(randomTicket());
   TIKS_EL.value=JSON.stringify(tiks);
-  reloadState(null, tiks);
+  reloadState(tiks);
 }
 
 function randomize() {
   let jsonState = quickpick(INITIAL_N);
   let state = JSON.stringify(jsonState);
   TIKS_EL.value = state;
-  reloadState(null, jsonState);
+  reloadState(jsonState);
 }
 
 function clearState() {
   let tiks = [];
   TIKS_EL.value=JSON.stringify(tiks);
-  reloadState(null, tiks);
+  reloadState(tiks);
 }
 
 function randomTicket() {
