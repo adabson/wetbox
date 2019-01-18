@@ -37,7 +37,11 @@ button{
   <div id="pcc"></div>
   <div>Number of tickets: <span id="ntix"></span></div>
   <div>Saturday lotto, 3pairs. <a href="index-powerball.html">go to powerball</a></div>
+
   <button onclick="addTik();">addTik</button>
+  <button onclick="randomize();">randomize</button>
+  <button onclick="clearState()">clear</button>
+
   <textarea id="tiks"></textarea>
 </body>
 <script>
@@ -47,6 +51,7 @@ P = 3;
 ROWS = 110;
 COLS = 129; //rows * cols should equal NCP
 
+INITIAL_N = 720;
 NCK = choose(N,K);
 NCP = choose(N,P);
 COLOR = [
@@ -69,7 +74,7 @@ function reloadState(e, manualState) {
     return;
   }
   try {
-    if( manualState ) {
+    if( manualState || manualState.length ) {
       tiks = manualState;
     } else {
       tiks = JSON.parse( e.target.value );e.target.value
@@ -132,13 +137,10 @@ function enumerateThreePairs() {
   return [[0,1,2],[0,1,3],[0,1,4],[0,1,5],[0,2,3],[0,2,4],[0,2,5],[0,3,4],[0,3,5],[0,4,5],[1,2,3],[1,2,4],[1,2,5],[1,3,4],[1,3,5],[1,4,5],[2,3,4],[2,3,5],[2,4,5],[3,4,5]];
 }
 
-(function init(n) {
+(function init() {
   proceduallyGenerateRectangle(ROWS, COLS);
-  let jsonState = quickpick(n);
-  let state = JSON.stringify(jsonState);
-  TIKS_EL.value = state;
-  reloadState(null, jsonState);
-})(720);
+  randomize();
+})();
 
 function quickpick(n) {
   let ret = [];
@@ -151,6 +153,19 @@ function quickpick(n) {
 function addTik() {
   let tiks=JSON.parse(TIKS_EL.value);
   tiks.push(randomTicket());
+  TIKS_EL.value=JSON.stringify(tiks);
+  reloadState(null, tiks);
+}
+
+function randomize() {
+  let jsonState = quickpick(INITIAL_N);
+  let state = JSON.stringify(jsonState);
+  TIKS_EL.value = state;
+  reloadState(null, jsonState);
+}
+
+function clearState() {
+  let tiks = [];
   TIKS_EL.value=JSON.stringify(tiks);
   reloadState(null, tiks);
 }
