@@ -10,454 +10,46 @@ html,body{
 }
 table{
   border-collapse:collapse;
+  border:1px solid #000;
 }
 td,th{
-  width:15px;
-  height:15px;
-  border:1px solid #aaa;
-  background-color:#fff;
+  min-width:5px;
+  height:5px;
+  background-color:#ddd;
 }
-tr:last-child, td:first-child{
-  color:#aaa;
-}
-td:last-child {
-  background-color:#aaa;
-  border:none;
-  border-radius:0 15px 0 0;
-}
-#bestpc{
-  font-size:30px;
-  font-weight:bold;
-  padding:10px;
-}
-#besttiks{
-  width:100%;
-  min-height:300px;
-}
-button {
+button{
   float:right;
   width:200px;
   height:50px;
 }
+#tiks{
+  width:100%;
+  min-height:300px;
+}
+#pcc { /*PerCent Coverage*/
+  font-size:30px;
+  font-weight:bold;
+  padding:10px;
+}
 </style>
 </head>
 <body>
-  <div id="bestpc"></div>
+  <div id="pcc"></div>
   <div>Number of tickets: <span id="ntix"></span></div>
-  <button onClick="randomTry()">TryAdd</button>  <!-- you should always use try<button onClick="randomAdd()">Add</button>-->
-  <button onClick="backTik()">Remove</button>
-  <button onClick="resetTiks()">Reset</button>
-  <button onClick="loadTiks()">Load</button>
-  <button onClick="process()">Big Evolve (broken, should not reduce %)</button>
-  <button onClick="processHillclimb()">Big Hillclimb</button>
-  <button onClick="randomTryNEvolve(X)">Evolve</button>
-  <button onClick="bufferMutate()">Buffer Mutate</button> <!-- the buffer mutate tries to mutate every number in every ticket, one at a time to try and improve its optimality. Should ideally be used on a cross-polenated-evolution ticket batch. You may also want to consider dual mutations, though this increases from n -> n^2. Buffer mutate may do nothing (no feedback). Thats ok, just keep farming. farming. farming. -->
-  <textarea id="besttiks"></textarea>
+  <div>Saturday lotto, 3pairs. <a href="index-powerball.html">go to powerball</a></div>
+  <button onclick="addTik();">addTik</button>
+  <textarea id="tiks"></textarea>
 </body>
 <script>
-// N CHOOSE K ----------------------------------------------------------------------------------------- 
-N = 35;
-K = 7;
+N = 45;
+K = 6;
+P = 3;
+ROWS = 110;
+COLS = 129; //rows * cols should equal NCP
 
-// -------- buy X tickets  [GOOD PARAMS: X=15, ITER=1000, TRY_ITER=10000)------------------------------ 
-state = null;
-X = 30; //30 = $720
-ITER = 10000;
-TRY_ITER=1000; //hillclimb iters (100iter, 1M reasonable for hillclimb | 1000x1000 reasonable for evolve)
-
-// 35c2 = 595
-// 595/7c2 =  595 / 21 = 28.33 = 29 powerhits lower bound for full coverage (29*24 = AU$696)
-//non-empty will prevent loading the pre-generation for hillclimber
-tiks = [[3,7,13,15,21,22,28],[5,10,19,24,26,30,34],[8,11,12,17,18,32,35],[2,11,13,14,27,29,30],[7,8,9,20,25,31,34],[1,3,10,16,27,33,35],[4,6,9,19,22,23,33],[4,5,16,17,20,21,25],[1,8,14,21,23,24,27],[1,2,3,4,18,24,26],[12,14,15,19,25,29,31],[1,6,11,15,28,29,34],[4,8,12,13,15,30,33],[9,10,17,18,21,23,29],[2,7,10,13,16,31,32]];
-
-
-function bufferMutate() {
-  //for each ticket
-  //for each number
-  //iterate through all the other non-duplicate numbers 
-  //and check if the score is better. if it is, replace the number ;) (possible alternative: maybe you want to save all the improvements and make more selective mutations?)
-
-  let preState = JSON.parse(JSON.stringify(tiks)); //in case we mess up the algo defn and want a cheap way out
-  let preCoverage = stateCoverage();
-
-  let betterTiks = JSON.parse(JSON.stringify(tiks));
-
-  for(let i=0;i<tiks.length;i++) {
-    let tik = betterTiks[i];
-    for(let j=0;j<K;j++) { //for each number
-      for( let k=1;k<=N;k++) {
-        if(tik.includes(k)) {
-          continue;
-        } //for each possible number 
-
-        (betterTiks[i])[j] = k;
-        let mutantCandidateScore = computePowerCoverage(betterTiks);
-
-        if( mutantCandidateScore > preCoverage ) {
-          console.log('found improvement!', mutantCandidateScore,'>',preCoverage);
-          console.log(JSON.stringify(betterTiks));
-
-          tiks = betterTiks;
-          update();
-          break;
-        } else { //revert
-          betterTiks = JSON.parse(JSON.stringify(tiks));
-        }
-      }
-    }
-  }
-
-}
-
-function randomAdd() { //add another ticket without hillclimb
-  tiks.push(quickpick());
-  update();
-
-  let bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
-  document.getElementById('ntix').innerText = tiks.length;
-  document.getElementById('bestpc').innerText = bestpc+'%';
-  document.getElementById('besttiks').value = JSON.stringify(tiks);
-}
-
-function loadTiks() {
-  tiks=JSON.parse(document.getElementById('besttiks').value);
-  update();
-
-  let bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
-  document.getElementById('ntix').innerText = tiks.length;
-  document.getElementById('bestpc').innerText = bestpc+'%';
-  document.getElementById('besttiks').value = JSON.stringify(tiks);
-}
-
-function resetTiks() {
-  tiks = [];
-  update();
-
-  let bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
-  document.getElementById('ntix').innerText = tiks.length;
-  document.getElementById('bestpc').innerText = bestpc+'%';
-  document.getElementById('besttiks').value = JSON.stringify(tiks);
-}
-
-function backTik() {
-  tiks.pop();
-  update();
-
-  let bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
-  document.getElementById('ntix').innerText = tiks.length;
-  document.getElementById('bestpc').innerText = bestpc+'%';
-  document.getElementById('besttiks').value = JSON.stringify(tiks);
-}
-
-function randomTry() { //add another ticket by randomized hillclimb
-  let bestCandidate=[];
-  let bestScore=0;
-  let bestPossibleScore=choose(K,2);
-
-  for(let i=0;i<TRY_ITER;i++){
-    let candidate = quickpick();
-    candidate.sort((a,b)=>b-a); //reverse order lets us index by [1][2] (ie forward-ordered indexing on reverse-ordered ticket)
-    let score = 0;
-    score += state[candidate[0]][candidate[1]] < 1 ? 1 : 0;
-    score += state[candidate[0]][candidate[2]] < 1 ? 1 : 0;
-    score += state[candidate[0]][candidate[3]] < 1 ? 1 : 0;
-    score += state[candidate[0]][candidate[4]] < 1 ? 1 : 0;
-    score += state[candidate[0]][candidate[5]] < 1 ? 1 : 0;
-    score += state[candidate[0]][candidate[6]] < 1 ? 1 : 0;
-
-    score += state[candidate[1]][candidate[2]] < 1 ? 1 : 0;
-    score += state[candidate[1]][candidate[3]] < 1 ? 1 : 0;
-    score += state[candidate[1]][candidate[4]] < 1 ? 1 : 0;
-    score += state[candidate[1]][candidate[5]] < 1 ? 1 : 0;
-    score += state[candidate[1]][candidate[6]] < 1 ? 1 : 0;
-
-    score += state[candidate[2]][candidate[3]] < 1 ? 1 : 0;
-    score += state[candidate[2]][candidate[4]] < 1 ? 1 : 0;
-    score += state[candidate[2]][candidate[5]] < 1 ? 1 : 0;
-    score += state[candidate[2]][candidate[6]] < 1 ? 1 : 0;
-
-    score += state[candidate[3]][candidate[4]] < 1 ? 1 : 0;
-    score += state[candidate[3]][candidate[5]] < 1 ? 1 : 0;
-    score += state[candidate[3]][candidate[6]] < 1 ? 1 : 0;
-
-    score += state[candidate[4]][candidate[5]] < 1 ? 1 : 0;
-    score += state[candidate[4]][candidate[6]] < 1 ? 1 : 0;
-
-    score += state[candidate[5]][candidate[6]] < 1 ? 1 : 0;
-
-    if(score > bestScore) {
-      bestCandidate = candidate;
-      bestScore = score;
-
-      if(score===bestPossibleScore) {
-        break;
-      }
-    }
-  }
-
-  if(bestCandidate.length!==0) {
-    tiks.push(bestCandidate);
-  }
-  update();
-
-  let bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
-  document.getElementById('ntix').innerText = tiks.length;
-  document.getElementById('bestpc').innerText = bestpc+'%';
-  document.getElementById('besttiks').value = JSON.stringify(tiks);
-}
-
-function randomTryN(n) {
-  tiks = [];
-  for(let i=0;i<n;i++) {
-    randomTry();
-  }
-  let bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
-  //console.log('randomTryN found',bestpc,'%');
-}
-
-function randomTryNEvolve(n) { //conduct an evolution using per-ticket randomized hillclimb, over multiple tickets in the existing space
-  // if(tiks.length!==X) {
-  //   tiks = quickpickn(X); //initialize, BE SURE NOT TO change tiks length lol => this doesnt work too well :/
-  // }
-
-  //procedure
-
-  //for each rotates --- if we wanna do multiple rotations
-  //for each X
-  //rotate array , pop last element (but keep it as candidate)
-  //for each X, randomTry TRY_ITER times (this is contained in randomTry)
-  //randomTry();
-  //compare results of randomTry to initial, keep best survivor
-
-  for(let i=0;i<tiks.length;i++) {
-    tiks.push(tiks.shift()); // rotate array by 1
-    let preBackup = JSON.parse(JSON.stringify(tiks));
-
-    update();
-    let preEvolveCoverage = stateCoverage();
-    let preEvolve = tiks.pop();
-    randomTry(); //includes TRY_ITER loop
-
-    let postEvolveCoverage = stateCoverage();
-
-    if( preEvolveCoverage > postEvolveCoverage ) { //revert 
-      //tiks.pop();
-      //tiks.push(preEvolve);
-      tiks = preBackup;
-    }
-  }
-
-}
-
-// Spawn the table
-(function proceduallyGenerateTriangle(n) {
-  let table = document.createElement("table")
-  table.setAttribute('cellpadding',0);
-  table.setAttribute('cellspacing',0);
-  document.body.prepend(table);
-
-  // Row generation
-  for(let i=0;i<(n+2);i++) {
-    let row = document.createElement("tr");
-    row.setAttribute('id','r'+i)
-    table.appendChild(row);
-
-    //r0 and rn+1 are horizontal label rows 
-    if( i===0 || i===(n+1)) {
-      for(let k=0;k<=(n+1);k++) {
-        let cell = document.createElement("td");
-        row.appendChild(cell);
-        if(k!==0 && k!==(n+1) ) {
-          let labl = document.createTextNode(k.toString().padStart(2,'0'));
-          cell.appendChild(labl);
-        } else if(i===0 && k===(n+1)) {
-          cell.style.backgroundColor ='#fff';
-        }
-      }
-      continue;
-    }
-
-    // Regular column generation
-    for(let j=0;j<=i;j++) { 
-      let cell = document.createElement("td");
-      row.appendChild(cell);
-
-      if(j===0) {
-        let labl = document.createTextNode(i.toString().padStart(2,'0'));
-        cell.appendChild(labl);
-      }
-    }
-  }
-})(N)
-
-
-function shuffle(array) {
-  var currentIndex = array.length, temporaryValue, randomIndex;
-  while (0 !== currentIndex) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-  return array;
-}
-
-function quickpick() {
-  for (var a=[],i=0;i<N;++i) a[i]=i+1;
-  a = shuffle(a);
-  return a.slice(0,K);
-}
-//console.log(quickpick());
-
-function quickpickn(n) {
-  tiks = [];
-  for(let i=0;i<n;i++) {
-    tiks[i] = quickpick();
-  }
-}
-
-blankSlate = [
-  [0],
-  [0,0],
-  [0,0,0],
-  [0,0,0,0],
-  [0,0,0,0,0],
-  [0,0,0,0,0,0],
-  [0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-]; //border of dataset should be all zeros (visually obvious if this cond is broken)
-
-//add a computeCoverage(tiks) -> that'd be a really handy, modular function!
-
-function computePowerCoverage(someTiks) { // handles a powerhit (..c35) batch of tickets
-  let myState = [
-    [0],
-    [0,0],
-    [0,0,0],
-    [0,0,0,0],
-    [0,0,0,0,0],
-    [0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-  ];
-
-  for(let i=0;i<someTiks.length;i++) {
-    let tik = someTiks[i];
-    tik.sort((a,b)=>b-a); //reverse
-
-    myState[tik[0]][tik[1]] = 1;
-    myState[tik[0]][tik[2]] = 1;
-    myState[tik[0]][tik[3]] = 1;
-    myState[tik[0]][tik[4]] = 1;
-    myState[tik[0]][tik[5]] = 1;
-    myState[tik[0]][tik[6]] = 1;
-
-    myState[tik[1]][tik[2]] = 1;
-    myState[tik[1]][tik[3]] = 1;
-    myState[tik[1]][tik[4]] = 1;
-    myState[tik[1]][tik[5]] = 1;
-    myState[tik[1]][tik[6]] = 1;
-
-    myState[tik[2]][tik[3]] = 1;
-    myState[tik[2]][tik[4]] = 1;
-    myState[tik[2]][tik[5]] = 1;
-    myState[tik[2]][tik[6]] = 1;
-
-    myState[tik[3]][tik[4]] = 1;
-    myState[tik[3]][tik[5]] = 1;
-    myState[tik[3]][tik[6]] = 1;
-
-    myState[tik[4]][tik[5]] = 1;
-    myState[tik[4]][tik[6]] = 1;
-
-    myState[tik[5]][tik[6]] = 1;
-  }
-
-  let count = 0;
-  for(let i=0;i<myState.length;i++) {
-    let row = myState[i];
-    for(let j=0;j<row.length;j++) {
-      count += row[j];
-    }
-  }
-  return count;
-}
-
-
-function resetState() {
-  state = JSON.parse(JSON.stringify(blankSlate));
-}
-resetState();
-
-let clashOfColors = [
+NCK = choose(N,K);
+NCP = choose(N,P);
+COLOR = [
   'black',
   '#0f0',
   'yellow',
@@ -465,223 +57,200 @@ let clashOfColors = [
   'red',
 ];
 
-function computeState() {
-  //state = JSON.parse(JSON.stringify(blankSlate)); //force refresh the state
+PCC_EL = document.getElementById("pcc");
+NTIX_EL = document.getElementById("ntix");
+TIKS_EL = document.getElementById("tiks");
+TIKS_EL.addEventListener('keyup', reloadState);
 
-  for(let i=0;i<tiks.length;i++) {
-    let tik = tiks[i];
-    tik.sort((a,b)=>a-b); //By Default it sorts alphabetically, so will return [11,12,8,9], dumb. add lambda to fix
-    // console.log(tik);
+function reloadState(e, manualState) {
+  let tiks;
+  if(!document.getElementById(`r${ROWS-1}`)) {
+    console.error('Table not yet generated, ignored reload');
+    return;
+  }
+  try {
+    if( manualState ) {
+      tiks = manualState;
+    } else {
+      tiks = JSON.parse( e.target.value );e.target.value
+    }    
+  } catch( ex ) {
+    console.log('Incomplete data, ignored reload.')
+    return;
+  }
+  let state = new Array(NCP).fill(0); // compute state, technically nPairs
+  for(let i=0;i<tiks.length;i++) { 
+    let tik = tiks[i].sort((a,b)=>a-b); //a-b is forward sort
+    if(tik.length!==K) {
+      continue;
+    }
 
-    if(tik.length === K) { //tik.length > 1 && tik.length < 8) {
-      let a = tik[0];
-      let b = tik[1];
-      let c = tik[2];
-      let d = tik[3];
-      let e = tik[4];
-      let f = tik[5];
-      let g = tik[6];
+    let ithTriplet = enumerateThreePairs().map( x => { 
+      let pairCombo = [tik[x[0]], tik[x[1]], tik[x[2]]];
+      return inverseIthCombination(N, pairCombo)
+    });
 
-      if(!a || !b || !c || !d || !e || !f) {
-        console.error('UH OH, ZERO TICKET ENTRY')
-      }
+    for(let i=0;i<ithTriplet.length;i++) { //length should always be 6c3 = 20
+      state[ithTriplet[i]]++;
+    }
+  }
 
-      state[b][a]++;
-      state[c][a]++;
-      state[d][a]++;
-      state[e][a]++;
-      state[c][b]++;
-      state[d][b]++;
-
-      state[d][c]++;
-
-      state[e][b]++;
-      state[e][c]++;
-      state[e][d]++;
-
-      state[f][a]++;
-      state[f][b]++;
-      state[f][c]++;
-      state[f][d]++;
-      state[f][e]++;
-
-      if(g) { //to account for the ..C6 saturday lotto
-        state[g][a]++;
-        state[g][b]++;
-        state[g][c]++;
-        state[g][d]++;
-        state[g][e]++;
-        state[g][f]++;
+  //console.log(state);
+  // draw.
+  let covered=0;
+  for(let i=0;i<ROWS;i++) {
+    let rowEl = document.getElementById(`r${i}`);
+    for(let j=0;j<COLS;j++) {
+      let cellEl = rowEl.children[j];
+      let k = i * ROWS + j; // The kth index of our state array
+      let color = COLOR[Math.min(state[k],COLOR.length-1)];
+      cellEl.style.backgroundColor = color;
+      if( state[k] ) {
+        covered++;
       }
     }
   }
 
+  //update texts
+  PCC_EL.innerText = (100 * covered / NCP).toFixed(2)+'%';
+  NTIX_EL.innerText = tiks.length;
 }
 
-function drawState() { //drawstate or countstate
-  for(let i=0;i<(N+2);i++) { //row iterator
-    for(let j=0;j<=i;j++) { //col iterator (init to zero to test lower bound)
-      let val = state[i][j];
-      let cel = document.getElementById(`r${i}`).children[j];
-      cel.style.backgroundColor = clashOfColors[Math.min( val, clashOfColors.length - 1)];
-    }
-  }
+// Consider adding this to npm-wetbox if you can abstract it
+function enumerateThreePairs() {
+  // let ret = [];
+  // let LEN = K;
+  // for(let i=0;i<LEN;i++){
+  //   for(let j=i+1;j<LEN;j++){
+  //     for(let k=j+1;k<LEN;k++){
+  //       ret.push([i,j,k]);
+  //     }
+  //   }
+  // }
+  // return ret;
+  //hardcode. i dont need to loop this every time
+  return [[0,1,2],[0,1,3],[0,1,4],[0,1,5],[0,2,3],[0,2,4],[0,2,5],[0,3,4],[0,3,5],[0,4,5],[1,2,3],[1,2,4],[1,2,5],[1,3,4],[1,3,5],[1,4,5],[2,3,4],[2,3,5],[2,4,5],[3,4,5]];
 }
 
-function stateCoverage(callUp=true) { //this should maybe include an update() function!!!!!!!!!!!!!!
-  if(callUp) {
-    update();
+(function init(n) {
+  proceduallyGenerateRectangle(ROWS, COLS);
+  let jsonState = quickpick(n);
+  let state = JSON.stringify(jsonState);
+  TIKS_EL.value = state;
+  reloadState(null, jsonState);
+})(720);
+
+function quickpick(n) {
+  let ret = [];
+  for(let i=0;i<n;i++) {
+    ret.push(randomTicket());
   }
-  let ret = 0;
-  let k=0;
-  for(let i=1;i<(N+1);i++) { //row iterator
-    for(let j=1;j<i;j++) { //col iterator (init to zero to test lower bound)
-      if(state[i][j]>0) ret++;
-      //else console.log('NO COVERAGE AT ',i,j,'(',state[i][j],')');
-    }
-  }
-  //console.log('state coverage=',stateCoverage);
-  //console.log('',ret,'/',choose(N,2),'=',(100*ret/choose(N,2)).toFixed(2),'%' );
   return ret;
 }
 
-function update() { 
-  resetState();
-  computeState();  
-
-  let bestpc = ((stateCoverage(false)/choose(N,2))*100).toFixed(2);
-  document.getElementById('ntix').innerText = tiks.length;
-  document.getElementById('bestpc').innerText = bestpc+'%';
-  document.getElementById('besttiks').value = JSON.stringify(tiks);
-
-  drawState();
+function addTik() {
+  let tiks=JSON.parse(TIKS_EL.value);
+  tiks.push(randomTicket());
+  TIKS_EL.value=JSON.stringify(tiks);
+  reloadState(null, tiks);
 }
 
-function process() {
-  bestTiks = JSON.parse(JSON.stringify(tiks));
-  bestStateCoverage = stateCoverage();
+function randomTicket() {
+  return ithCombination(N, K, randInt(NCK));
+}
 
-  for(let i=0;i<ITER;i++){
-    // quickpickn(X); // just randomly pick 30, no climbing
-    // randomTryN(X); //hillclimber, but dies each time
-    randomTryNEvolve(X); //hillclimb by mutating each ticket ::: does not grow tiks size
+// Spawn the table
+function proceduallyGenerateRectangle(rows, cols) {
+  let table = document.createElement("table")
+  table.setAttribute('cellpadding',0);
+  table.setAttribute('cellspacing',0);
+  document.body.prepend(table);
 
-    update();
-    let sc = stateCoverage();
-    if(sc > bestStateCoverage) { // we have a new beststate 
-      console.log(stateCoverage(),'is better than',bestStateCoverage,'?');
-      console.log(JSON.stringify(tiks))
-      bestStateCoverage = sc;
-      bestTiks = JSON.parse(JSON.stringify(tiks)); //deep copy
+  // Row generation
+  for(let i=0;i<ROWS;i++) {
+    let row = document.createElement("tr");
+    row.setAttribute('id','r'+i)
+    table.appendChild(row);
+
+    // Col generation
+    for(let j=0;j<COLS;j++) { 
+      let cell = document.createElement("td");
+      row.appendChild(cell);
     }
   }
-
-  console.log('-------best');
-  tiks=JSON.parse(JSON.stringify(bestTiks));
-  update();
-  bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
-  drawState();
-
-  document.getElementById('bestpc').innerText = bestpc+'%';
-  document.getElementById('ntix').innerText = bestTiks.length;
-  document.getElementById('besttiks').value = JSON.stringify(bestTiks);
-
-  console.log('--- finished big process evolve');
-}
-//process();
-
-
-function processHillclimb() {
-  bestTiks = JSON.parse(JSON.stringify(tiks));
-  bestStateCoverage = stateCoverage();
-
-  for(let i=0;i<ITER;i++){
-    // quickpickn(X); // just randomly pick 30, no climbing
-    randomTryN(X); //hillclimber, but dies each time
-    //randomTryNEvolve(X); //hillclimb by mutating each ticket ::: does not grow tiks size
-
-    update();
-    let sc = stateCoverage();
-    if(sc > bestStateCoverage) { // we have a new beststate 
-      console.log(stateCoverage(),'is better than',bestStateCoverage,'?');
-      console.log(JSON.stringify(tiks))
-      bestStateCoverage = sc;
-      bestTiks = JSON.parse(JSON.stringify(tiks)); //deep copy
-    }
-  }
-
-  console.log('-------best');
-  tiks=JSON.parse(JSON.stringify(bestTiks));
-  update();
-  bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
-  drawState();
-
-  document.getElementById('bestpc').innerText = bestpc+'%';
-  document.getElementById('ntix').innerText = bestTiks.length;
-  document.getElementById('besttiks').value = JSON.stringify(bestTiks);
-
-  console.log('--- finished big hillclimb');
 }
 
-update();
-drawState();
-let bestpc = ((stateCoverage()/choose(N,2))*100).toFixed(2);
-document.getElementById('bestpc').innerText = bestpc+'%';
-document.getElementById('ntix').innerText = tiks.length;
-document.getElementById('besttiks').value = JSON.stringify(tiks);
-
-//this time its 45 Choose 6 = 45/6*44/5*43/4*42/3*41/2*40/1 = 8 145 060
-function choose(n, k) {
+function choose( n, k ) { // n & k are part of the mathematical choose() function
   let ret = 1;
+  if( k===0 || k===n ) {
+    return 1;
+  } else if( k===1 ) {
+    return n;
+  } else if( k<0 || k>n) {
+    return 0;
+  } else if( k > n/2 ) {
+    k = n - k;
+  }
   for(let i=1;i<=k;i++){
-    ret*=(n-k+i)/i;
+    ret *= ( n - k + i ) / i;
+  }
+  return Math.round( ret );
+}
+
+function randInt( n ) {
+  return Math.floor( Math.random() * n );
+}
+
+function hasDuplicates ( array ) {
+  return ( new Set( array) ).size !== array.length;
+}
+
+function sequence( n ) {
+  return Array.from( {length: n}, (x, y) => y );
+}
+
+function ithCombination( n, k, i ) { // i is ith iteration 0 <= i < nCk
+  let arr;
+  if( n.constructor === Array ) {
+    arr = n;
+  } else {
+    let limit = choose(n,k);
+    if(i >= limit) {
+      throw `i must be below nCk (${limit})!`;
+    }
+    arr = sequence(n);
+  }
+  if( k === 0 ) {
+    return [];
+  } else if( arr.length === k ) {
+    return arr;
+  } else {
+    let remainingSlots = choose(arr.length-1, k-1);
+    if( i < remainingSlots ) {
+      return [arr[0]].concat( ithCombination(arr.slice(1), k-1, i) );
+    } 
+    return ithCombination(arr.slice(1), k, i-remainingSlots);
+  }
+}
+
+function inverseIthCombination( n, combinationArray ) { // returns a 0-indexed iteration 0<=i<n array
+  let k = combinationArray.length;
+  let position = Array.from(combinationArray, x => sequence(n).indexOf(x));
+  if( position.includes(-1)) {
+    throw `Error: combinationArray must contain elements in range 0 <= x < ${n}.`;
+  }
+  if( hasDuplicates(position)) {
+    throw 'Error: combinationArray is a combination and should not contain duplicates.'
+  }
+  position.sort((a,b)=>a-b);
+  let ret = 0;
+
+  for(let i=0;i<position.length;i++) {
+    let last = i===0 ? 0 : position[i-1]+1;
+    add = choose(n-last, k-i) - choose(n-position[i], k-i);
+    ret += add;
   }
   return ret;
 }
-
-/*
-66 tickets is absolute minimum lower bound for sat aka 6C2/45C2 = 15/990 = 66
-29 tiks is the absolute min lower bound for thursday powerhit aka 7C2/35C2 = 21/595 = ciel(28.33) = 29
-
-30 powerhits --
-  88.07 (evo hillclimb)
-  [[1,3,5,6,12,16,19],[1,2,4,7,9,15,32],[8,11,12,17,18,32,35],[2,5,19,20,24,30,35],[2,6,13,17,22,27,30],[7,21,27,30,31,32,34],[12,14,15,18,25,29,30],[1,4,14,17,21,28,33],[16,18,21,24,25,27,33],[5,7,9,13,18,19,28],[5,14,19,22,25,31,32],[2,12,20,23,28,32,33],[6,10,11,15,24,28,31],[4,5,11,19,23,27,29],[5,8,10,25,26,28,30],[9,16,17,26,29,31,35],[8,15,19,21,22,26,33],[7,8,13,14,16,23,24],[2,8,9,15,20,27,34],[3,9,11,21,23,30,33],[10,11,14,16,20,26,34],[3,15,17,23,25,34,35],[6,10,13,21,29,33,35],[4,6,13,18,20,25,31],[1,3,7,8,20,22,29],[3,13,24,26,29,32,34],[3,4,10,14,27,28,35],[4,12,16,22,24,30,34],[1,12,18,23,26,31,34],[6,9,10,14,18,22,23]]
-
-  89.75 (big random, no evo)
-  [[4,14,16,18,21,24,26],[1,6,8,19,20,23,30],[5,14,15,27,29,32,35],[8,10,11,17,18,25,29],[3,6,9,24,27,28,31],[7,12,13,26,28,30,33],[13,16,19,22,29,31,34],[1,2,9,11,13,15,21],[2,4,5,6,17,22,33],[3,4,12,15,23,25,34],[2,3,7,10,16,20,32],[9,14,20,25,33,34,35],[10,12,17,19,21,27,35],[5,7,11,22,23,24,35],[5,21,25,28,30,32,34],[1,5,9,12,18,22,32],[1,10,14,17,23,26,31],[2,8,24,25,26,27,34],[4,8,11,19,31,32,33],[8,9,15,16,17,28,30],[1,2,4,28,29,30,35],[6,7,15,18,20,21,31],[3,10,11,14,22,28,30],[3,18,21,23,27,29,33],[3,5,8,13,20,26,35],[6,11,12,16,20,27,29],[6,10,13,17,24,32,34],[7,9,15,19,24,26,29],[1,4,7,13,16,25,27],[2,13,14,18,19,23,28]]
-
-
-15 powerhit record (50%+ :: $360, 52.94% coverage theoretical limit) ---
-
-51.76%
-  [[1,3,5,7,33,34,35],[1,2,11,13,14,22,28],[3,4,15,19,20,24,32],[8,18,20,25,26,30,33],[6,7,9,23,25,27,31],[5,13,17,18,19,29,31],[2,10,12,15,30,31,35],[4,9,10,14,21,29,33],[12,13,16,20,21,23,34],[9,16,17,24,26,28,35],[5,6,8,10,11,16,32],[4,17,22,27,30,32,34],[3,6,8,12,22,26,29],[7,11,15,18,21,22,24],[1,2,8,19,21,26,27]]
-51.76%
-  [[8,9,12,16,17,25,35],[2,12,15,22,26,27,31],[6,9,13,21,22,24,29],[1,7,18,19,28,31,34],[2,3,6,19,23,25,32],[10,12,13,14,18,30,32],[1,4,11,15,20,24,25],[8,11,21,23,26,30,34],[3,14,27,29,33,34,35],[2,5,17,18,20,21,33],[4,5,7,9,11,27,32],[5,10,16,20,23,29,31],[3,4,13,16,17,26,28],[6,7,8,10,15,17,33],[5,19,22,24,28,30,35]]
-51.93%
-  [[1,2,9,18,21,31,35],[1,5,8,20,24,26,28],[9,10,12,15,20,22,30],[1,10,11,14,27,29,33],[6,8,11,13,17,22,31],[7,12,26,27,31,32,34],[3,7,14,17,20,21,23],[4,10,17,19,25,34,35],[2,3,16,22,24,25,27],[3,5,13,30,32,33,35],[4,6,15,16,23,26,33],[5,7,8,16,18,19,29],[4,14,18,24,28,30,34],[6,12,21,24,25,28,29],[2,11,15,19,23,28,32]]
-
-52.27% USING EVOLUTIONARY ALGO!!! YEAH BABY!
-  [[5,6,7,10,13,23,29],[1,2,3,4,29,32,35],[3,5,15,19,20,21,33],[10,15,24,25,26,34,35],[2,8,10,12,17,19,30],[7,14,18,19,27,28,35],[2,13,14,15,16,22,26],[3,6,9,14,17,25,30],[1,8,14,21,23,24,27],[18,20,23,26,30,31,32],[1,7,17,22,31,33,34],[5,8,11,16,28,32,34],[9,12,16,18,24,29,33],[4,9,10,11,20,22,27],[6,11,12,13,21,31,35]]
-
-52.27%
-  [[1,4,6,17,23,33,34],[6,18,21,24,26,29,35],[19,21,22,23,28,30,31],[1,2,4,5,13,21,32],[3,10,14,17,19,32,35],[3,5,7,8,28,29,34],[3,4,12,16,18,25,30],[2,11,16,19,25,26,34],[8,12,13,14,26,31,33],[9,11,27,29,30,32,33],[4,7,9,10,15,24,31],[1,14,20,24,25,27,28],[13,15,16,17,22,25,29],[5,11,12,15,20,23,35],[2,3,6,8,9,20,22]]
-
-38 record --
-  95.46 ()
-  [[4,8,14,15,21,28,31],[5,15,16,19,20,27,33],[7,18,25,30,32,33,35],[4,6,10,22,27,29,34],[12,13,16,17,29,31,35],[2,5,10,11,17,24,32],[9,11,20,21,23,30,34],[1,3,6,11,16,25,28],[1,2,3,8,9,22,33],[1,3,13,15,18,24,26],[6,8,17,19,21,26,32],[1,5,7,10,12,14,21],[2,7,13,23,24,28,34],[9,12,18,23,27,28,32],[3,4,5,8,23,34,35],[3,7,8,10,20,25,29],[11,13,14,19,22,23,29],[6,14,20,24,31,32,35],[7,9,15,17,22,25,26],[4,12,24,25,26,31,33],[2,6,12,15,29,30,31],[16,18,21,22,24,29,30],[1,4,17,20,28,29,32],[9,14,19,24,25,27,30],[2,4,5,6,13,18,19],[1,10,11,19,27,28,35],[1,10,17,18,23,31,34],[8,9,10,13,27,30,33],[3,5,22,26,28,30,32],[2,9,16,21,26,27,35],[8,10,11,15,16,23,26],[6,13,20,21,23,25,33],[3,5,9,12,20,22,31],[4,7,11,14,19,31,32],[2,12,14,19,26,29,34],[5,14,17,18,25,29,33],[3,8,11,17,18,27,31],[4,7,9,14,16,33,34]]
-
-RECORD FOR 100% coverage (lower is better)
-39tiks,99.83% (i rekon you can plug the single remainder manually)
-  [[4,14,16,18,21,24,26],[1,6,8,19,20,23,30],[5,14,15,27,29,32,35],[8,10,11,17,18,25,29],[3,6,9,24,27,28,31],[7,12,13,26,28,30,33],[13,16,19,22,29,31,34],[1,2,9,11,13,15,21],[2,4,5,6,17,22,33],[3,4,12,15,23,25,34],[2,3,7,10,16,20,32],[9,14,20,25,33,34,35],[10,12,17,19,21,27,35],[5,7,11,22,23,24,35],[5,21,25,28,30,32,34],[1,5,9,12,18,22,32],[1,10,14,17,23,26,31],[2,8,24,25,26,27,34],[4,8,11,19,31,32,33],[8,9,15,16,17,28,30],[1,2,4,28,29,30,35],[6,7,15,18,20,21,31],[3,10,11,14,22,28,30],[3,18,21,23,27,29,33],[3,5,8,13,20,26,35],[6,11,12,16,20,27,29],[6,10,13,17,24,32,34],[7,9,15,19,24,26,29],[1,4,7,13,22,25,27],[2,13,14,18,19,23,28],[5,6,16,19,25,31,35],[7,8,12,14,24,30,31],[1,10,15,16,24,33,34],[4,8,9,10,20,21,22],[3,7,17,18,19,34,35],[6,11,14,16,23,26,32],[17,18,20,24,27,28,30],[2,12,15,18,22,26,31],[1,3,5,9,10,21,23]]
-
-HIGHEST EVERGREEN (single paired) ------------------------
-(11) 38.82%
-  [[2,3,5,9,10,28,34],[7,8,9,16,19,22,32],[4,18,20,21,23,32,34],[1,5,12,18,24,26,29],[8,10,14,20,26,30,33],[4,5,15,25,30,31,35],[6,10,11,17,22,29,31],[6,9,12,13,14,15,23],[1,2,11,21,25,27,33],[3,13,16,17,20,24,25],[7,17,23,26,27,28,35]]
-
--------
-
-[[1,2,3,4,5,6,7],[7,8,9,10,11,12,13],[13,14,15,16,17,18,19],[19,20,21,22,23,24,25],[25,26,27,28,29,30,31]]
-*/ 
-
 </script>
 </html>
