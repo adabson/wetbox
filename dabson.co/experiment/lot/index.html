@@ -15,7 +15,7 @@ table{
 td,th{
   min-width:5px;
   height:5px;
-  background-color:#ddd;
+  background-color:#000;
 }
 button{
   float:right;
@@ -109,7 +109,7 @@ function draw(state) {
     let rowEl = document.getElementById(`r${i}`);
     for(let j=0;j<COLS;j++) {
       let cellEl = rowEl.children[j];
-      let k = i * ROWS + j; // The kth index of our state array
+      let k = i * (ROWS-1) + j; // The kth index of our state array
       let color = COLOR[Math.min(state[k],COLOR.length-1)];
       cellEl.style.backgroundColor = color;
       if( state[k] ) {
@@ -121,6 +121,10 @@ function draw(state) {
   //update texts
   PCC_EL.innerText = (100 * covered / NCP).toFixed(2)+'%';
   NTIX_EL.innerText = tiks.length;
+}
+//for testing, draw(point(128));
+function point(n) { 
+  return (new Array(n)).fill(0).concat(1);
 }
 
 // Consider adding this to npm-wetbox if you can abstract it
@@ -141,7 +145,6 @@ function enumerateThreePairs() {
 
 (function init() {
   proceduallyGenerateRectangle(ROWS, COLS);
-  randomize();
 })();
 
 function quickpick(n) {
