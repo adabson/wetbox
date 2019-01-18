@@ -67,15 +67,15 @@ NTIX_EL = document.getElementById("ntix");
 TIKS_EL = document.getElementById("tiks");
 TIKS_EL.addEventListener('keyup', reloadState);
 
-function reloadState(e, manualState) {
+function reloadState(e, manualTiks) {
   let tiks;
   if(!document.getElementById(`r${ROWS-1}`)) {
     console.error('Table not yet generated, ignored reload');
     return;
   }
   try {
-    if( manualState || manualState.length ) {
-      tiks = manualState;
+    if( manualTiks || manualTiks.length ) {
+      tiks = manualTiks;
     } else {
       tiks = JSON.parse( e.target.value );e.target.value
     }    
@@ -100,8 +100,10 @@ function reloadState(e, manualState) {
     }
   }
 
-  //console.log(state);
-  // draw.
+  draw(state);
+}
+
+function draw(state) {
   let covered=0;
   for(let i=0;i<ROWS;i++) {
     let rowEl = document.getElementById(`r${i}`);
