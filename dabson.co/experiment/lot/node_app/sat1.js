@@ -20,13 +20,14 @@ let basePool = [
 N = 45;
 K = 6;
 P = 3;
-M = 48; // multiplier. (45*2)/2 = 15 (flattest distribution), 15*48=720 (basepool.length)
+M = 10; //48; // multiplier. (45*2)/2 = 15 (flattest distribution), 15*48=720 (basepool.length)
 
 let blankSlate = [];
-for(let i=0;i<48;i++) { 
+for(let i=0;i<M;i++) { 
   blankSlate = blankSlate.concat(JSON.parse(JSON.stringify(basePool)));
 }
-tiks = JSON.parse(JSON.stringify(blankSlate));
+tiks = JSON.parse(JSON.stringify(blankSlate)); //deep copy initialize
+maxPossible = blankSlate.length * choose(K, P); //given 15*M tickets and 20 3-pairings per ticket
 
 
 
@@ -51,7 +52,7 @@ function coverage(tiks) {
   return state.filter(Boolean).length; //count
 }
 
-console.log('Coverage',coverage(tiks),'/',tiks.length*choose(K,P),'/',choose(N,P));
+console.log('Coverage',coverage(tiks),'/',maxPossible,'/',choose(N,P));
 
 
 
