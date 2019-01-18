@@ -105,16 +105,17 @@ function reloadState(e, manualTiks) {
 
 function draw(state) {
   let covered=0;
-  for(let i=0;i<ROWS;i++) {
+  let k = 0;
+  for(let i=0;i<ROWS && k<state.length;i++) {
     let rowEl = document.getElementById(`r${i}`);
-    for(let j=0;j<COLS;j++) {
+    for(let j=0;j<COLS && k<state.length;j++) {
       let cellEl = rowEl.children[j];
-      let k = i * (ROWS-1) + j; // The kth index of our state array
       let color = COLOR[Math.min(state[k],COLOR.length-1)];
       cellEl.style.backgroundColor = color;
       if( state[k] ) {
         covered++;
       }
+      k++;
     }
   }
 

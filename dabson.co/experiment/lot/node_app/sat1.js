@@ -30,3 +30,4 @@ for(let i=0;i<48;i++) {
 //genetic algo approach again :)
 
 tiks = JSON.parse(JSON.stringify(blankSlate));
+let state = new Array(14190).fill(0);
