@@ -21,12 +21,14 @@ N = 45;
 K = 6;
 P = 3;
 M = 10; //48; // multiplier. (45*2)/2 = 15 (flattest distribution), 15*48=720 (basepool.length)
+//X = M * basePool.length; //total no tickets
 
 let blankSlate = [];
 for(let i=0;i<M;i++) { 
   blankSlate = blankSlate.concat(JSON.parse(JSON.stringify(basePool)));
 }
 tiks = JSON.parse(JSON.stringify(blankSlate)); //deep copy initialize
+X = tiks.length;
 maxPossible = blankSlate.length * choose(K, P); //given 15*M tickets and 20 3-pairings per ticket
 
 
@@ -59,6 +61,51 @@ console.log(JSON.stringify(tiks));
 
 
 
+ITER = 10;
+ITER_RESET_EVERY=5
+let bestTiks = JSON.parse(JSON.stringify(tiks)); //JSON.parse(JSON.stringify(blankSlate))
+let bestCoverage = coverage(tiks);
+
+for(let i=0;i<ITER;i++) {
+  //swap 2 random pairs and assess the coverage
+
+	//console.log('iter'+i+' @'+reportCoverage());
+	if(i%ITER_RESET_EVERY===0) {
+	  if(coverage(tiks) >= bestCoverage) {
+	    bestCoverage = coverage(tiks);
+	    bestTiks = JSON.parse(JSON.stringify(tiks));
+	    console.log('new best!--------------------------------------');
+	    let pcCover = (bestCoverage / choose(N,2) * 100 ).toFixed(2);
+	    console.log('best: (',bestCoverage,' = '+pcCover+'%)',JSON.stringify(bestTiks));
+	  } else { console.log('iter',i); }
+	  tiks = JSON.parse(JSON.stringify(blankSlate)); //reset
+	}
+
+  let t = randomTwoTargets();
+  let safeA = !tiks[t[0][0]].includes(tiks[t[1][0]][t[1][1]]);
+  let safeB = !tiks[t[1][0]].includes(tiks[t[0][0]][t[0][1]]);
+  if(safeA && safeB) {
+    // console.log('ok to swap');
+    let preCoverage = coverage(tiks);
+    let preState = JSON.stringify(tiks);
+
+    let swapA = parseInt(tiks[t[0][0]][t[0][1]]);
+    let swapB = parseInt(tiks[t[1][0]][t[1][1]]);
+
+    tiks[t[0][0]][t[0][1]] = swapB;
+    tiks[t[1][0]][t[1][1]] = swapA;
+    let postCoverage = coverage(tiks);
+
+    if( preCoverage > postCoverage ) { //revert
+      tiks = JSON.parse(preState);
+      let postRevertCoverage = coverage(tiks);
+      if(preCoverage!==postRevertCoverage) {
+        console.log('BROKEN REVERSION: is',preCoverage,'=',postRevertCoverage,'?');
+        console.log(preState==JSON.stringify(tiks));
+      }
+    }
+  }
+}
 
 
 
@@ -66,16 +113,23 @@ console.log(JSON.stringify(tiks));
 
 
 
+function randomTwoTargets() {
+  let i = Math.floor(Math.random() * X);
+  let k = i;
+  while(k===i) {
+    k = Math.floor(Math.random() * X);
+  }
+
+  let j = Math.floor(Math.random() * K);
+  let l = Math.floor(Math.random() * K);
+
+  return [[i,j],[k,l]];
+}
 
 
 
 
-
-
-
-
-
-
+//----------------------------------
 
 function choose( n, k ) { // n & k are part of the mathematical choose() function
   let ret = 1;
