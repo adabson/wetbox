@@ -56,8 +56,8 @@ function coverage(tiks) {
   return state.filter(Boolean).length; //count
 }
 
-console.log('Coverage',coverage(tiks),'/',maxPossible,'/',choose(N,P));
-console.log(JSON.stringify(tiks));
+// console.log('Coverage',coverage(tiks),'/',maxPossible,'/',choose(N,P));
+// console.log(JSON.stringify(tiks));
 
 ITER = 12001;
 ITER_LOG_EVERY=100;
@@ -70,7 +70,7 @@ for(let i=0;i<ITER;i++) {
 	//console.log('iter'+i+' @'+reportCoverage());
 
 	if(i%ITER_LOG_EVERY===0) {
-		console.log('iter'+i,'best',bestCoverage);
+		console.log('iter'+i,'current',coverage(tiks));
 	}
 
 	if(i%ITER_RESET_EVERY===0) {
