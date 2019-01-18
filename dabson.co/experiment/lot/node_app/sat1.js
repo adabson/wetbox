@@ -75,8 +75,9 @@ for(let i=0;i<ITER;i++) {
 	    bestCoverage = coverage(tiks);
 	    bestTiks = JSON.parse(JSON.stringify(tiks));
 	    console.log('new best!------------------',bestCoverage,'/',maxPossible);
-	    let pcCover = (bestCoverage / maxPossible * 100 ).toFixed(2);
-	    console.log('best: (',bestCoverage,' = '+pcCover+'%)',JSON.stringify(bestTiks));
+	    let localCover = (bestCoverage / choose(N, P) * 100 ).toFixed(2);
+	    let pcCover = (bestCoverage / choose(N, P) * 100 ).toFixed(2);
+	    console.log('best: (',bestCoverage,' = '+localCover+'%, total: '+pcCover+'%)',JSON.stringify(bestTiks));
 	  } else { console.log('iter',i); }
 	  tiks = JSON.parse(JSON.stringify(blankSlate)); //reset
 	}

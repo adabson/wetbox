@@ -102,10 +102,10 @@ function reloadState(manualTiks) { //manualTiks is an event if button pushed
     }
   }
 
-  draw(state);
+  draw(state, tiks.length);
 }
 
-function draw(state) {
+function draw(state, nTiks) {
   let covered=0;
   let k = 0;
   for(let i=0;i<ROWS && k<state.length;i++) {
@@ -122,8 +122,8 @@ function draw(state) {
   }
 
   //update texts
-  PCC_EL.innerText = (100 * covered / NCP).toFixed(2)+'%';
-  NTIX_EL.innerText = tiks.length;
+  PCC_EL.innerText = (100 * covered / NCP).toFixed(2)+'% '+covered+' / '+(nTiks*choose(K,3))+' / '+NCP;
+  NTIX_EL.innerText = nTiks.toString();
 }
 //for testing, draw(point(128));
 function point(n) { 
