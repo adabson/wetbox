@@ -61,8 +61,8 @@ console.log(JSON.stringify(tiks));
 
 
 
-ITER = 10;
-ITER_RESET_EVERY=5
+ITER = 1000;
+ITER_RESET_EVERY=100
 let bestTiks = JSON.parse(JSON.stringify(tiks)); //JSON.parse(JSON.stringify(blankSlate))
 let bestCoverage = coverage(tiks);
 
