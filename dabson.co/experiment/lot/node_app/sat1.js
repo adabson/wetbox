@@ -59,14 +59,20 @@ function coverage(tiks) {
 console.log('Coverage',coverage(tiks),'/',maxPossible,'/',choose(N,P));
 console.log(JSON.stringify(tiks));
 
-ITER = 10000;
-ITER_RESET_EVERY=1000
+ITER = 12001;
+ITER_LOG_EVERY=100;
+ITER_RESET_EVERY=4000;
 let bestTiks = JSON.parse(JSON.stringify(tiks)); //JSON.parse(JSON.stringify(blankSlate))
 let bestCoverage = coverage(tiks);
 
 for(let i=0;i<ITER;i++) {
   //swap 2 random pairs and assess the coverage
 	//console.log('iter'+i+' @'+reportCoverage());
+
+	if(i%ITER_LOG_EVERY===0) {
+		console.log('iter'+i,'best',bestCoverage);
+	}
+
 	if(i%ITER_RESET_EVERY===0) {
 	  if(coverage(tiks) >= bestCoverage) {
 	    bestCoverage = coverage(tiks);
@@ -74,7 +80,7 @@ for(let i=0;i<ITER;i++) {
 	    console.log('new best!------------------',bestCoverage,'/',maxPossible);
 	    let localCover = (bestCoverage / maxPossible * 100 ).toFixed(2);
 	    let pcCover = (bestCoverage / choose(N, P) * 100 ).toFixed(2);
-	    console.log('\n'+bestCoverage+' best = '+localCover+'% ('+tiks.length+' tickets), total: '+pcCover+'%)');
+	    console.log('\n'+bestCoverage+' best /',maxPossible,'/',choose(N,P),'= '+localCover+'% ('+tiks.length+' tickets), total: '+pcCover+'%)');
 	    console.log("  "+JSON.stringify(bestTiks)+"\n");
 	  } else { console.log('iter',i); }
 	  tiks = JSON.parse(JSON.stringify(blankSlate)); //reset
