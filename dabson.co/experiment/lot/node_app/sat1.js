@@ -22,6 +22,8 @@ K = 6;
 P = 3;
 M = 10; //48; // multiplier. (45*2)/2 = 15 (flattest distribution), 15*48=720 (basepool.length)
 //X = M * basePool.length; //total no tickets
+//bought in batches of 7, LCM is 105 (M=7)
+
 
 let blankSlate = [];
 for(let i=0;i<M;i++) { 
@@ -57,10 +59,6 @@ function coverage(tiks) {
 console.log('Coverage',coverage(tiks),'/',maxPossible,'/',choose(N,P));
 console.log(JSON.stringify(tiks));
 
-
-
-
-
 ITER = 10000;
 ITER_RESET_EVERY=1000
 let bestTiks = JSON.parse(JSON.stringify(tiks)); //JSON.parse(JSON.stringify(blankSlate))
@@ -68,16 +66,16 @@ let bestCoverage = coverage(tiks);
 
 for(let i=0;i<ITER;i++) {
   //swap 2 random pairs and assess the coverage
-
 	//console.log('iter'+i+' @'+reportCoverage());
 	if(i%ITER_RESET_EVERY===0) {
 	  if(coverage(tiks) >= bestCoverage) {
 	    bestCoverage = coverage(tiks);
 	    bestTiks = JSON.parse(JSON.stringify(tiks));
 	    console.log('new best!------------------',bestCoverage,'/',maxPossible);
-	    let localCover = (bestCoverage / choose(N, P) * 100 ).toFixed(2);
+	    let localCover = (bestCoverage / maxPossible * 100 ).toFixed(2);
 	    let pcCover = (bestCoverage / choose(N, P) * 100 ).toFixed(2);
-	    console.log('best: (',bestCoverage,' = '+localCover+'%, total: '+pcCover+'%)',JSON.stringify(bestTiks));
+	    console.log('\nbest: (',bestCoverage,'= '+localCover+'% ('+tiks.length+' tickets), total: '+pcCover+'%)');
+	    console.log("  "+JSON.stringify(bestTiks)+"\n");
 	  } else { console.log('iter',i); }
 	  tiks = JSON.parse(JSON.stringify(blankSlate)); //reset
 	}
