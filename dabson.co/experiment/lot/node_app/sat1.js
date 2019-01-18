@@ -61,8 +61,8 @@ console.log(JSON.stringify(tiks));
 
 
 
-ITER = 1000;
-ITER_RESET_EVERY=100
+ITER = 10000;
+ITER_RESET_EVERY=1000
 let bestTiks = JSON.parse(JSON.stringify(tiks)); //JSON.parse(JSON.stringify(blankSlate))
 let bestCoverage = coverage(tiks);
 
@@ -74,8 +74,8 @@ for(let i=0;i<ITER;i++) {
 	  if(coverage(tiks) >= bestCoverage) {
 	    bestCoverage = coverage(tiks);
 	    bestTiks = JSON.parse(JSON.stringify(tiks));
-	    console.log('new best!--------------------------------------');
-	    let pcCover = (bestCoverage / choose(N,2) * 100 ).toFixed(2);
+	    console.log('new best!------------------',bestCoverage,'/',maxPossible);
+	    let pcCover = (bestCoverage / maxPossible * 100 ).toFixed(2);
 	    console.log('best: (',bestCoverage,' = '+pcCover+'%)',JSON.stringify(bestTiks));
 	  } else { console.log('iter',i); }
 	  tiks = JSON.parse(JSON.stringify(blankSlate)); //reset
