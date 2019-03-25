@@ -1,7 +1,14 @@
-for(let i=0;i<choose(45,7);i++) { //choose(45,7)
+const am = process.argv[2] * 1000000 || 0;
+const bm = process.argv[3] * 1000000 || choose(45,7);
+
+for(let i=am;i<bm;i++) { //choose(45,7)
   let x = ithCombination(45,7,i);
   console.log((x[0]+1).toString().padStart(2)+(x[1]+1).toString().padStart(3)+(x[2]+1).toString().padStart(3)+(x[3]+1).toString().padStart(3)+(x[4]+1).toString().padStart(3)+(x[5]+1).toString().padStart(3)+(x[6]+1).toString().padStart(3));
 }
+
+// to aggregate: (for .. type too slow, use copy)
+// for %f in (*m.txt) do type "%f" > aggregate.txt
+// copy 01m.txt+02m.txt+03m.txt+04m.txt+05m.txt+06m.txt+07m.txt+08m.txt+09m.txt+10m.txt+11m.txt+12m.txt+13m.txt+14m.txt+15m.txt+16m.txt+17m.txt+18m.txt+19m.txt+20m.txt+21m.txt+22m.txt+23m.txt+24m.txt+25m.txt+26m.txt+27m.txt+28m.txt+29m.txt+30m.txt+31m.txt+32m.txt+33m.txt+34m.txt+35m.txt+36m.txt+37m.txt+38m.txt+39m.txt+40m.txt+41m.txt+42m.txt+43m.txt+44m.txt+45m.txt master.txt
 
 // ----------------------------------
 function choose( n, k ) { // n & k are part of the mathematical choose() function
