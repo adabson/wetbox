@@ -22,10 +22,13 @@ textarea {
 <textarea id="inp"></textarea><br>
 <textarea id="out" readonly></textarea><br>
 <br><br>
+<input type="text" id="glyph" value="pogslide" onclick="if(this.value='pogslide')this.value='';"/>
+<br>
 <button>pogslide</button>
 <button>congaparrot</button>
 <button>aussieparrot</button>
 <button>partyharold</button>
+<button>hmm-spin-nikki</button>
 <br><br><br>
 
 <textarea id="slackout" onclick="copyToClipboard(this)" readonly></textarea><br>
@@ -308,21 +311,34 @@ function translate(inp) {
   return lines.join( '\n' );
 }
 
+function refresh() {
+  let glyphEl = document.getElementById('glyph');
+  let out = document.getElementById( 'out' );
+
+  slackout.value = slackOut( glyphEl.value, out.value );
+}
+
 (function() {
   let inp = document.getElementById( 'inp' );
   let out = document.getElementById( 'out' );
   let slackout = document.getElementById( 'slackout' );
   let buttons = document.querySelectorAll( 'button' );
-  let defaultEmoji = 'partyharold';
+  let defaultEmoji = 'pogslide';
+  let glyphEl = document.getElementById('glyph');
 
   inp.addEventListener('input', e => { 
     out.value = translate( inp.value );
-    slackout.value = slackOut( defaultEmoji, out.value );
+    slackout.value = slackOut( glyphEl.value, out.value );
   });
 
   buttons.forEach( b => {
-    b.addEventListener( 'click', e => { slackout.value = slackOut( b.innerText, out.value ) } );
+    b.addEventListener( 'click', e => { glyphEl.value = b.innerText; refresh(); } );
   });
+
+  glyphEl.addEventListener( 'keyup', e => {
+    refresh();
+  });
+
 })();
 </script>
 </html>
