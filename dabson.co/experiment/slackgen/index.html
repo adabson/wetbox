@@ -344,7 +344,8 @@ function refresh() {
   let getGlyph = getGetParameter('glyph');
   inp.innerText = getInp;
   glyphEl.value = getGlyph;
-  slackout.value = slackOut( getInp, getGlyph );
+  out.value = translate( getInp );
+  slackout.value = slackOut( getGlyph, out.value );
 
   inp.addEventListener('input', e => { 
     out.value = translate( inp.value );
