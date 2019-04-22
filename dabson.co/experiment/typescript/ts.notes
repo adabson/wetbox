@@ -70,3 +70,5 @@ function getType<T>
 function getWheels<v extends Vehicle>(veh: v): number {
 	return veh.drive();
 }
+
+aa
