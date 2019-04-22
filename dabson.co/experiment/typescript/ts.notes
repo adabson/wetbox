@@ -22,3 +22,4 @@ What typescript can't do:
 	* Number ranges
 	* etc.
 
+You cant push a number to a string array (no mixed typing?)

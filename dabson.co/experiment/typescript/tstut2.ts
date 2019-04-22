@@ -1,6 +1,6 @@
 interface SuperHero {
 	realName: String;
-	syperName: String;
+	superName: String;
 }
 
 var superman: SuperHero = {
@@ -8,4 +8,4 @@ var superman: SuperHero = {
 	superName: "Superman"
 }
 
-document.write(superman.realName + " is " + superman.superName+"<br>");
+document.write(superman.realName + " is " + superman.superName + "<br>");
