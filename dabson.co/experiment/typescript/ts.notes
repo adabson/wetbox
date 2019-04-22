@@ -41,3 +41,15 @@ var getSum = function(
 // TS private values are automatically assigned & registered to that class
 constructor(private name: string, private owner: string ){}
 
+omg, those typescript getters and setters syntaxes are so much sexier ^^ 
+
+	get weight(): number {
+		return this._weight;
+	}
+
+	set weight( weight: number ) {
+		this._weight = weight;
+	}
+
+	ani.weight = 23;
+	writeLn( ani.weight );
