@@ -63,3 +63,6 @@ class Dog extends Animal{
 }
 
 any type of datatype 
+
+Data Type markers:
+function getType<T>
