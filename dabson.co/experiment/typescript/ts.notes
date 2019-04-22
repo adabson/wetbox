@@ -2,3 +2,12 @@ tsc tstut.ts --target ES6
 tsc *.ts --watch --target ES6
 
 ^ this compiles everything from typescript into javascript 
+
+
+Variables _A-Za-z0-9
+ooo you can have typeless types lol (anything)
+
+var myName: string = "Dabson";
+var myAge: number = 41;
+var canVote: boolean = true;
+var anything: any = "dog";
