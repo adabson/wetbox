@@ -25,3 +25,5 @@ What typescript can't do:
 	* etc.
 
 You cant push a number to a string array (no mixed typing?)
+
+typescript can do for..of (js just for..in)
