@@ -7,7 +7,7 @@ class Animal {
     ownerInfo() {
         writeLn(this.name + " is owned by " + this.owner);
     }
-    getNumOfAnimals() {
+    static showNumOfAnimals() {
         return Animal.numOfAnimals;
     }
     get weight() {
@@ -20,6 +20,16 @@ class Animal {
 Animal.numOfAnimals = 0;
 let ani = new Animal("Sir fluffkins", "Cruella De Vil");
 ani.ownerInfo();
-writeLn(ani.getNumOfAnimals());
+writeLn("No of Animals: " + Animal.showNumOfAnimals());
 ani.weight = 23;
-writeLn(ani.weight);
+writeLn(ani.name + " weight = " + ani.weight);
+class Dog extends Animal {
+    constructor(name, owner) {
+        super(name, owner);
+        Dog.numOfAnimals++;
+    }
+}
+var grover = new Dog("Grover", "Jimmy");
+writeLn("#Animals= " + Animal.showNumOfAnimals());
+writeLn("Is a dog an animal? " + (grover instanceof Animal));
+writeLn("Does grover have a name? " + ('name' in grover));

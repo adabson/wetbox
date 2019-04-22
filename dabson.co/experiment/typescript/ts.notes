@@ -53,3 +53,14 @@ omg, those typescript getters and setters syntaxes are so much sexier ^^
 
 	ani.weight = 23;
 	writeLn( ani.weight );
+
+extends permits inheritance 
+
+class Dog extends Animal{
+	constructor(name: string, owner: string) {
+		super(name, owner);
+	}
+}
+
+
+
