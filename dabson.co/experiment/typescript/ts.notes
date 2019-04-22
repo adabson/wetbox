@@ -1,0 +1,4 @@
+tsc tstut.ts --target ES6
+tsc *.ts --watch --target ES6
+
+^ this compiles everything from typescript into javascript 
