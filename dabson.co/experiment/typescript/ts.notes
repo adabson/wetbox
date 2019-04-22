@@ -13,7 +13,12 @@ var canVote: boolean = true;
 var anything: any = "dog";
 
 null | undefined
-
 anything will still have a data type
-
 interface: complex data types
+
+What typescript can't do:
+	* Define RegExp patterns for type value
+	* Define validation like string length
+	* Number ranges
+	* etc.
+
