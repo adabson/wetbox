@@ -3,16 +3,14 @@ interface Vehicle {
 }
 
 class Car implements Vehicle{
-	constructor(private wheels: number) {
-	}
+	constructor(private wheels: number) {}
 	drive(): void{
 		writeLn("The car drives with " + this.wheels + " wheels");
 	}
 }
 
 class Bike implements Vehicle{ 
-	constructor(private wheels: number) {
-	}
+	constructor(private wheels: number) {}
 	drive(): void{
 		writeLn("The bike drives with " + this.wheels + " wheels");
 	}
