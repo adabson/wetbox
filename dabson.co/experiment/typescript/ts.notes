@@ -1,7 +1,13 @@
 https://www.youtube.com/watch?v=-PR_XqW9JJU
 --------------------------------------------
+needed tsconfig.json to wildcard all *.ts files
+
 tsc tstut.ts --target ES6
 tsc *.ts --watch --target ES6
+
+---------------------
+|       tsc -w      |
+---------------------
 
 ^ this compiles everything from typescript into javascript 
 
@@ -80,3 +86,40 @@ function theSum(x,y,z): void{
 }
 var args = [4,5,6];
 theSum(...args);
+
+
+https://www.youtube.com/watch?v=rAy_3SIqT-E
+-------------------------------------------
+* Typescript is a superset of js 
+* ts transpiles to js 
+* designed for larger apps 
+* gives us static type checking (eh..)
+* class-based objects (es6 gives that thou?)
+* ts makes js more modular? imports :o?
+* ts gives es6 features (but then, so do most modern browers)
+* syntax closer to Java / Scala 
+* promises to 'find & prevent bugs'
+TYPES 
+	- String 
+	- Number 
+	- Boolean 
+	- Array 
+	- Any 
+	- Void 
+	- Null 
+	- Tuple 
+	- Enum 
+	- Generics
+
+Class-based objects 
+	* OO in js 
+	* no prototypes (good, bad?)
+	* encapsulation 
+	* inheritance 
+	* access modifiers (public/protected/private)
+
+TypeScript Compiler (tsc) 
+	* written in TypeScript itself 
+	* compiles .ts to .js 
+	* supports ES6, installed with npm
+
