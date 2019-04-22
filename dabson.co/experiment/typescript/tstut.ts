@@ -12,3 +12,12 @@ document.write("myName is a " + typeof (myName) + "<br>");
 document.write("canVote is a " + typeof (canVote) + "<br>");
 document.write("myAge is a " + typeof (myAge) + "<br>");
 document.write("anything is a " + typeof (anything) + "<br>");
+
+var strToNum: number = parseInt("5");
+var numToStr: number = (5).toString();
+
+document.write("strToNum is a " + typeof (strToNum) + "<br>");
+document.write("numToStr is a " + typeof (numToStr) + "<br>");
+
+const PI = 3.14159;
+document.write("PI is a " + typeof (PI) + "<br>");

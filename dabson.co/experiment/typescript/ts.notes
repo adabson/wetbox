@@ -15,3 +15,5 @@ var anything: any = "dog";
 null | undefined
 
 anything will still have a data type
+
+interface: complex data types
