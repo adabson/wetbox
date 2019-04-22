@@ -71,4 +71,12 @@ function getWheels<v extends Vehicle>(veh: v): number {
 	return veh.drive();
 }
 
-aa
+Spread operator can separate values of an array into function arguments 
+
+(basically an inverse variadic aka 'Rest parameters' operator )
+
+function theSum(x,y,z): void{
+	writeLn("Sum: "+(x+y+z));
+}
+var args = [4,5,6];
+theSum(...args);
