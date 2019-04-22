@@ -38,3 +38,6 @@ var getSum = function(
 	return num1 + num2;
 }
 
+// TS private values are automatically assigned & registered to that class
+constructor(private name: string, private owner: string ){}
+
