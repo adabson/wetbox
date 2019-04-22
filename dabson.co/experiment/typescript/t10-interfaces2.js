@@ -16,5 +16,10 @@ class Bike {
 }
 var car = new Car(4);
 var bike = new Bike(2);
-car.drive();
-bike.drive();
+// car.drive();
+// bike.drive();
+function callDrive(veh) {
+    return veh.drive();
+}
+callDrive(car);
+callDrive(bike);

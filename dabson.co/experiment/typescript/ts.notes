@@ -64,5 +64,9 @@ class Dog extends Animal{
 
 any type of datatype 
 
-Data Type markers:
+Data-type markers:
 function getType<T>
+
+function getWheels<v extends Vehicle>(veh: v): number {
+	return veh.drive();
+}

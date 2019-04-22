@@ -17,7 +17,14 @@ class Bike implements Vehicle{
 }
 
 var car = new Car(4);
-var bike= new Bike(2);
+var bike = new Bike(2);
 
-car.drive();
-bike.drive();
+// car.drive();
+// bike.drive();
+
+function callDrive<v extends Vehicle>(veh: v): number {
+	return veh.drive();
+}
+
+callDrive(car);
+callDrive(bike);
