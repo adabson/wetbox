@@ -1,3 +1,5 @@
+https://www.youtube.com/watch?v=-PR_XqW9JJU
+--------------------------------------------
 tsc tstut.ts --target ES6
 tsc *.ts --watch --target ES6
 
