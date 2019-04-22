@@ -27,3 +27,14 @@ What typescript can't do:
 You cant push a number to a string array (no mixed typing?)
 
 typescript can do for..of (js just for..in)
+
+// for(x in y) prints INDEXES
+// for(x of y) prints VALUES
+
+typed functions (includes return type)
+var getSum = function(
+	num1: number, 
+	num2: number): number {
+	return num1 + num2;
+}
+

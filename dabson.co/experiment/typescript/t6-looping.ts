@@ -6,6 +6,7 @@ for(var val in randArray) {
 }
 
 var strArray = randArray.map(String);
+writeLn("<hr>");
 
 // for(x of y) prints VALUES
 for(var val of strArray) {
