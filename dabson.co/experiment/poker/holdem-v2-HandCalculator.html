@@ -199,8 +199,17 @@ function isFlush(handArray) {
 }
 
 function isStraight(handArray) {
-  let suitAgnosticSet = new Set(handArray.map( x => x % nCardsPerSuit ).sort()); //still zero-indexed
-  return suitAgnosticSet;
+  let suitAgnosticSet = new Set(handArray.map( x => x % nCardsPerSuit ).sort()); //still zero-indexed, no duplicates
+  let suitAgnosticArray = Array.from( suitAgnosticSet );
+  let runString = '';
+  for(let i=1;i<suitAgnosticArray.length;i++) {
+    if(suitAgnosticArray[i]-suitAgnosticArray[i-1]===1) {
+      runString += '1';
+    } else {
+      runString += '0';
+    }
+  }
+  return runString.includes('1111');
 }
 
 function isStraightFlush(handArray) {
