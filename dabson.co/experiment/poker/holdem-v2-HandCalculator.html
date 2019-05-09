@@ -11,17 +11,17 @@ body{
 <body></body>
 <script>
 const RANK = {
-  UNRANKED:       'Unranked',
-  HIGH_CARD:      'High Card',
-  PAIR:           'Pair',
-  TWO_PAIR:       'Two Pair',
-  THREE_KIND:     'Three of a Kind',
-  STRAIGHT:       'Straight',
-  FLUSH:          'Flush',
-  FULL_HOUSE:     'Full House',
-  FOUR_KIND:      'Four of a Kind',
-  STRAIGHT_FLUSH: 'Straight Flush',
   ROYAL_FLUSH:    'Royal Flush',
+  STRAIGHT_FLUSH: 'Straight Flush',
+  FOUR_KIND:      'Four of a Kind',
+  FULL_HOUSE:     'Full House',
+  FLUSH:          'Flush',
+  STRAIGHT:       'Straight',
+  THREE_KIND:     'Three of a Kind',
+  TWO_PAIR:       'Two Pair',
+  PAIR:           'Pair',
+  HIGH_CARD:      'High Card',
+  UNRANKED:       'Unranked',
 };
 
 const CLUB1 =  0;
@@ -292,7 +292,17 @@ function testFor(rankType) {
 
 shuffle(deck);
 renderGame();
-testFor(RANK.FOUR_KIND);
+
+// testFor(RANK.ROYAL_FLUSH);
+// testFor(RANK.STRAIGHT_FLUSH);
+// testFor(RANK.FOUR_KIND);
+// testFor(RANK.FULL_HOUSE);
+// testFor(RANK.FLUSH);
+// testFor(RANK.STRAIGHT);
+// testFor(RANK.THREE_KIND);
+// testFor(RANK.TWO_PAIR);
+// testFor(RANK.PAIR);
+// testFor(RANK.HIGH_CARD);
 
 </script>
 </html>
