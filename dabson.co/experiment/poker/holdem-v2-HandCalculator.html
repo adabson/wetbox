@@ -249,10 +249,15 @@ function isFourKind(handArray) {
 }
 
 function isThreeKind(handArray) {
-
+  let typeCount = cardTypeCount(handArray);
+  return typeCount.some( x => x >= 3 );
 }
 
-function isFullHouse(handArray) {}
+function isFullHouse(handArray) {
+  let reverseSortedTypeCount = cardTypeCount(handArray).sort().reverse();
+  return reverseSortedTypeCount[0] >= 3 && reverseSortedTypeCount[1] >= 2;
+}
+
 function isTwoPair(handArray) {}
 function isPair(handArray) {}
 
@@ -296,7 +301,7 @@ renderGame();
 // testFor(RANK.ROYAL_FLUSH);
 // testFor(RANK.STRAIGHT_FLUSH);
 // testFor(RANK.FOUR_KIND);
-// testFor(RANK.FULL_HOUSE);
+testFor(RANK.FULL_HOUSE);
 // testFor(RANK.FLUSH);
 // testFor(RANK.STRAIGHT);
 // testFor(RANK.THREE_KIND);
