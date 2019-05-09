@@ -167,6 +167,10 @@ function sequence( n ) {
   return Array.from( {length: n}, (x, y) => y );
 }
 
+function zeros( n ) {
+  return new Array( n + 1 ).join( '0' ).split( '' ).map( parseFloat );
+}
+
 Array.prototype.containsAll = function(...els) {
   return els.every(e => this.includes(e));
 };
@@ -204,6 +208,12 @@ function sortedSuitAgnosticSet(handArray) {
   return Array.from( new Set(handArray.map( x => x % nCardsPerSuit ).sort()) );
 }
 
+function cardTypeCount( handArray ) {
+  let count = zeros( nCardsPerSuit );
+  handArray.forEach( x => { count[ x % nCardsPerSuit ]++ } );
+  return count;
+}
+
 function isStraight(handArray) {
   let suitAgnosticArray = sortedSuitAgnosticSet( handArray );
   let runString = '';
@@ -225,18 +235,23 @@ function isStraightFlush(handArray) {
   return isStraight(clubSubset) | isStraight(diamondSubset) | isStraight(heartSubset) | isStraight(spadeSubset);
 }
 
-function isFourKind(handArray) {}
+function isFourKind(handArray) {
+  
+}
+
+function isThreeKind(handArray) {
+
+}
+
 function isFullHouse(handArray) {}
-function isThreeKind(handArray) {}
 function isTwoPair(handArray) {}
 function isPair(handArray) {}
 
 function isHighCard(handArray) {
-  return toCardString( Math.max(...sortedSuitAgnosticSet( handArray )) );
+  return toCardString( Math.max(...sortedSuitAgnosticSet( handArray )) + 1 );
 }
 
-function toCardString(zeroIndexedCard) {
-  const oneIndexedCard = zeroIndexedCard + 1;
+function toCardString(oneIndexedCard) { // keep it at one so false (0) results in unknown kicker
   return oneIndexedCard ===  1 ? 'ace' :
          oneIndexedCard ===  2 ? 'deuce' :
          oneIndexedCard ===  3 ? 'three' :
