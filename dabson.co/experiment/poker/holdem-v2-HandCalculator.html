@@ -236,6 +236,7 @@ function isHighCard(handArray) {
 }
 
 function toCardString(oneIndexedCard) {
+  console.log(oneIndexedCard);
   return oneIndexedCard ===  1 ? 'ace' :
          oneIndexedCard ===  2 ? 'deuce' :
          oneIndexedCard ===  3 ? 'three' :
@@ -248,7 +249,7 @@ function toCardString(oneIndexedCard) {
          oneIndexedCard === 10 ? 'ten' :
          oneIndexedCard === 11 ? 'jack' :
          oneIndexedCard === 12 ? 'queen' :
-         oneIndexedCard === 12 ? 'king' :
+         oneIndexedCard === 13 ? 'king' :
                                  'unknown';
 }
 
