@@ -116,7 +116,6 @@ function renderGame() {
     let playerRank = calculateRank(playerHand);
     let playerRankEl = document.createTextNode(playerRank);
     playerEl.appendChild(playerRankEl);
-    console.log('player hand', playerHand,isRoyalFlush(playerHand));
 
     document.body.appendChild(playerEl);
   }
@@ -144,14 +143,6 @@ function shuffle(array) {
   return array;
 }
 
-function isRoyalFlush(handArray) {
-  const isRoyalClubs    = handArray.containsAll( CLUBT, CLUBJ, CLUBQ, CLUBK, CLUB1 );
-  const isRoyalDiamonds = handArray.containsAll( DIAMONDT, DIAMONDJ, DIAMONDQ, DIAMONDK, DIAMOND1 );
-  const isRoyalHearts   = handArray.containsAll( HEARTT, HEARTJ, HEARTQ, HEARTK, HEART1 );
-  const isRoyalSpades   = handArray.containsAll( SPADET, SPADEJ, SPADEQ, SPADEK, SPADE1 );
-  return isRoyalClubs | isRoyalDiamonds | isRoyalHearts | isRoyalSpades;
-}
-
 function calculateRank(handArray) {
   if(handArray.length != (nCardsPerPlayer + nCardsPerBoard)) {
     throw new Error( `Calculate Rank Error: Invalid hand size. Expected (${nCardsPerPlayer + nCardsPerBoard}), but was (${handArray.length})` );
@@ -159,6 +150,10 @@ function calculateRank(handArray) {
 
   if( isRoyalFlush(handArray) ) {
     return RANK.ROYAL_FLUSH;
+  }
+
+  if( isFlush(handArray) ) {
+    return RANK.FLUSH;
   }
 
   return RANK.UNRANKED;
@@ -172,16 +167,46 @@ Array.prototype.containsAll = function(...els) {
   return els.every(e => this.includes(e));
 };
 
-console.log('royalFlushMe');
-for(let i=0;i<1000000;i++) {
-  shuffle(deck);
-  if(isRoyalFlush(deck.slice(0,7))) {
-    console.log(`Royal Flush achived on the ${i}th iteration!`);
-    console.log(deck.slice(0,7));
-    renderGame();
-    break;
-  }
+function isRoyalFlush(handArray) {
+  const isRoyalClubs    = handArray.containsAll( CLUBT, CLUBJ, CLUBQ, CLUBK, CLUB1 );
+  const isRoyalDiamonds = handArray.containsAll( DIAMONDT, DIAMONDJ, DIAMONDQ, DIAMONDK, DIAMOND1 );
+  const isRoyalHearts   = handArray.containsAll( HEARTT, HEARTJ, HEARTQ, HEARTK, HEART1 );
+  const isRoyalSpades   = handArray.containsAll( SPADET, SPADEJ, SPADEQ, SPADEK, SPADE1 );
+  return isRoyalClubs | isRoyalDiamonds | isRoyalHearts | isRoyalSpades;
 }
+
+function isFlush(handArray) {
+  let noClubs = 0;
+  let noDiamonds = 0;
+  let noHearts = 0;
+  let noSpades = 0;
+
+  handArray.forEach(card => {
+         if(card <= CLUBK ) noClubs++;
+    else if(card >= DIAMOND1 && card <= DIAMONDK ) noDiamonds++
+    else if(card >= HEART1 && card <= HEARTK ) noHearts++
+    else if(card >= SPADE1 && card <= SPADEK ) noSpades++
+  });
+  
+  const isClubFlush = noClubs > 4;
+  const isDiamondFlush = noDiamonds > 4;
+  const isHeartFlush = noHearts > 4;
+  const isSpadeFlush = noSpades > 4;
+
+  return isClubFlush | isDiamondFlush | isHeartFlush | isSpadeFlush;
+}
+
+function isStraightFlush(handArray) {}
+function isFourKind(handArray) {}
+function isFullHouse(handArray) {}
+function isStraight(handArray) {}
+function isThreeKind(handArray) {}
+function isTwoPair(handArray) {}
+function isPair(handArray) {}
+function isHighCard(handArray) {}
+
+shuffle(deck);
+renderGame();
 
 </script>
 </body>
