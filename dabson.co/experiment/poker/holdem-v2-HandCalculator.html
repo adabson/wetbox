@@ -245,21 +245,27 @@ function isStraightFlush(handArray) {
 
 function isFourKind(handArray) {
   let typeCount = cardTypeCount(handArray);
-  return typeCount.some( x => x >= 4 );
+  return typeCount.some( x => x === 4 );
 }
 
 function isThreeKind(handArray) {
   let typeCount = cardTypeCount(handArray);
-  return typeCount.some( x => x >= 3 );
+  return typeCount.some( x => x === 3 );
 }
 
 function isFullHouse(handArray) {
   let reverseSortedTypeCount = cardTypeCount(handArray).sort().reverse();
-  return reverseSortedTypeCount[0] >= 3 && reverseSortedTypeCount[1] >= 2;
+  return reverseSortedTypeCount[0] === 3 && reverseSortedTypeCount[1] >= 2;
 }
 
-function isTwoPair(handArray) {}
-function isPair(handArray) {}
+function isTwoPair(handArray) {
+  let reverseSortedTypeCount = cardTypeCount(handArray).sort().reverse();
+  return reverseSortedTypeCount[0] === 2 && reverseSortedTypeCount[1] === 2;
+}
+function isPair(handArray) {
+  let reverseSortedTypeCount = cardTypeCount(handArray).sort().reverse();
+  return reverseSortedTypeCount[0] === 2;
+}
 
 function isHighCard(handArray) {
   return toCardString( Math.max(...sortedSuitAgnosticSet( handArray )) + 1 );
@@ -300,8 +306,8 @@ renderGame();
 
 // testFor(RANK.ROYAL_FLUSH);
 // testFor(RANK.STRAIGHT_FLUSH);
-// testFor(RANK.FOUR_KIND);
-testFor(RANK.FULL_HOUSE);
+testFor(RANK.FOUR_KIND);
+// testFor(RANK.FULL_HOUSE);
 // testFor(RANK.FLUSH);
 // testFor(RANK.STRAIGHT);
 // testFor(RANK.THREE_KIND);
