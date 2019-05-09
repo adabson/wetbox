@@ -33,7 +33,7 @@ const CLUB5 =  4;
 const CLUB6 =  5;
 const CLUB7 =  6;
 const CLUB8 =  7;
-const CLUBA =  8;
+const CLUB9 =  8;
 const CLUBT =  9;
 const CLUBJ = 10;
 const CLUBQ = 11;
@@ -159,7 +159,7 @@ function calculateRank(handArray) {
           isThreeKind(handArray) ? RANK.THREE_KIND :
             isTwoPair(handArray) ? RANK.TWO_PAIR :
                isPair(handArray) ? RANK.PAIR :
-           isHighCard(handArray) ? RANK.HIGH_CARD :
+           isHighCard(handArray) ? RANK.HIGH_CARD + ` (${isHighCard(handArray)} kicker)` :
                                    RANK.UNRANKED;
 }
 
@@ -200,9 +200,12 @@ function isFlush(handArray) {
   return isClubFlush | isDiamondFlush | isHeartFlush | isSpadeFlush;
 }
 
+function sortedSuitAgnostic(handArray) {
+  return Array.from( new Set(handArray.map( x => x % nCardsPerSuit ).sort()) );
+}
+
 function isStraight(handArray) {
-  let suitAgnosticSet = new Set(handArray.map( x => x % nCardsPerSuit ).sort()); //still zero-indexed, no duplicates
-  let suitAgnosticArray = Array.from( suitAgnosticSet );
+  let suitAgnosticArray = sortedSuitAgnostic( handArray );
   let runString = '';
   for(let i=1;i<suitAgnosticArray.length;i++) {
     if(suitAgnosticArray[i]-suitAgnosticArray[i-1]===1) {
@@ -229,7 +232,24 @@ function isTwoPair(handArray) {}
 function isPair(handArray) {}
 
 function isHighCard(handArray) {
-  return true;
+  return toCardString( Math.max(...sortedSuitAgnostic( handArray )) + 1 );
+}
+
+function toCardString(oneIndexedCard) {
+  return oneIndexedCard ===  1 ? 'ace' :
+         oneIndexedCard ===  2 ? 'deuce' :
+         oneIndexedCard ===  3 ? 'three' :
+         oneIndexedCard ===  4 ? 'four' :
+         oneIndexedCard ===  5 ? 'five' :
+         oneIndexedCard ===  6 ? 'six' :
+         oneIndexedCard ===  7 ? 'seven' :
+         oneIndexedCard ===  8 ? 'eight' :
+         oneIndexedCard ===  9 ? 'nine' :
+         oneIndexedCard === 10 ? 'ten' :
+         oneIndexedCard === 11 ? 'jack' :
+         oneIndexedCard === 12 ? 'queen' :
+         oneIndexedCard === 12 ? 'king' :
+                                 'unknown';
 }
 
 shuffle(deck);
