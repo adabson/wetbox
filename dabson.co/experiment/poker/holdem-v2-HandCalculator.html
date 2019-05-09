@@ -94,6 +94,11 @@ const nPlayers        = 8;
 const nDeck           = deckMap.length; // 52
 const nMaxPlayers     = Math.floor((nDeck-nCardsPerBoard)/nCardsPerPlayer); // 52-5=47, no burns, 2 cards each = 46/2 = 23 max players
 
+let runDetectString = ''; // string used for straights, compute once (for holdem, is '1111' )
+for(let i=1;i<nCardsPerHand;i++) {
+  runDetectString += '1';
+}
+
 const deck = sequence(nDeck); // 0-12 clubs, 13-25 diamonds, 26-38 hearts, 39-51 spades
 //shuffle(deck);
 
@@ -224,8 +229,7 @@ function isStraight(handArray) {
   let runString = '';
   let suitAgnosticArray = sortedSuitAgnosticSet( handArray );
   if(suitAgnosticArray[0] === 0 ) {
-    //console.log(suitAgnosticArray);
-    suitAgnosticArray.push(nCardsPerSuit); //aces count at both ends in a straight
+    suitAgnosticArray = suitAgnosticArray.concat(nCardsPerSuit); //aces count at both ends in a straight
   }
   for(let i=1;i<suitAgnosticArray.length;i++) {
     if(suitAgnosticArray[i]-suitAgnosticArray[i-1]===1) {
@@ -235,10 +239,7 @@ function isStraight(handArray) {
     }
   }
 
-  let runDetectString = '';
-  for(let i=1;i<nCardsPerHand;i++) {
-    runDetectString += '1';
-  }
+  // console.log(suitAgnosticArray,runString,runDetectString);
 
   return runString.includes( runDetectString );
 }
@@ -309,8 +310,7 @@ function testFor(rankType) {
   for(let i=0;i<1000000;i++) {
     shuffle(deck);
     let handArray = deck.slice(0,7);
-    let isHigh = handArray.containsAny( CLUBK, DIAMONDK, HEARTK, SPADEK ) && handArray.containsAny( CLUBQ, DIAMONDQ, HEARTQ, SPADEQ ) && handArray.containsAny( CLUB1, DIAMOND1, HEART1, SPADE1 ) && handArray.containsAny( CLUBJ, DIAMONDJ, HEARTJ, SPADEJ ) && handArray.containsAny( CLUBT, DIAMONDT, HEARTT, SPADET ) && !handArray.containsAny( CLUB9, DIAMOND9, HEART9, SPADE9 );
-    if(isHigh && calculateRank(handArray) === rankType ) {
+    if(calculateRank(handArray) === rankType ) {
       console.log(`${rankType} achived for p1 on the ${i}th iteration!`);
       console.log(deck.slice(0,7));
       renderGame();
