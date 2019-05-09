@@ -1,0 +1,337 @@
+<html>
+<style>
+.card{
+  font-size:5em;
+  line-height:1em;
+}
+body{
+  font-family:Arial,sans-serif;
+}
+</style>
+<body></body>
+<script>
+const RANK = {
+  ROYAL_FLUSH:    'Royal Flush',
+  STRAIGHT_FLUSH: 'Straight Flush',
+  FOUR_KIND:      'Four of a Kind',
+  FULL_HOUSE:     'Full House',
+  FLUSH:          'Flush',
+  STRAIGHT:       'Straight',
+  THREE_KIND:     'Three of a Kind',
+  TWO_PAIR:       'Two Pair',
+  PAIR:           'Pair',
+  HIGH_CARD:      'High Card',
+  UNRANKED:       'Unranked',
+};
+
+const CLUB1    =  0;
+const CLUB2    =  1;
+const CLUB3    =  2;
+const CLUB4    =  3;
+const CLUB5    =  4;
+const CLUB6    =  5;
+const CLUB7    =  6;
+const CLUB8    =  7;
+const CLUB9    =  8;
+const CLUBT    =  9;
+const CLUBJ    = 10;
+const CLUBQ    = 11;
+const CLUBK    = 12;
+
+const DIAMOND1 = 13;
+const DIAMOND2 = 14;
+const DIAMOND3 = 15;
+const DIAMOND4 = 16;
+const DIAMOND5 = 17;
+const DIAMOND6 = 18;
+const DIAMOND7 = 19;
+const DIAMOND8 = 20;
+const DIAMOND9 = 21;
+const DIAMONDT = 22;
+const DIAMONDJ = 23;
+const DIAMONDQ = 24;
+const DIAMONDK = 25;
+
+const HEART1   = 26;
+const HEART2   = 27;
+const HEART3   = 28;
+const HEART4   = 29;
+const HEART5   = 30;
+const HEART6   = 31;
+const HEART7   = 32;
+const HEART8   = 33;
+const HEART9   = 34;
+const HEARTT   = 35;
+const HEARTJ   = 36;
+const HEARTQ   = 37;
+const HEARTK   = 38;
+
+const SPADE1   = 39;
+const SPADE2   = 40;
+const SPADE3   = 41;
+const SPADE4   = 42;
+const SPADE5   = 43;
+const SPADE6   = 44;
+const SPADE7   = 45;
+const SPADE8   = 46;
+const SPADE9   = 47;
+const SPADET   = 48;
+const SPADEJ   = 49;
+const SPADEQ   = 50;
+const SPADEK   = 51;
+
+const clubMap    = [127185,127186,127187,127188,127189,127190,127191,127192,127193,127194,127195,127197,127198];
+const diamondMap = [127169,127170,127171,127172,127173,127174,127175,127176,127177,127178,127179,127181,127182];
+const heartMap   = [127153,127154,127155,127156,127157,127158,127159,127160,127161,127162,127163,127165,127166];
+const spadeMap   = [127137,127138,127139,127140,127141,127142,127143,127144,127145,127146,127147,127149,127150];
+const deckMap    = [].concat(clubMap,diamondMap,heartMap,spadeMap);
+
+const nCardsPerSuit   = 13;
+const nCardsPerPlayer = 2;
+const nCardsPerBoard  = 5;
+const nCardsPerHand   = 5;
+const nPlayers        = 8;
+const nDeck           = deckMap.length; // 52
+const nMaxPlayers     = Math.floor((nDeck-nCardsPerBoard)/nCardsPerPlayer); // 52-5=47, no burns, 2 cards each = 46/2 = 23 max players
+
+let runDetectString = ''; // string used for straights, compute once (for holdem, is '1111' )
+for(let i=1;i<nCardsPerHand;i++) {
+  runDetectString += '1';
+}
+
+const deck = sequence(nDeck); // 0-12 clubs, 13-25 diamonds, 26-38 hearts, 39-51 spades
+//shuffle(deck);
+
+function renderGame() {
+  document.body.innerHTML = '';
+  let cardsEl = document.createElement('div'); //getElementById('cards');
+  document.body.appendChild(cardsEl);
+
+  for(let i=0;i<nCardsPerBoard;i++) {
+    cardsEl.appendChild( getCardEl(deck[i]) );
+  }
+
+  for(let i=0;i<Math.min(nPlayers*nCardsPerPlayer, nMaxPlayers);i+=nCardsPerPlayer) {
+    let playerEl = document.createElement('div');
+
+    let playerHand = deck.slice(0, nCardsPerBoard);
+
+    for(let j=0;j<nCardsPerPlayer;j++) {
+      let cardNo = deck[nCardsPerBoard+(i*nCardsPerPlayer)+j];
+      playerHand.push(cardNo);
+      playerEl.appendChild(getCardEl(cardNo));
+    }
+
+    let playerRank = calculateRank(playerHand);
+    let playerRankEl = document.createTextNode(playerRank);
+    playerEl.appendChild(playerRankEl);
+
+    document.body.appendChild(playerEl);
+  }
+}
+
+function getCardEl(cardNo) {
+  let cardUnicode = deckMap[cardNo];
+  let color = cardNo >= DIAMOND1 && cardNo <= HEARTK ? 'c00' : '000';
+  let cardEl = document.createElement('span');
+  cardEl.setAttribute('class', 'card');
+  cardEl.setAttribute('style', `color:#${color}`);
+  cardEl.innerHTML = `&#${cardUnicode};`; // because most implementations of javascript only support 16-bit javascript, we need to use 32-bit HTML specialchars
+  return cardEl;
+}
+
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+  while (0 !== currentIndex) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+  return array;
+}
+
+function calculateRank(handArray) {
+  if(handArray.length != (nCardsPerPlayer + nCardsPerBoard)) {
+    throw new Error( `Calculate Rank Error: Invalid hand size. Expected (${nCardsPerPlayer + nCardsPerBoard}), but was (${handArray.length})` );
+  }
+
+  return isRoyalFlush(handArray) ? RANK.ROYAL_FLUSH : 
+      isStraightFlush(handArray) ? RANK.STRAIGHT_FLUSH :
+           isFourKind(handArray) ? RANK.FOUR_KIND :
+          isFullHouse(handArray) ? RANK.FULL_HOUSE :
+              isFlush(handArray) ? RANK.FLUSH :
+           isStraight(handArray) ? RANK.STRAIGHT :
+          isThreeKind(handArray) ? RANK.THREE_KIND :
+            isTwoPair(handArray) ? RANK.TWO_PAIR :
+               isPair(handArray) ? RANK.PAIR :
+           isHighCard(handArray) ? RANK.HIGH_CARD + ` (${isHighCard(handArray)} kicker)` :
+                                   RANK.UNRANKED;
+}
+
+function sequence( n ) {
+  return Array.from( {length: n}, (x, y) => y );
+}
+
+function zeros( n ) {
+  return new Array( n + 1 ).join( '0' ).split( '' ).map( parseFloat );
+}
+
+Array.prototype.containsAll = function(...els) {
+  return els.every(e => this.includes(e));
+};
+
+Array.prototype.containsAny = function(...els) {
+  return els.some(e => this.includes(e));
+};
+
+function isRoyalFlush(handArray) {
+  const isRoyalClubs    = handArray.containsAll( CLUBT, CLUBJ, CLUBQ, CLUBK, CLUB1 );
+  const isRoyalDiamonds = handArray.containsAll( DIAMONDT, DIAMONDJ, DIAMONDQ, DIAMONDK, DIAMOND1 );
+  const isRoyalHearts   = handArray.containsAll( HEARTT, HEARTJ, HEARTQ, HEARTK, HEART1 );
+  const isRoyalSpades   = handArray.containsAll( SPADET, SPADEJ, SPADEQ, SPADEK, SPADE1 );
+  return isRoyalClubs | isRoyalDiamonds | isRoyalHearts | isRoyalSpades;
+}
+
+function isFlush(handArray) {
+  let noClubs = 0;
+  let noDiamonds = 0;
+  let noHearts = 0;
+  let noSpades = 0;
+
+  handArray.forEach(card => {
+         if(card <= CLUBK ) noClubs++;
+    else if(card >= DIAMOND1 && card <= DIAMONDK ) noDiamonds++
+    else if(card >= HEART1 && card <= HEARTK ) noHearts++
+    else if(card >= SPADE1 && card <= SPADEK ) noSpades++
+  });
+
+  const isClubFlush = noClubs >= nCardsPerHand;
+  const isDiamondFlush = noDiamonds >= nCardsPerHand;
+  const isHeartFlush = noHearts >= nCardsPerHand;
+  const isSpadeFlush = noSpades >= nCardsPerHand;
+
+  return isClubFlush | isDiamondFlush | isHeartFlush | isSpadeFlush;
+}
+
+function sortedSuitAgnosticSet(handArray) {
+  return Array.from( new Set(handArray.map( x => x % nCardsPerSuit ).sort((a, b) => a - b)) );
+}
+
+function cardTypeCount( handArray ) { // returns counter array ace to king
+  let count = zeros( nCardsPerSuit );
+  handArray.forEach( x => { count[ x % nCardsPerSuit ]++ } );
+  return count;
+}
+
+function isStraight(handArray) {
+  let runString = '';
+  let suitAgnosticArray = sortedSuitAgnosticSet( handArray );
+  if(suitAgnosticArray[0] === 0 ) {
+    suitAgnosticArray = suitAgnosticArray.concat(nCardsPerSuit); //aces count at both ends in a straight
+  }
+  for(let i=1;i<suitAgnosticArray.length;i++) {
+    if(suitAgnosticArray[i]-suitAgnosticArray[i-1]===1) {
+      runString += '1';
+    } else {
+      runString += '0';
+    }
+  }
+
+  // console.log(suitAgnosticArray,runString,runDetectString);
+
+  return runString.includes( runDetectString );
+}
+
+function isStraightFlush(handArray) {
+  let clubSubset = [];
+  let diamondSubset = [];
+  let heartSubset = [];
+  let spadeSubset = [];
+
+  handArray.forEach( card => {
+         if(card <= CLUBK ) clubSubset.push(card);
+    else if(card >= DIAMOND1 && card <= DIAMONDK ) diamondSubset.push(card);
+    else if(card >= HEART1 && card <= HEARTK ) heartSubset.push(card);
+    else if(card >= SPADE1 && card <= SPADEK ) spadeSubset.push(card);
+  });
+
+  return isStraight(clubSubset) | isStraight(diamondSubset) | isStraight(heartSubset) | isStraight(spadeSubset);
+}
+
+function isFourKind(handArray) {
+  let typeCount = cardTypeCount(handArray);
+  return typeCount.some( x => x === 4 );
+}
+
+function isThreeKind(handArray) {
+  let typeCount = cardTypeCount(handArray);
+  return typeCount.some( x => x === 3 );
+}
+
+function isFullHouse(handArray) {
+  let reverseSortedTypeCount = cardTypeCount(handArray).sort((a, b) => b - a);
+  return reverseSortedTypeCount[0] === 3 && reverseSortedTypeCount[1] >= 2;
+}
+
+function isTwoPair(handArray) {
+  let reverseSortedTypeCount = cardTypeCount(handArray).sort((a, b) => b - a);
+  return reverseSortedTypeCount[0] === 2 && reverseSortedTypeCount[1] === 2;
+}
+function isPair(handArray) {
+  let reverseSortedTypeCount = cardTypeCount(handArray).sort((a, b) => b - a);
+  return reverseSortedTypeCount[0] === 2;
+}
+
+function isHighCard(handArray) {
+  return toCardString( Math.max(...sortedSuitAgnosticSet( handArray )) + 1 );
+}
+
+function toCardString(oneIndexedCard) { // keep it at one so false (0) results in unknown kicker
+  return oneIndexedCard ===  1 ? 'ace' :
+         oneIndexedCard ===  2 ? 'deuce' :
+         oneIndexedCard ===  3 ? 'three' :
+         oneIndexedCard ===  4 ? 'four' :
+         oneIndexedCard ===  5 ? 'five' :
+         oneIndexedCard ===  6 ? 'six' :
+         oneIndexedCard ===  7 ? 'seven' :
+         oneIndexedCard ===  8 ? 'eight' :
+         oneIndexedCard ===  9 ? 'nine' :
+         oneIndexedCard === 10 ? 'ten' :
+         oneIndexedCard === 11 ? 'jack' :
+         oneIndexedCard === 12 ? 'queen' :
+         oneIndexedCard === 13 ? 'king' :
+                                 false;
+}
+
+function testFor(rankType) {
+  console.log('Testing for: '+rankType);
+  for(let i=0;i<1000000;i++) {
+    shuffle(deck);
+    let handArray = deck.slice(0,7);
+    if(calculateRank(handArray) === rankType ) {
+      console.log(`${rankType} achived for p1 on the ${i}th iteration!`);
+      console.log(deck.slice(0,7));
+      renderGame();
+      break;
+    }
+  }
+}
+
+shuffle(deck);
+renderGame();
+
+// testFor(RANK.ROYAL_FLUSH);
+// testFor(RANK.STRAIGHT_FLUSH);
+// testFor(RANK.FOUR_KIND);
+// testFor(RANK.FULL_HOUSE);
+// testFor(RANK.FLUSH);
+testFor(RANK.STRAIGHT);
+// testFor(RANK.THREE_KIND);
+// testFor(RANK.TWO_PAIR);
+// testFor(RANK.PAIR);
+// testFor(RANK.HIGH_CARD);
+
+</script>
+</html>
