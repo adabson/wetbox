@@ -8,8 +8,7 @@ body{
   font-family:Arial,sans-serif;
 }
 </style>
-<body>
-<div id="cards"></div>
+<body></body>
 <script>
 const RANK = {
   UNRANKED:       'Unranked',
@@ -99,7 +98,10 @@ const deck = sequence(nDeck); // 0-12 clubs, 13-25 diamonds, 26-38 hearts, 39-51
 //shuffle(deck);
 
 function renderGame() {
-  let cardsEl = document.getElementById('cards');
+  document.body.innerHTML = '';
+  let cardsEl = document.createElement('div'); //getElementById('cards');
+  document.body.appendChild(cardsEl);
+
   for(let i=0;i<nCardsPerBoard;i++) {
     cardsEl.appendChild( getCardEl(deck[i]) );
   }
@@ -208,7 +210,7 @@ function sortedSuitAgnosticSet(handArray) {
   return Array.from( new Set(handArray.map( x => x % nCardsPerSuit ).sort()) );
 }
 
-function cardTypeCount( handArray ) {
+function cardTypeCount( handArray ) { // returns counter array ace to king
   let count = zeros( nCardsPerSuit );
   handArray.forEach( x => { count[ x % nCardsPerSuit ]++ } );
   return count;
@@ -242,7 +244,8 @@ function isStraightFlush(handArray) {
 }
 
 function isFourKind(handArray) {
-  
+  let typeCount = cardTypeCount(handArray);
+  return typeCount.some( x => x >= 4 );
 }
 
 function isThreeKind(handArray) {
@@ -271,12 +274,25 @@ function toCardString(oneIndexedCard) { // keep it at one so false (0) results i
          oneIndexedCard === 11 ? 'jack' :
          oneIndexedCard === 12 ? 'queen' :
          oneIndexedCard === 13 ? 'king' :
-                                 'unknown';
+                                 false;
+}
+
+function testFor(rankType) {
+  console.log('Testing for: '+rankType);
+  for(let i=0;i<1000000;i++) {
+    shuffle(deck);
+    if(calculateRank(deck.slice(0,7)) === rankType ) {
+      console.log(`${rankType} achived for p1 on the ${i}th iteration!`);
+      console.log(deck.slice(0,7));
+      renderGame();
+      break;
+    }
+  }
 }
 
 shuffle(deck);
 renderGame();
+testFor(RANK.FOUR_KIND);
 
 </script>
-</body>
 </html>
