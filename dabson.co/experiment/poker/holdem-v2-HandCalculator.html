@@ -232,11 +232,11 @@ function isTwoPair(handArray) {}
 function isPair(handArray) {}
 
 function isHighCard(handArray) {
-  return toCardString( Math.max(...sortedSuitAgnostic( handArray )) + 1 );
+  return toCardString( Math.max(...sortedSuitAgnostic( handArray )) );
 }
 
-function toCardString(oneIndexedCard) {
-  console.log(oneIndexedCard);
+function toCardString(zeroIndexedCard) {
+  const oneIndexedCard = zeroIndexedCard + 1;
   return oneIndexedCard ===  1 ? 'ace' :
          oneIndexedCard ===  2 ? 'deuce' :
          oneIndexedCard ===  3 ? 'three' :
