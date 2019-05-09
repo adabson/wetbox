@@ -224,7 +224,13 @@ function isStraight(handArray) {
       runString += '0';
     }
   }
-  return runString.includes('1111');
+
+  let runDetectString = '';
+  for(let i=1;i<nCardsPerHand;i++) {
+    runDetectString += '1';
+  }
+
+  return runString.includes( runDetectString );
 }
 
 function isStraightFlush(handArray) {
