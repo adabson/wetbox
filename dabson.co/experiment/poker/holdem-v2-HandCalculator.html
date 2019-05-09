@@ -150,15 +150,17 @@ function calculateRank(handArray) {
     throw new Error( `Calculate Rank Error: Invalid hand size. Expected (${nCardsPerPlayer + nCardsPerBoard}), but was (${handArray.length})` );
   }
 
-  if( isRoyalFlush(handArray) ) {
-    return RANK.ROYAL_FLUSH;
-  }
-
-  if( isFlush(handArray) ) {
-    return RANK.FLUSH;
-  }
-
-  return RANK.UNRANKED;
+  return isRoyalFlush(handArray) ? RANK.ROYAL_FLUSH : 
+      isStraightFlush(handArray) ? RANK.STRAIGHT_FLUSH :
+           isFourKind(handArray) ? RANK.FOUR_KIND :
+          isFullHouse(handArray) ? RANK.FULL_HOUSE :
+              isFlush(handArray) ? RANK.FLUSH :
+           isStraight(handArray) ? RANK.STRAIGHT :
+          isThreeKind(handArray) ? RANK.THREE_KIND :
+            isTwoPair(handArray) ? RANK.TWO_PAIR :
+               isPair(handArray) ? RANK.PAIR :
+           isHighCard(handArray) ? RANK.HIGH_CARD :
+                                   RANK.UNRANKED;
 }
 
 function sequence( n ) {
@@ -216,7 +218,7 @@ function isStraightFlush(handArray) {
   let clubSubset = [];
   let diamondSubset = [];
   let heartSubset = [];
-  let straightSubset = [];
+  let spadeSubset = [];
   return isStraight(clubSubset) | isStraight(diamondSubset) | isStraight(heartSubset) | isStraight(spadeSubset);
 }
 
@@ -225,7 +227,10 @@ function isFullHouse(handArray) {}
 function isThreeKind(handArray) {}
 function isTwoPair(handArray) {}
 function isPair(handArray) {}
-function isHighCard(handArray) {}
+
+function isHighCard(handArray) {
+  return true;
+}
 
 shuffle(deck);
 renderGame();
