@@ -200,12 +200,12 @@ function isFlush(handArray) {
   return isClubFlush | isDiamondFlush | isHeartFlush | isSpadeFlush;
 }
 
-function sortedSuitAgnostic(handArray) {
+function sortedSuitAgnosticSet(handArray) {
   return Array.from( new Set(handArray.map( x => x % nCardsPerSuit ).sort()) );
 }
 
 function isStraight(handArray) {
-  let suitAgnosticArray = sortedSuitAgnostic( handArray );
+  let suitAgnosticArray = sortedSuitAgnosticSet( handArray );
   let runString = '';
   for(let i=1;i<suitAgnosticArray.length;i++) {
     if(suitAgnosticArray[i]-suitAgnosticArray[i-1]===1) {
@@ -232,7 +232,7 @@ function isTwoPair(handArray) {}
 function isPair(handArray) {}
 
 function isHighCard(handArray) {
-  return toCardString( Math.max(...sortedSuitAgnostic( handArray )) );
+  return toCardString( Math.max(...sortedSuitAgnosticSet( handArray )) );
 }
 
 function toCardString(zeroIndexedCard) {
