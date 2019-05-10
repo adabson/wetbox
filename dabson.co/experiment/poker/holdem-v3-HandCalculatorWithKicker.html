@@ -2,12 +2,21 @@
 <style>
 .card{
   font-size:4.5em;
-  line-height:.915em;
-  width:.6em;
+  line-height:.88em;
+  width:.63em;
   background-color:#fff;
   display:inline-block;
-  padding-right:.03em;
-  padding-left:-.5em;
+  text-align:right;
+  overflow:hidden;
+  border-radius:.06em;
+  border:.03em solid #000;
+  margin:.03em;
+  box-sizing:border-box;
+}
+.card span{
+  position:relative;
+  left:-.042em;
+  top:.004em;
 }
 body{
   font-family:Arial,sans-serif;
@@ -141,9 +150,12 @@ function getCardEl(cardNo) {
   let cardUnicode = deckMap[cardNo];
   let color = cardNo >= DIAMOND1 && cardNo <= HEARTK ? 'c00' : '000';
   let cardEl = document.createElement('span');
+  let cardInnerEl = document.createElement('span');
   cardEl.setAttribute('class', 'card');
-  cardEl.setAttribute('style', `color:#${color}`);
-  cardEl.innerHTML = `&#${cardUnicode};`; // because most implementations of javascript only support 16-bit javascript, we need to use 32-bit HTML specialchars
+  cardEl.setAttribute('style', `color:#${color};border-color:${color}`);
+
+  cardInnerEl.innerHTML = `&#${cardUnicode};`; // because most implementations of javascript only support 16-bit javascript, we need to use 32-bit HTML specialchars
+  cardEl.appendChild(cardInnerEl);
   return cardEl;
 }
 
