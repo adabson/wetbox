@@ -1,11 +1,18 @@
 <html>
 <style>
 .card{
-  font-size:5em;
-  line-height:1em;
+  font-size:4.5em;
+  line-height:.915em;
+  width:.6em;
+  background-color:#fff;
+  display:inline-block;
+  padding-right:.03em;
+  padding-left:-.5em;
 }
 body{
   font-family:Arial,sans-serif;
+  font-size:2em;
+  background-color:#0f0;
 }
 </style>
 <body></body>
@@ -122,7 +129,7 @@ function renderGame() {
       playerEl.appendChild(getCardEl(cardNo));
     }
 
-    let playerRank = calculateRank(playerHand);
+    let playerRank = calculateFullRank(playerHand);
     let playerRankEl = document.createTextNode(playerRank);
     playerEl.appendChild(playerRankEl);
 
@@ -166,7 +173,7 @@ function calculateRank(handArray) {
           isThreeKind(handArray) ? RANK.THREE_KIND :
             isTwoPair(handArray) ? RANK.TWO_PAIR :
                isPair(handArray) ? RANK.PAIR :
-           isHighCard(handArray) ? RANK.HIGH_CARD + ` (${isHighCard(handArray)} kicker)` :
+           isHighCard(handArray) ? RANK.HIGH_CARD :
                                    RANK.UNRANKED;
 }
 
@@ -285,27 +292,27 @@ function isPair(handArray) {
 }
 
 function isHighCard(handArray) {
-  return toCardString( Math.max(...sortedSuitAgnosticSet( handArray )) + 1 );
+  return true;
 }
 
 function toCardString(oneIndexedCard) { // keep it at one so false (0) results in unknown kicker
-  return oneIndexedCard ===  1 ? 'ace' :
+  return oneIndexedCard ===  1 ? 'ace'   :
          oneIndexedCard ===  2 ? 'deuce' :
          oneIndexedCard ===  3 ? 'three' :
-         oneIndexedCard ===  4 ? 'four' :
-         oneIndexedCard ===  5 ? 'five' :
-         oneIndexedCard ===  6 ? 'six' :
+         oneIndexedCard ===  4 ? 'four'  :
+         oneIndexedCard ===  5 ? 'five'  :
+         oneIndexedCard ===  6 ? 'six'   :
          oneIndexedCard ===  7 ? 'seven' :
          oneIndexedCard ===  8 ? 'eight' :
-         oneIndexedCard ===  9 ? 'nine' :
-         oneIndexedCard === 10 ? 'ten' :
-         oneIndexedCard === 11 ? 'jack' :
+         oneIndexedCard ===  9 ? 'nine'  :
+         oneIndexedCard === 10 ? 'ten'   :
+         oneIndexedCard === 11 ? 'jack'  :
          oneIndexedCard === 12 ? 'queen' :
-         oneIndexedCard === 13 ? 'king' :
+         oneIndexedCard === 13 ? 'king'  :
                                  false;
 }
 
-function testFor(rankType) {
+function testRank(rankType) {
   console.log('Testing for: '+rankType);
   for(let i=0;i<1000000;i++) {
     shuffle(deck);
@@ -319,19 +326,40 @@ function testFor(rankType) {
   }
 }
 
+function calculateFullRank(playerHand) {
+  let rank = calculateRank(playerHand)
+  let high = "king";
+  let kicker = "queen";
+  return `${rank} ${high} ${kicker}`;
+}
+
+function calculateWinners(...hands) {
+
+  // calculate rank
+  // if > 1people with same rank, calculate high (or split if equivilent hand/no high)
+  // if > 1 people with same high, caluclate kicker(s) (or split if equivilent hand/no kickers)
+
+
+}
+
 shuffle(deck);
 renderGame();
 
-// testFor(RANK.ROYAL_FLUSH);
-// testFor(RANK.STRAIGHT_FLUSH);
-// testFor(RANK.FOUR_KIND);
-// testFor(RANK.FULL_HOUSE);
-// testFor(RANK.FLUSH);
-testFor(RANK.STRAIGHT);
-// testFor(RANK.THREE_KIND);
-// testFor(RANK.TWO_PAIR);
-// testFor(RANK.PAIR);
-// testFor(RANK.HIGH_CARD);
+// testRank(RANK.ROYAL_FLUSH);
+// testRank(RANK.STRAIGHT_FLUSH);
+// testRank(RANK.FOUR_KIND);
+// testRank(RANK.FULL_HOUSE);
+// testRank(RANK.FLUSH);
+// testRank(RANK.STRAIGHT);
+// testRank(RANK.THREE_KIND);
+// testRank(RANK.TWO_PAIR);
+// testRank(RANK.PAIR);
+// testRank(RANK.HIGH_CARD);
+
+
+// format:
+// [highcard, kicker, kicker, kicker]
+
 
 </script>
 </html>
