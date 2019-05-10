@@ -58,56 +58,7 @@ const RANK = [
   RANK.STRAIGHT_FLUSH,
   RANK.ROYAL_FLUSH 
 ] = RANK;
-
-// Tri is a 6-digit tridecimal (base-13), easiest to see as ParseInt( ...TRI ).toString(13)
-// const RANK = (function() { 
-//   return [
-//     'Unranked',
-//     'Royal Flush',
-//     {BABY: 'Royal Flush2'}
-//   ]; 
-  /*
-    'Royal Flush',
-    ROYAL_FLUSH:    { DEC: 10, TRI: 10 * M[5], STR: 'Royal Flush' },
-    STRAIGHT_FLUSH: { DEC:  9, TRI:  9 * M[5], STR: 'Straight Flush'},
-    FOUR_KIND:      { DEC:  8, TRI:  8 * M[5], STR: 'Four of a Kind'},
-    FULL_HOUSE:     { DEC:  7, TRI:  7 * M[5], STR: 'Full House'},
-    FLUSH:          { DEC:  6, TRI:  6 * M[5], STR: 'Flush'},
-    STRAIGHT:       { DEC:  5, TRI:  5 * M[5], STR: 'Straight'},
-    THREE_KIND:     { DEC:  4, TRI:  4 * M[5], STR: 'Three of a Kind'},
-    TWO_PAIR:       { DEC:  3, TRI:  3 * M[5], STR: 'Two Pair'},
-    PAIR:           { DEC:  2, TRI:  2 * M[5], STR: 'Pair'},
-    HIGH_CARD:      { DEC:  1, TRI:  1 * M[5], STR: 'High Card'},
-    UNRANKED:       { DEC:  0, TRI:  0 * M[5], STR: 'Unranked'},*/
-
-//})();
-//RANK.ROYAL_FLUSH  = 'Royal Flush';
-
-/*
-const RANK = (function() { return {
-  ROYAL_FLUSH:    { DEC: 10, TRI: 10 * M[5], STR: 'Royal Flush' },
-  STRAIGHT_FLUSH: { DEC:  9, TRI:  9 * M[5], STR: 'Straight Flush'},
-  FOUR_KIND:      { DEC:  8, TRI:  8 * M[5], STR: 'Four of a Kind'},
-  FULL_HOUSE:     { DEC:  7, TRI:  7 * M[5], STR: 'Full House'},
-  FLUSH:          { DEC:  6, TRI:  6 * M[5], STR: 'Flush'},
-  STRAIGHT:       { DEC:  5, TRI:  5 * M[5], STR: 'Straight'},
-  THREE_KIND:     { DEC:  4, TRI:  4 * M[5], STR: 'Three of a Kind'},
-  TWO_PAIR:       { DEC:  3, TRI:  3 * M[5], STR: 'Two Pair'},
-  PAIR:           { DEC:  2, TRI:  2 * M[5], STR: 'Pair'},
-  HIGH_CARD:      { DEC:  1, TRI:  1 * M[5], STR: 'High Card'},
-  UNRANKED:       { DEC:  0, TRI:  0 * M[5], STR: 'Unranked'},
-}; })();
-
-*/
-
-// function intRank tridecimalRank ) { //for the rank object, given a rank number, return a rank
-//   return Object.keys[Math.floor(tridecimalRank/M[5])];
-// };
-
-// give a Json object a prototype by objectifing it
-// function Objectify(data) {
-//   (function() {}).extend(this, data);
-// }
+RANK.TRI = n => n * M[5];
 
 const CLUB2    =  0;
 const CLUB3    =  1;
