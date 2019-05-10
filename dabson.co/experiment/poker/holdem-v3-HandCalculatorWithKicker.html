@@ -32,21 +32,56 @@ const M = [1, 13, 169, 2197, 28561, 371293]; // BASE-13 MULTIPLIERS = [0,1,2,3,4
 
 asBase13 = x => parseInt( x ).toString( BASE );
 
-// Tri is a 6-digit tridecimal (base-13), easiest to see as ParseInt( ...TRI ).toString(13)
-const RANK = (function() { return {
-  ROYAL_FLUSH:    { DEC: 10, TRI: 10 * M[5], STR: 'Royal Flush' },
-  STRAIGHT_FLUSH: { DEC:  9, TRI:  9 * M[5], STR: 'Straight Flush'},
-  FOUR_KIND:      { DEC:  8, TRI:  8 * M[5], STR: 'Four of a Kind'},
-  FULL_HOUSE:     { DEC:  7, TRI:  7 * M[5], STR: 'Full House'},
-  FLUSH:          { DEC:  6, TRI:  6 * M[5], STR: 'Flush'},
-  STRAIGHT:       { DEC:  5, TRI:  5 * M[5], STR: 'Straight'},
-  THREE_KIND:     { DEC:  4, TRI:  4 * M[5], STR: 'Three of a Kind'},
-  TWO_PAIR:       { DEC:  3, TRI:  3 * M[5], STR: 'Two Pair'},
-  PAIR:           { DEC:  2, TRI:  2 * M[5], STR: 'Pair'},
-  HIGH_CARD:      { DEC:  1, TRI:  1 * M[5], STR: 'High Card'},
-  UNRANKED:       { DEC:  0, TRI:  0 * M[5], STR: 'Unranked'},
-}; })();
+const RANK = [
+  'Unranked',
+  'High Card',
+  'Pair',
+  'Two Pair',
+  'Three of a Kind',
+  'Straight',
+  'Flush',
+  'Full House',
+  'Four of a Kind',
+  'Straight Flush',
+  'Royal Flush',
+];
+[ 
+  RANK.UNRANKED,
+  RANK.HIGH_CARD,
+  RANK.PAIR, 
+  RANK.TWO_PAIR, 
+  RANK.THREE_KIND,
+  RANK.STRAIGHT,
+  RANK.FLUSH,
+  RANK.FULL_HOUSE,
+  RANK.FOUR_KIND,
+  RANK.STRAIGHT_FLUSH,
+  RANK.ROYAL_FLUSH 
+] = RANK;
 
+// Tri is a 6-digit tridecimal (base-13), easiest to see as ParseInt( ...TRI ).toString(13)
+// const RANK = (function() { 
+//   return [
+//     'Unranked',
+//     'Royal Flush',
+//     {BABY: 'Royal Flush2'}
+//   ]; 
+  /*
+    'Royal Flush',
+    ROYAL_FLUSH:    { DEC: 10, TRI: 10 * M[5], STR: 'Royal Flush' },
+    STRAIGHT_FLUSH: { DEC:  9, TRI:  9 * M[5], STR: 'Straight Flush'},
+    FOUR_KIND:      { DEC:  8, TRI:  8 * M[5], STR: 'Four of a Kind'},
+    FULL_HOUSE:     { DEC:  7, TRI:  7 * M[5], STR: 'Full House'},
+    FLUSH:          { DEC:  6, TRI:  6 * M[5], STR: 'Flush'},
+    STRAIGHT:       { DEC:  5, TRI:  5 * M[5], STR: 'Straight'},
+    THREE_KIND:     { DEC:  4, TRI:  4 * M[5], STR: 'Three of a Kind'},
+    TWO_PAIR:       { DEC:  3, TRI:  3 * M[5], STR: 'Two Pair'},
+    PAIR:           { DEC:  2, TRI:  2 * M[5], STR: 'Pair'},
+    HIGH_CARD:      { DEC:  1, TRI:  1 * M[5], STR: 'High Card'},
+    UNRANKED:       { DEC:  0, TRI:  0 * M[5], STR: 'Unranked'},*/
+
+//})();
+//RANK.ROYAL_FLUSH  = 'Royal Flush';
 
 /*
 const RANK = (function() { return {
@@ -241,7 +276,7 @@ function isRoyalFlush(handArray) {
   const isRoyalDiamonds = handArray.containsAll( DIAMONDT, DIAMONDJ, DIAMONDQ, DIAMONDK, DIAMONDA );
   const isRoyalHearts   = handArray.containsAll( HEARTT, HEARTJ, HEARTQ, HEARTK, HEARTA );
   const isRoyalSpades   = handArray.containsAll( SPADET, SPADEJ, SPADEQ, SPADEK, SPADEA );
-  return ( isRoyalClubs | isRoyalDiamonds | isRoyalHearts | isRoyalSpades ) * RANK.ROYAL_FLUSH.TRI;
+  return ( isRoyalClubs | isRoyalDiamonds | isRoyalHearts | isRoyalSpades ) ; // @todo* RANK.ROYAL_FLUSH.TRI;
 }
 
 function isFlush(handArray) {
