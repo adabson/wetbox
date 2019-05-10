@@ -26,80 +26,114 @@ body{
 </style>
 <body></body>
 <script>
-const RANK = {
-  ROYAL_FLUSH:    'Royal Flush',
-  STRAIGHT_FLUSH: 'Straight Flush',
-  FOUR_KIND:      'Four of a Kind',
-  FULL_HOUSE:     'Full House',
-  FLUSH:          'Flush',
-  STRAIGHT:       'Straight',
-  THREE_KIND:     'Three of a Kind',
-  TWO_PAIR:       'Two Pair',
-  PAIR:           'Pair',
-  HIGH_CARD:      'High Card',
-  UNRANKED:       'Unranked',
-};
 
-const CLUB1    =  0;
-const CLUB2    =  1;
-const CLUB3    =  2;
-const CLUB4    =  3;
-const CLUB5    =  4;
-const CLUB6    =  5;
-const CLUB7    =  6;
-const CLUB8    =  7;
-const CLUB9    =  8;
-const CLUBT    =  9;
-const CLUBJ    = 10;
-const CLUBQ    = 11;
-const CLUBK    = 12;
+const BASE = 13;
+const M = [1, 13, 169, 2197, 28561, 371293]; // BASE-13 MULTIPLIERS = [0,1,2,3,4,5].map( x => Math.pow(BASE, x) )
 
-const DIAMOND1 = 13;
-const DIAMOND2 = 14;
-const DIAMOND3 = 15;
-const DIAMOND4 = 16;
-const DIAMOND5 = 17;
-const DIAMOND6 = 18;
-const DIAMOND7 = 19;
-const DIAMOND8 = 20;
-const DIAMOND9 = 21;
-const DIAMONDT = 22;
-const DIAMONDJ = 23;
-const DIAMONDQ = 24;
-const DIAMONDK = 25;
+asBase13 = x => parseInt( x ).toString( BASE );
 
-const HEART1   = 26;
-const HEART2   = 27;
-const HEART3   = 28;
-const HEART4   = 29;
-const HEART5   = 30;
-const HEART6   = 31;
-const HEART7   = 32;
-const HEART8   = 33;
-const HEART9   = 34;
-const HEARTT   = 35;
-const HEARTJ   = 36;
-const HEARTQ   = 37;
-const HEARTK   = 38;
+// Tri is a 6-digit tridecimal (base-13), easiest to see as ParseInt( ...TRI ).toString(13)
+const RANK = (function() { return {
+  ROYAL_FLUSH:    { DEC: 10, TRI: 10 * M[5], STR: 'Royal Flush' },
+  STRAIGHT_FLUSH: { DEC:  9, TRI:  9 * M[5], STR: 'Straight Flush'},
+  FOUR_KIND:      { DEC:  8, TRI:  8 * M[5], STR: 'Four of a Kind'},
+  FULL_HOUSE:     { DEC:  7, TRI:  7 * M[5], STR: 'Full House'},
+  FLUSH:          { DEC:  6, TRI:  6 * M[5], STR: 'Flush'},
+  STRAIGHT:       { DEC:  5, TRI:  5 * M[5], STR: 'Straight'},
+  THREE_KIND:     { DEC:  4, TRI:  4 * M[5], STR: 'Three of a Kind'},
+  TWO_PAIR:       { DEC:  3, TRI:  3 * M[5], STR: 'Two Pair'},
+  PAIR:           { DEC:  2, TRI:  2 * M[5], STR: 'Pair'},
+  HIGH_CARD:      { DEC:  1, TRI:  1 * M[5], STR: 'High Card'},
+  UNRANKED:       { DEC:  0, TRI:  0 * M[5], STR: 'Unranked'},
+}; })();
 
-const SPADE1   = 39;
-const SPADE2   = 40;
-const SPADE3   = 41;
-const SPADE4   = 42;
-const SPADE5   = 43;
-const SPADE6   = 44;
-const SPADE7   = 45;
-const SPADE8   = 46;
-const SPADE9   = 47;
-const SPADET   = 48;
-const SPADEJ   = 49;
-const SPADEQ   = 50;
-const SPADEK   = 51;
 
-const clubMap    = [127185,127186,127187,127188,127189,127190,127191,127192,127193,127194,127195,127197,127198];
-const diamondMap = [127169,127170,127171,127172,127173,127174,127175,127176,127177,127178,127179,127181,127182];
-const heartMap   = [127153,127154,127155,127156,127157,127158,127159,127160,127161,127162,127163,127165,127166];
-const spadeMap   = [127137,127138,127139,127140,127141,127142,127143,127144,127145,127146,127147,127149,127150];
+/*
+const RANK = (function() { return {
+  ROYAL_FLUSH:    { DEC: 10, TRI: 10 * M[5], STR: 'Royal Flush' },
+  STRAIGHT_FLUSH: { DEC:  9, TRI:  9 * M[5], STR: 'Straight Flush'},
+  FOUR_KIND:      { DEC:  8, TRI:  8 * M[5], STR: 'Four of a Kind'},
+  FULL_HOUSE:     { DEC:  7, TRI:  7 * M[5], STR: 'Full House'},
+  FLUSH:          { DEC:  6, TRI:  6 * M[5], STR: 'Flush'},
+  STRAIGHT:       { DEC:  5, TRI:  5 * M[5], STR: 'Straight'},
+  THREE_KIND:     { DEC:  4, TRI:  4 * M[5], STR: 'Three of a Kind'},
+  TWO_PAIR:       { DEC:  3, TRI:  3 * M[5], STR: 'Two Pair'},
+  PAIR:           { DEC:  2, TRI:  2 * M[5], STR: 'Pair'},
+  HIGH_CARD:      { DEC:  1, TRI:  1 * M[5], STR: 'High Card'},
+  UNRANKED:       { DEC:  0, TRI:  0 * M[5], STR: 'Unranked'},
+}; })();
+
+*/
+
+// function intRank tridecimalRank ) { //for the rank object, given a rank number, return a rank
+//   return Object.keys[Math.floor(tridecimalRank/M[5])];
+// };
+
+// give a Json object a prototype by objectifing it
+// function Objectify(data) {
+//   (function() {}).extend(this, data);
+// }
+
+const CLUB2    =  0;
+const CLUB3    =  1;
+const CLUB4    =  2;
+const CLUB5    =  3;
+const CLUB6    =  4;
+const CLUB7    =  5;
+const CLUB8    =  8;
+const CLUB9    =  7;
+const CLUBT    =  8;
+const CLUBJ    =  9;
+const CLUBQ    = 10;
+const CLUBK    = 11;
+const CLUBA    = 12;
+
+const DIAMOND2 = 13;
+const DIAMOND3 = 14;
+const DIAMOND4 = 15;
+const DIAMOND5 = 16;
+const DIAMOND6 = 17;
+const DIAMOND7 = 18;
+const DIAMOND8 = 19;
+const DIAMOND9 = 20;
+const DIAMONDT = 21;
+const DIAMONDJ = 22;
+const DIAMONDQ = 23;
+const DIAMONDK = 24;
+const DIAMONDA = 25;
+
+const HEART2   = 26;
+const HEART3   = 27;
+const HEART4   = 28;
+const HEART5   = 29;
+const HEART6   = 30;
+const HEART7   = 31;
+const HEART8   = 32;
+const HEART9   = 33;
+const HEARTT   = 34;
+const HEARTJ   = 35;
+const HEARTQ   = 36;
+const HEARTK   = 37;
+const HEARTA   = 38;
+
+const SPADE2   = 39;
+const SPADE3   = 40;
+const SPADE4   = 41;
+const SPADE5   = 42;
+const SPADE6   = 43;
+const SPADE7   = 44;
+const SPADE8   = 45;
+const SPADE9   = 46;
+const SPADET   = 47;
+const SPADEJ   = 48;
+const SPADEQ   = 49;
+const SPADEK   = 50;
+const SPADEA   = 51;
+
+const clubMap    = [127186,127187,127188,127189,127190,127191,127192,127193,127194,127195,127197,127198,127185];
+const diamondMap = [127170,127171,127172,127173,127174,127175,127176,127177,127178,127179,127181,127182,127169];
+const heartMap   = [127154,127155,127156,127157,127158,127159,127160,127161,127162,127163,127165,127166,127153];
+const spadeMap   = [127138,127139,127140,127141,127142,127143,127144,127145,127146,127147,127149,127150,127137];
 const deckMap    = [].concat(clubMap,diamondMap,heartMap,spadeMap);
 
 const nCardsPerSuit   = 13;
@@ -110,10 +144,6 @@ const nPlayers        = 8;
 const nDeck           = deckMap.length; // 52
 const nMaxPlayers     = Math.floor((nDeck-nCardsPerBoard)/nCardsPerPlayer); // 52-5=47, no burns, 2 cards each = 46/2 = 23 max players
 
-let runDetectString = ''; // string used for straights, compute once (for holdem, is '1111' )
-for(let i=1;i<nCardsPerHand;i++) {
-  runDetectString += '1';
-}
 
 const deck = sequence(nDeck); // 0-12 clubs, 13-25 diamonds, 26-38 hearts, 39-51 spades
 //shuffle(deck);
@@ -148,7 +178,7 @@ function renderGame() {
 
 function getCardEl(cardNo) {
   let cardUnicode = deckMap[cardNo];
-  let color = cardNo >= DIAMOND1 && cardNo <= HEARTK ? 'c00' : '000';
+  let color = cardNo >= DIAMOND2 && cardNo <= HEARTA ? 'c00' : '000';
   let cardEl = document.createElement('span');
   let cardInnerEl = document.createElement('span');
   cardEl.setAttribute('class', 'card');
@@ -171,22 +201,23 @@ function shuffle(array) {
   return array;
 }
 
-function calculateRank(handArray) {
+function calculateRank(handArray) { // returnsa 6-digit base-13 number
   if(handArray.length != (nCardsPerPlayer + nCardsPerBoard)) {
     throw new Error( `Calculate Rank Error: Invalid hand size. Expected (${nCardsPerPlayer + nCardsPerBoard}), but was (${handArray.length})` );
   }
 
-  return isRoyalFlush(handArray) ? RANK.ROYAL_FLUSH : 
-      isStraightFlush(handArray) ? RANK.STRAIGHT_FLUSH :
-           isFourKind(handArray) ? RANK.FOUR_KIND :
-          isFullHouse(handArray) ? RANK.FULL_HOUSE :
-              isFlush(handArray) ? RANK.FLUSH :
-           isStraight(handArray) ? RANK.STRAIGHT :
-          isThreeKind(handArray) ? RANK.THREE_KIND :
-            isTwoPair(handArray) ? RANK.TWO_PAIR :
-               isPair(handArray) ? RANK.PAIR :
-           isHighCard(handArray) ? RANK.HIGH_CARD :
-                                   RANK.UNRANKED;
+  // I dunno, is using psudo-booleans a good thing?
+  return isRoyalFlush(handArray) ? isRoyalFlush(handArray) : 
+      isStraightFlush(handArray) ? isStraightFlush(handArray) :
+           isFourKind(handArray) ? isFourKind(handArray) :
+          isFullHouse(handArray) ? isFullHouse(handArray) :
+              isFlush(handArray) ? isFlush(handArray) :
+           isStraight(handArray) ? isStraight(handArray) :
+          isThreeKind(handArray) ? isThreeKind(handArray) :
+            isTwoPair(handArray) ? isTwoPair(handArray) :
+               isPair(handArray) ? isPair(handArray) :
+           isHighCard(handArray) ? isHighCard(handArray) :
+                                   0;
 }
 
 function sequence( n ) {
@@ -206,11 +237,11 @@ Array.prototype.containsAny = function(...els) {
 };
 
 function isRoyalFlush(handArray) {
-  const isRoyalClubs    = handArray.containsAll( CLUBT, CLUBJ, CLUBQ, CLUBK, CLUB1 );
-  const isRoyalDiamonds = handArray.containsAll( DIAMONDT, DIAMONDJ, DIAMONDQ, DIAMONDK, DIAMOND1 );
-  const isRoyalHearts   = handArray.containsAll( HEARTT, HEARTJ, HEARTQ, HEARTK, HEART1 );
-  const isRoyalSpades   = handArray.containsAll( SPADET, SPADEJ, SPADEQ, SPADEK, SPADE1 );
-  return isRoyalClubs | isRoyalDiamonds | isRoyalHearts | isRoyalSpades;
+  const isRoyalClubs    = handArray.containsAll( CLUBT, CLUBJ, CLUBQ, CLUBK, CLUBA );
+  const isRoyalDiamonds = handArray.containsAll( DIAMONDT, DIAMONDJ, DIAMONDQ, DIAMONDK, DIAMONDA );
+  const isRoyalHearts   = handArray.containsAll( HEARTT, HEARTJ, HEARTQ, HEARTK, HEARTA );
+  const isRoyalSpades   = handArray.containsAll( SPADET, SPADEJ, SPADEQ, SPADEK, SPADEA );
+  return ( isRoyalClubs | isRoyalDiamonds | isRoyalHearts | isRoyalSpades ) * RANK.ROYAL_FLUSH.TRI;
 }
 
 function isFlush(handArray) {
@@ -220,10 +251,10 @@ function isFlush(handArray) {
   let noSpades = 0;
 
   handArray.forEach(card => {
-         if(card <= CLUBK ) noClubs++;
-    else if(card >= DIAMOND1 && card <= DIAMONDK ) noDiamonds++
-    else if(card >= HEART1 && card <= HEARTK ) noHearts++
-    else if(card >= SPADE1 && card <= SPADEK ) noSpades++
+         if(card <= CLUBA ) noClubs++;
+    else if(card >= DIAMOND2 && card <= DIAMONDA ) noDiamonds++
+    else if(card >= HEART2 && card <= HEARTA ) noHearts++
+    else if(card >= SPADE2 && card <= SPADEA ) noSpades++
   });
 
   const isClubFlush = noClubs >= nCardsPerHand;
@@ -247,20 +278,28 @@ function cardTypeCount( handArray ) { // returns counter array ace to king
 function isStraight(handArray) {
   let runString = '';
   let suitAgnosticArray = sortedSuitAgnosticSet( handArray );
-  if(suitAgnosticArray[0] === 0 ) {
-    suitAgnosticArray = suitAgnosticArray.concat(nCardsPerSuit); //aces count at both ends in a straight
-  }
-  for(let i=1;i<suitAgnosticArray.length;i++) {
-    if(suitAgnosticArray[i]-suitAgnosticArray[i-1]===1) {
-      runString += '1';
+  // ALL BROKEN
+  //let highestRank = 
+  // if(suitAgnosticArray.reverse(0) === 0 ) {
+  //   suitAgnosticArray.unshift(nCardsPerSuit); //aces count at both ends in a straight
+  // }
+
+  let last = suitAgnosticArray[suitAgnosticArray.length-1];
+  let runLength = nCardsPerHand - 1;
+  let run = 0;
+
+  for(let i=suitAgnosticArray.length-2;i>=0;i--) {
+    if(suitAgnosticArray[i]+1 === last) {
+      run++;
     } else {
-      runString += '0';
+      run = 0;
     }
+    if( run === runLength ) {
+      return 1 + ( ( suitAgnosticArray[i] + runLength ) % nCardsPerSuit );
+    }
+    last = suitAgnosticArray[i];
   }
-
-  // console.log(suitAgnosticArray,runString,runDetectString);
-
-  return runString.includes( runDetectString );
+  return 0;
 }
 
 function isStraightFlush(handArray) {
@@ -270,10 +309,10 @@ function isStraightFlush(handArray) {
   let spadeSubset = [];
 
   handArray.forEach( card => {
-         if(card <= CLUBK ) clubSubset.push(card);
-    else if(card >= DIAMOND1 && card <= DIAMONDK ) diamondSubset.push(card);
-    else if(card >= HEART1 && card <= HEARTK ) heartSubset.push(card);
-    else if(card >= SPADE1 && card <= SPADEK ) spadeSubset.push(card);
+         if(                    card <= CLUBA    ) clubSubset.push(card);
+    else if(card >= DIAMOND2 && card <= DIAMONDA ) diamondSubset.push(card);
+    else if(card >= HEART2   && card <= HEARTA   ) heartSubset.push(card);
+    else if(card >= SPADE2   && card <= SPADEA   ) spadeSubset.push(card);
   });
 
   return isStraight(clubSubset) | isStraight(diamondSubset) | isStraight(heartSubset) | isStraight(spadeSubset);
@@ -281,12 +320,12 @@ function isStraightFlush(handArray) {
 
 function isFourKind(handArray) {
   let typeCount = cardTypeCount(handArray);
-  return typeCount.some( x => x === 4 );
+  return typeCount.indexOf(4) + 1;
 }
 
 function isThreeKind(handArray) {
   let typeCount = cardTypeCount(handArray);
-  return typeCount.some( x => x === 3 );
+  return typeCount.indexOf(3) + 1;
 }
 
 function isFullHouse(handArray) {
@@ -308,19 +347,19 @@ function isHighCard(handArray) {
 }
 
 function toCardString(oneIndexedCard) { // keep it at one so false (0) results in unknown kicker
-  return oneIndexedCard ===  1 ? 'ace'   :
-         oneIndexedCard ===  2 ? 'deuce' :
-         oneIndexedCard ===  3 ? 'three' :
-         oneIndexedCard ===  4 ? 'four'  :
-         oneIndexedCard ===  5 ? 'five'  :
-         oneIndexedCard ===  6 ? 'six'   :
-         oneIndexedCard ===  7 ? 'seven' :
-         oneIndexedCard ===  8 ? 'eight' :
-         oneIndexedCard ===  9 ? 'nine'  :
-         oneIndexedCard === 10 ? 'ten'   :
-         oneIndexedCard === 11 ? 'jack'  :
-         oneIndexedCard === 12 ? 'queen' :
-         oneIndexedCard === 13 ? 'king'  :
+  return oneIndexedCard ===  1 ? 'deuce' :
+         oneIndexedCard ===  2 ? 'three' :
+         oneIndexedCard ===  3 ? 'four'  :
+         oneIndexedCard ===  4 ? 'five'  :
+         oneIndexedCard ===  5 ? 'six'   :
+         oneIndexedCard ===  6 ? 'seven' :
+         oneIndexedCard ===  7 ? 'eight' :
+         oneIndexedCard ===  8 ? 'nine'  :
+         oneIndexedCard ===  9 ? 'ten'   :
+         oneIndexedCard === 10 ? 'jack'  :
+         oneIndexedCard === 11 ? 'queen' :
+         oneIndexedCard === 12 ? 'king'  :
+         oneIndexedCard === 13 ? 'ace'   :
                                  false;
 }
 
@@ -340,9 +379,24 @@ function testRank(rankType) {
 
 function calculateFullRank(playerHand) {
   let rank = calculateRank(playerHand)
-  let high = "king";
-  let kicker = "queen";
-  return `${rank} ${high} ${kicker}`;
+  let subRank = calculateSubRank(playerHand, rank);
+  //let high = "king";
+  //let kicker = "queen"; ${high} ${kicker}
+  return `${rank}`;
+}
+
+function calculateSubRank(playerHand, rank) { //rank vs subrank calc is a bit circular
+    return rank === RANK.ROYAL_FLUSH ? 0 : 
+        rank === RANK.STRAIGHT_FLUSH ? isStraightFlush(playerHand) :
+             rank === RANK.FOUR_KIND ? isFourKind(playerHand) :
+            rank === RANK.FULL_HOUSE ? isFullHouse(playerHand) :
+                 rank === RANK.FLUSH ? isFlush(playerHand):
+              rank === RANK.STRAIGHT ? isStraight(playerHand) :
+            rank === RANK.THREE_KIND ? isThreeKind(playerHand) :
+              rank === RANK.TWO_PAIR ? isTwoPair(playerHand) :
+                  rank === RANK.PAIR ? isPair(playerHand) :
+             rank === RANK.HIGH_CARD ? isHighCard(playerHand) :
+                                       0;
 }
 
 function calculateWinners(...hands) {
@@ -350,7 +404,6 @@ function calculateWinners(...hands) {
   // calculate rank
   // if > 1people with same rank, calculate high (or split if equivilent hand/no high)
   // if > 1 people with same high, caluclate kicker(s) (or split if equivilent hand/no kickers)
-
 
 }
 
