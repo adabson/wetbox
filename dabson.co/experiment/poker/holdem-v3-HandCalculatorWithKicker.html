@@ -70,7 +70,7 @@ RANK.THREE = n => { return n * M[3]; }
 RANK.FOUR  = n => { return n * M[4]; }
 RANK.FIVE  = n => { return n * M[5]; }
 RANK.S = (r,n1,n2,n3,n4,n5) => { return RANK.ZERO(r) + n1*M[1] + n2*M[2] + n3*M[3] + n4*M[4] + n5*M[5]; }
-RANK.TOP = function(pureRank) {
+RANK.getZeroRank = function(pureRank) {
   let index = Math.floor( pureRank / M[0]);
   return RANK[index];
 }
@@ -220,7 +220,7 @@ function calculateRank(handArray) { // returnsa 6-digit base-13 number
                    isHighCard(handArray) ? isHighCard(handArray) :
                                            0;
 
-  return RANK.TOP( pureRank ) + ' ' + pureRank.toString(13);
+  return RANK.getZeroRank( pureRank ) + ' ' + pureRank.toString(13);
 }
 
 function sequence( n ) {
