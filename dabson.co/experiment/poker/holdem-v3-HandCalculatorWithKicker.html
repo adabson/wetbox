@@ -339,8 +339,10 @@ function isPair(handArray) {
   let typeCount = cardTypeCount(handArray);
   if(!typeCount.includes(2) ) { return 0; }
   let pairValue = typeCount.indexOf(2);
-  let kickers = suitAgnosticSet( handArray ).filter( x => x !== pairValue).sort(DESC);
-  kickers = kickers.slice(0, nCardsPerHand-2);
+  let kickers = suitAgnosticSet( handArray )
+    .filter( x => x !== pairValue)
+    .sort(DESC)
+    .slice(0, nCardsPerHand - 2);
   return RANK.S(RANK.PAIR, pairValue, ...kickers, 0);
 }
 
