@@ -336,7 +336,7 @@ function isTwoPair(handArray) {
   if( !( reverseSortedTypeCount[0] === 2 && reverseSortedTypeCount[1] === 2 ) ) { return 0; }
 
   let typeCount = cardTypeCount(handArray);
-  let pairVals = [];
+  let pairVals = []; // first highest pair, 2nd highest pair, ...etc
   let kicker = -1;
   for(let i=typeCount.length-1;i>=0;i--) {
     if(typeCount[i]===2) {
