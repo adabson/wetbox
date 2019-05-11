@@ -370,28 +370,6 @@ function testRank(rankType) {
   }
 }
 
-function calculateFullRank(playerHand) {
-  let rank = calculateRank(playerHand)
-  let subRank = calculateSubRank(playerHand, rank);
-  //let high = "king";
-  //let kicker = "queen"; ${high} ${kicker}
-  return `${rank}`;
-}
-
-function calculateSubRank(playerHand, rank) { //rank vs subrank calc is a bit circular
-    return rank === RANK.ROYAL_FLUSH ? 0 : 
-        rank === RANK.STRAIGHT_FLUSH ? isStraightFlush(playerHand) :
-             rank === RANK.FOUR_KIND ? isFourKind(playerHand) :
-            rank === RANK.FULL_HOUSE ? isFullHouse(playerHand) :
-                 rank === RANK.FLUSH ? isFlush(playerHand):
-              rank === RANK.STRAIGHT ? isStraight(playerHand) :
-            rank === RANK.THREE_KIND ? isThreeKind(playerHand) :
-              rank === RANK.TWO_PAIR ? isTwoPair(playerHand) :
-                  rank === RANK.PAIR ? isPair(playerHand) :
-             rank === RANK.HIGH_CARD ? isHighCard(playerHand) :
-                                       0;
-}
-
 function calculateWinners(...hands) {
 
   // calculate rank
