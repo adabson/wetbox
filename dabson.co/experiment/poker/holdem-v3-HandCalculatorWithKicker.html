@@ -336,7 +336,7 @@ function isTwoPair(handArray) {
 }
 function isPair(handArray) {
   let typeCount = cardTypeCount(handArray);
-  if(!typeCount.includes(2) ) { // .sort(DESC)[0] this mutates typeCount and destroys ordering
+  if(!typeCount.includes(2) ) {
     return 0;
   }
 
