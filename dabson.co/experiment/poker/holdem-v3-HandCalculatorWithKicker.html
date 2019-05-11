@@ -336,17 +336,13 @@ function isTwoPair(handArray) {
 }
 
 function isThreeKind(handArray) {
-  let typeCount = cardTypeCount(handArray);
   let triple = cardTypeCount(handArray).indexOf(3);
   if(triple === -1) { return 0; }
-  return RANK.S( RANK.THREE_KIND, 
-    triple, 
-    ...suitAgnosticSet( handArray )
-      .filter( x => x !== triple)
-      .sort(DESC)
-      .slice(0, nCardsPerHand - 3),
-    0,
-    0);
+  let kickers = suitAgnosticSet( handArray )
+    .filter( x => x !== triple)
+    .sort(DESC)
+    .slice(0, nCardsPerHand - 3);
+  return RANK.S( RANK.THREE_KIND, triple, ...kickers, 0, 0);
 }
 
 function isPair(handArray) {
