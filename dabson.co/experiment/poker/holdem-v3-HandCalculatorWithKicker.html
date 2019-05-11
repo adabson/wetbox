@@ -64,7 +64,7 @@ RANK.TWO   = n => { return n * M[2]; }
 RANK.THREE = n => { return n * M[3]; }
 RANK.FOUR  = n => { return n * M[4]; }
 RANK.FIVE  = n => { return n * M[5]; }
-RANK.S = (r,n1,n2,n3,n4,n5) => { return RANK.ZERO( r ) + n1*M[1] + n2*M[2] + n3*M[3] + n4*M[4] + n5*M[5]; }
+RANK.S = (r,n1,n2,n3,n4,n5) => { return RANK.ZERO(r) + n1*M[1] + n2*M[2] + n3*M[3] + n4*M[4] + n5*M[5]; }
 
 const CLUB2    =  0;
 const CLUB3    =  1;
@@ -274,7 +274,7 @@ function cardTypeCount( handArray ) { // returns counter array ace to king
 function isStraight(handArray) {
   let runString = '';
   let suitAgnosticArray = sortedSuitAgnosticSet( handArray );
-  // ALL BROKEN
+  // @todo ALL BROKEN
   //let highestRank = 
   // if(suitAgnosticArray.reverse(0) === 0 ) {
   //   suitAgnosticArray.unshift(nCardsPerSuit); //aces count at both ends in a straight
@@ -334,15 +334,14 @@ function isTwoPair(handArray) {
   let reverseSortedTypeCount = cardTypeCount(handArray).sort(DESC);
   return ( reverseSortedTypeCount[0] === 2 && reverseSortedTypeCount[1] === 2 ) * RANK.ZERO( RANK.TWO_PAIR );
 }
+
 function isPair(handArray) {
   let typeCount = cardTypeCount(handArray);
-  if(!typeCount.includes(2) ) {
-    return 0;
-  }
-
+  if(!typeCount.includes(2) ) { return 0; }
   let pairValue = typeCount.indexOf(2);
   let kickers = suitAgnosticSet( handArray ).filter( x => x !== pairValue).sort(DESC);
-  return RANK.S(RANK.PAIR, pairValue, ...kickers);
+  kickers = kickers.slice(0, nCardsPerHand-2);
+  return RANK.S(RANK.PAIR, pairValue, ...kickers, 0);
 }
 
 function isHighCard(handArray) {
@@ -390,7 +389,7 @@ function calculateWinners(...hands) {
 shuffle(deck);
 renderGame();
 
-//testRank(RANK.ROYAL_FLUSH);
+// testRank(RANK.ROYAL_FLUSH);
 // testRank(RANK.STRAIGHT_FLUSH);
 // testRank(RANK.FOUR_KIND);
 // testRank(RANK.FULL_HOUSE);
@@ -401,10 +400,8 @@ renderGame();
 // testRank(RANK.PAIR);
 // testRank(RANK.HIGH_CARD);
 
-
 // format:
 // [highcard, kicker, kicker, kicker]
-
 
 </script>
 </html>
