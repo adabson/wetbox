@@ -71,7 +71,7 @@ RANK.FOUR  = n => { return n * M[4]; }
 RANK.FIVE  = n => { return n * M[5]; }
 RANK.S = (r,n1,n2,n3,n4,n5) => { return RANK.ZERO(r) + n1*M[1] + n2*M[2] + n3*M[3] + n4*M[4] + n5*M[5]; }
 RANK.getZeroRank = function(pureRank) {
-  let index = Math.floor( pureRank / M[0]);
+  let index = Math.floor(pureRank / M[0]);
   return RANK[index];
 }
 
@@ -333,7 +333,21 @@ function isFullHouse(handArray) {
 
 function isTwoPair(handArray) {
   let reverseSortedTypeCount = cardTypeCount(handArray).sort(DESC);
-  return ( reverseSortedTypeCount[0] === 2 && reverseSortedTypeCount[1] === 2 ) * RANK.ZERO( RANK.TWO_PAIR );
+  if( !( reverseSortedTypeCount[0] === 2 && reverseSortedTypeCount[1] === 2 ) ) { return 0; }
+  // RANK.ZERO( RANK.TWO_PAIR );
+  let typeCount = cardTypeCount(handArray);
+  let pairVals = [];
+  let kicker = -1;
+  for(let i=typeCount.length-1;i>=0;i--) {
+    if(typeCount[i]===2) {
+      pairVals.push(i);
+      typeCount[i]=0;
+    } else if( typeCount[i]===1 && kicker===-1) {
+      kicker = i;
+    }
+  }
+
+  return RANK.S( RANK.TWO_PAIR, pairVals[0], pairVals[1], kicker, 0, 0 );
 }
 
 function isNKind(handArray, nKind) {
@@ -403,7 +417,7 @@ renderGame();
 // testRank(RANK.FLUSH);
 // testRank(RANK.STRAIGHT);
 // testRank(RANK.THREE_KIND);
-// testRank(RANK.TWO_PAIR);
+ testRank(RANK.TWO_PAIR);
 // testRank(RANK.PAIR);
 // testRank(RANK.HIGH_CARD);
 
