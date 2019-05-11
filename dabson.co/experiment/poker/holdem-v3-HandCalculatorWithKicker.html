@@ -64,7 +64,7 @@ RANK.TWO   = n => { return n * M[2]; }
 RANK.THREE = n => { return n * M[3]; }
 RANK.FOUR  = n => { return n * M[4]; }
 RANK.FIVE  = n => { return n * M[5]; }
-RANK.S = (a,b,c,d,e) => { return a*M[1] + b*M[2] + c*M[3] + d*M[4] + e*M[5]; }
+RANK.S = (r,n1,n2,n3,n4,n5) => { return RANK.ZERO( r ) + n1*M[1] + n2*M[2] + n3*M[3] + n4*M[4] + n5*M[5]; }
 
 const CLUB2    =  0;
 const CLUB3    =  1;
@@ -342,12 +342,12 @@ function isPair(handArray) {
 
   let pairValue = typeCount.indexOf(2);
   let kickers = suitAgnosticSet( handArray ).filter( x => x !== pairValue).sort(DESC);
-  return RANK.ZERO( RANK.PAIR ) + RANK.S(pairValue, ...kickers);
+  return RANK.S(RANK.PAIR, pairValue, ...kickers);
 }
 
 function isHighCard(handArray) {
   let highs = suitAgnosticSet( handArray ).sort(DESC);
-  return RANK.ZERO( RANK.HIGH_CARD ) + RANK.S( ...highs );
+  return RANK.S( RANK.HIGH_CARD, ...highs );
 }
 
 function toCardString(oneIndexedCard) { // keep it at one so false (0) results in unknown kicker
