@@ -28,7 +28,9 @@ body{
 <script>
 
 const BASE = 13;
-const M = [ 371293, 28561, 2197, 169, 13, 1 ]; // BASE-13 MULTIPLIERS = [5,4,3,2,1,0].map( x => Math.pow(BASE, x) )
+const M = [ 371293, 28561, 2197, 169, 13, 1 ]; // BASE-13 DIGIT MULTIPLIERS = [5,4,3,2,1,0].map( x => Math.pow(BASE, x) )
+const ASC = (a, b) => a - b;
+const DESC = (a, b) => b - a;
 
 const RANK = [
   'Unranked',
@@ -255,7 +257,7 @@ function isFlush(handArray) {
 }
 
 function sortedSuitAgnosticSet(handArray) {
-  return Array.from( new Set(handArray.map( x => x % nCardsPerSuit ).sort((a, b) => a - b)) );
+  return Array.from( new Set(handArray.map( x => x % nCardsPerSuit ).sort(ASC) ) );
 }
 
 function cardTypeCount( handArray ) { // returns counter array ace to king
@@ -319,20 +321,21 @@ function isThreeKind(handArray) {
 }
 
 function isFullHouse(handArray) {
-  let reverseSortedTypeCount = cardTypeCount(handArray).sort((a, b) => b - a);
+  let reverseSortedTypeCount = cardTypeCount(handArray).sort(DESC);
   return ( reverseSortedTypeCount[0] === 3 && reverseSortedTypeCount[1] >= 2 ) * RANK.ZERO( RANK.FULL_HOUSE );
 }
 
 function isTwoPair(handArray) {
-  let reverseSortedTypeCount = cardTypeCount(handArray).sort((a, b) => b - a);
+  let reverseSortedTypeCount = cardTypeCount(handArray).sort(DESC);
   return ( reverseSortedTypeCount[0] === 2 && reverseSortedTypeCount[1] === 2 ) * RANK.ZERO( RANK.TWO_PAIR );
 }
 function isPair(handArray) {
-  let reverseSortedTypeCount = cardTypeCount(handArray).sort((a, b) => b - a);
+  let reverseSortedTypeCount = cardTypeCount(handArray).sort(DESC);
   return ( reverseSortedTypeCount[0] === 2 ) * RANK.ZERO( RANK.PAIR );
 }
 
 function isHighCard(handArray) {
+  handArray.sort(ASC);
   return RANK.ZERO( RANK.ONE_CARD ) + RANK.ONE( Math.max(...handArray) );
 }
 
