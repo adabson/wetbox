@@ -62,7 +62,7 @@ const RANK = [
   RANK.STRAIGHT_FLUSH,
   RANK.ROYAL_FLUSH 
 ] = RANK;
-RANK.TOP = r => { return ( Math.max( 0, RANK.indexOf( r ) ) * M[5] ).toString( BASE ); } // the top-level rank as tridecimal. RANK.TOP( RANK.ROYAL_FLUSH )
+RANK.CALC = r => { return ( Math.max( 0, RANK.indexOf( r ) ) * M[5] ).toString( BASE ); } // the top-level rank as tridecimal. RANK.CALC( RANK.ROYAL_FLUSH )
 RANK.toString = function(triDecimal) {
   asBase13nthDigit
 }
@@ -234,7 +234,7 @@ function isRoyalFlush(handArray) {
   const isRoyalDiamonds = handArray.containsAll( DIAMONDT, DIAMONDJ, DIAMONDQ, DIAMONDK, DIAMONDA );
   const isRoyalHearts   = handArray.containsAll( HEARTT, HEARTJ, HEARTQ, HEARTK, HEARTA );
   const isRoyalSpades   = handArray.containsAll( SPADET, SPADEJ, SPADEQ, SPADEK, SPADEA );
-  return ( isRoyalClubs | isRoyalDiamonds | isRoyalHearts | isRoyalSpades ) ? RANK.TOP( RANK.ROYAL_FLUSH ) : 0 ; // @todo* RANK.ROYAL_FLUSH.TRI;
+  return ( isRoyalClubs | isRoyalDiamonds | isRoyalHearts | isRoyalSpades ) ? RANK.CALC( RANK.ROYAL_FLUSH ) : 0 ; // @todo* RANK.ROYAL_FLUSH.TRI;
 }
 
 function isFlush(handArray) {
@@ -313,17 +313,17 @@ function isStraightFlush(handArray) {
 
 function isFourKind(handArray) {
   let typeCount = cardTypeCount(handArray);
-  return typeCount.indexOf(4) + 1;
+  return ( typeCount.indexOf(4) + 1 ) * RANK.CALC( RANK.FOUR_KIND );
 }
 
 function isThreeKind(handArray) {
   let typeCount = cardTypeCount(handArray);
-  return typeCount.indexOf(3) + 1;
+  return ( typeCount.indexOf(3) + 1 ) * RANK.CALC( RANK.THREE_KIND );
 }
 
 function isFullHouse(handArray) {
   let reverseSortedTypeCount = cardTypeCount(handArray).sort((a, b) => b - a);
-  return reverseSortedTypeCount[0] === 3 && reverseSortedTypeCount[1] >= 2;
+  return ( reverseSortedTypeCount[0] === 3 && reverseSortedTypeCount[1] >= 2 ) * RANK.CALC( RANK.FULL_HOUSE );
 }
 
 function isTwoPair(handArray) {
@@ -381,7 +381,7 @@ function calculateWinners(...hands) {
 shuffle(deck);
 renderGame();
 
-testRank(RANK.ROYAL_FLUSH);
+//testRank(RANK.ROYAL_FLUSH);
 // testRank(RANK.STRAIGHT_FLUSH);
 // testRank(RANK.FOUR_KIND);
 // testRank(RANK.FULL_HOUSE);
