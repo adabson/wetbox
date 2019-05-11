@@ -257,6 +257,10 @@ function isFlush(handArray) {
   return ( isClubFlush | isDiamondFlush | isHeartFlush | isSpadeFlush ) * RANK.ZERO( RANK.FLUSH );
 }
 
+function suitAgnosticSet(handArray) {
+  return Array.from( new Set(handArray.map( x => x % nCardsPerSuit ) ) );
+}
+
 function sortedSuitAgnosticSet(handArray) {
   return Array.from( new Set(handArray.map( x => x % nCardsPerSuit ).sort(ASC) ) );
 }
@@ -331,15 +335,18 @@ function isTwoPair(handArray) {
   return ( reverseSortedTypeCount[0] === 2 && reverseSortedTypeCount[1] === 2 ) * RANK.ZERO( RANK.TWO_PAIR );
 }
 function isPair(handArray) {
-  let reverseSortedTypeCount = cardTypeCount(handArray).sort(DESC);
-  return ( reverseSortedTypeCount[0] === 2 ) * RANK.ZERO( RANK.PAIR );
+  let typeCount = cardTypeCount(handArray);
+  if(!typeCount.includes(2) ) { // .sort(DESC)[0] this mutates typeCount and destroys ordering
+    return 0;
+  }
+
+  let pairValue = typeCount.indexOf(2);
+  let kickers = suitAgnosticSet( handArray ).filter( x => x !== pairValue).sort(DESC);
+  return RANK.ZERO( RANK.PAIR ) + RANK.S(pairValue, ...kickers);
 }
 
 function isHighCard(handArray) {
-  let highs = sortedSuitAgnosticSet( handArray ).sort(DESC);
-  console.log(highs)
-  console.log(RANK.S( ...highs ).toString(BASE))
-  console.log('---')
+  let highs = suitAgnosticSet( handArray ).sort(DESC);
   return RANK.ZERO( RANK.HIGH_CARD ) + RANK.S( ...highs );
 }
 
