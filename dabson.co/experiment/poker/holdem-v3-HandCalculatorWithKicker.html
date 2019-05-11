@@ -64,6 +64,7 @@ RANK.TWO   = n => { return n * M[2]; }
 RANK.THREE = n => { return n * M[3]; }
 RANK.FOUR  = n => { return n * M[4]; }
 RANK.FIVE  = n => { return n * M[5]; }
+RANK.S = (a,b,c,d,e) => { return a*M[1] + b*M[2] + c*M[3] + d*M[4] * e*M[5]; }
 
 const CLUB2    =  0;
 const CLUB3    =  1;
@@ -335,8 +336,8 @@ function isPair(handArray) {
 }
 
 function isHighCard(handArray) {
-  handArray.sort(ASC);
-  return RANK.ZERO( RANK.ONE_CARD ) + RANK.ONE( Math.max(...handArray) );
+  let highs = sortedSuitAgnosticSet( handArray ).sort(DESC);
+  return RANK.ZERO( RANK.HIGH_CARD ) + RANK.S( ...highs );
 }
 
 function toCardString(oneIndexedCard) { // keep it at one so false (0) results in unknown kicker
