@@ -328,7 +328,23 @@ function isStraightFlush(handArray) {
 
 function isFullHouse(handArray) {
   let reverseSortedTypeCount = cardTypeCount(handArray).sort(DESC);
-  return ( reverseSortedTypeCount[0] === 3 && reverseSortedTypeCount[1] >= 2 ) * RANK.ZERO( RANK.FULL_HOUSE );
+  if ( !( reverseSortedTypeCount[0] === 3 && reverseSortedTypeCount[1] >= 2 ) ) { return 0; }
+
+  let typeCount = cardTypeCount(handArray);
+  let tripVals = [];
+  let pairVals = [];
+  for(let i=typeCount.length-1;i>=0;i--) {
+    if(typeCount[i]===3) {
+      tripVals.push(i);
+    } else if(typeCount[i]===2) { 
+      pairVals.push(i);
+    }
+  }
+  let kicker = pairVals[0];
+  if(tripVals.length > 1 && tripVals[1] > kicker) {
+    kicker = tripVals[1];
+  }
+  return RANK.S( RANK.FULL_HOUSE, tripVals[0], kicker, 0, 0, 0 );
 }
 
 function isTwoPair(handArray) {
@@ -342,7 +358,7 @@ function isTwoPair(handArray) {
     if(typeCount[i]===2) {
       pairVals.push(i);
       typeCount[i]=0;
-    } else if( typeCount[i]===1 && kicker===-1) { //assumes holdem (7 cards, up to 3 pairs, solo final card)
+    } else if(typeCount[i]===1 && kicker===-1) { //assumes holdem (7 cards, up to 3 pairs, solo final card)
       kicker = i;
     }
   }
@@ -413,11 +429,11 @@ renderGame();
 // testRank(RANK.ROYAL_FLUSH);
 // testRank(RANK.STRAIGHT_FLUSH);
 // testRank(RANK.FOUR_KIND);
-// testRank(RANK.FULL_HOUSE);
+ testRank(RANK.FULL_HOUSE);
 // testRank(RANK.FLUSH);
 // testRank(RANK.STRAIGHT);
 // testRank(RANK.THREE_KIND);
- testRank(RANK.TWO_PAIR);
+// testRank(RANK.TWO_PAIR);
 // testRank(RANK.PAIR);
 // testRank(RANK.HIGH_CARD);
 
