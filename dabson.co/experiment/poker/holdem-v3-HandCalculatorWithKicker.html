@@ -325,20 +325,6 @@ function isFourKind(handArray) {
   return ( typeCount.indexOf(4) + 1 ) * RANK.ZERO( RANK.FOUR_KIND );
 }
 
-function isThreeKind(handArray) {
-  let typeCount = cardTypeCount(handArray);
-  let triple = typeCount.indexOf(3);
-  if(triple === -1) { return 0; }
-  return RANK.S( RANK.THREE_KIND, 
-    triple, 
-    ...(suitAgnosticSet( handArray )
-      .filter( x => x !== triple)
-      .sort(DESC)
-      .slice(0, nCardsPerHand - 3) ),
-    0,
-    0);
-}
-
 function isFullHouse(handArray) {
   let reverseSortedTypeCount = cardTypeCount(handArray).sort(DESC);
   return ( reverseSortedTypeCount[0] === 3 && reverseSortedTypeCount[1] >= 2 ) * RANK.ZERO( RANK.FULL_HOUSE );
@@ -347,6 +333,20 @@ function isFullHouse(handArray) {
 function isTwoPair(handArray) {
   let reverseSortedTypeCount = cardTypeCount(handArray).sort(DESC);
   return ( reverseSortedTypeCount[0] === 2 && reverseSortedTypeCount[1] === 2 ) * RANK.ZERO( RANK.TWO_PAIR );
+}
+
+function isThreeKind(handArray) {
+  let typeCount = cardTypeCount(handArray);
+  let triple = cardTypeCount(handArray).indexOf(3);
+  if(triple === -1) { return 0; }
+  return RANK.S( RANK.THREE_KIND, 
+    triple, 
+    ...suitAgnosticSet( handArray )
+      .filter( x => x !== triple)
+      .sort(DESC)
+      .slice(0, nCardsPerHand - 3),
+    0,
+    0);
 }
 
 function isPair(handArray) {
