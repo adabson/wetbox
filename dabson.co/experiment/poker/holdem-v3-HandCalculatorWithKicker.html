@@ -161,7 +161,7 @@ function renderGame() {
       playerEl.appendChild(getCardEl(cardNo));
     }
 
-    let playerRank = calculateFullRank(playerHand);
+    let playerRank = calculateRank(playerHand);
     let playerRankEl = document.createTextNode(playerRank);
     playerEl.appendChild(playerRankEl);
 
@@ -200,16 +200,16 @@ function calculateRank(handArray) { // returnsa 6-digit base-13 number
   // }
   // I dunno, is using psudo-booleans a good thing?
 
-  return isRoyalFlush(handArray) ? isRoyalFlush(handArray) : 
-      isStraightFlush(handArray) ? isStraightFlush(handArray) :
-           isFourKind(handArray) ? isFourKind(handArray) :
-          isFullHouse(handArray) ? isFullHouse(handArray) :
-              isFlush(handArray) ? isFlush(handArray) :
-           isStraight(handArray) ? isStraight(handArray) :
-          isThreeKind(handArray) ? isThreeKind(handArray) :
-            isTwoPair(handArray) ? isTwoPair(handArray) :
-               isPair(handArray) ? isPair(handArray) :
-           isHighCard(handArray) ? isHighCard(handArray) :
+  return isRoyalFlush(handArray) ? RANK.ROYAL_FLUSH    + ' ' + isRoyalFlush(handArray) : 
+      isStraightFlush(handArray) ? RANK.STRAIGHT_FLUSH + ' ' + isStraightFlush(handArray) :
+           isFourKind(handArray) ? RANK.FOUR_KIND      + ' ' + isFourKind(handArray) :
+          isFullHouse(handArray) ? RANK.FULL_HOUSE     + ' ' + isFullHouse(handArray) :
+              isFlush(handArray) ? RANK.FLUSH          + ' ' + isFlush(handArray) :
+           isStraight(handArray) ? RANK.STRAIGHT       + ' ' + isStraight(handArray) :
+          isThreeKind(handArray) ? RANK.THREE_KIND     + ' ' + isThreeKind(handArray) :
+            isTwoPair(handArray) ? RANK.TWO_PAIR       + ' ' + isTwoPair(handArray) :
+               isPair(handArray) ? RANK.PAIR           + ' ' + isPair(handArray) :
+           isHighCard(handArray) ? RANK.HIGH_CARD      + ' ' + isHighCard(handArray) :
                                    0;
 }
 
