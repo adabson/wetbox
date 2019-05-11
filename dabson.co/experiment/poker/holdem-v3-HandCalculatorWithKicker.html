@@ -32,6 +32,10 @@ const M = [1, 13, 169, 2197, 28561, 371293]; // BASE-13 MULTIPLIERS = [0,1,2,3,4
 
 asBase13 = x => parseInt( x ).toString( BASE );
 
+function base13SubRank( tri, nth ) { // n=0 is most significant bit
+  return Math.floor(  )
+}
+
 const RANK = [
   'Unranked',
   'High Card',
@@ -59,6 +63,9 @@ const RANK = [
   RANK.ROYAL_FLUSH 
 ] = RANK;
 RANK.TRI = n => n * M[5];
+RANK.toString = function(triDecimal) {
+  asBase13nthDigit
+}
 
 const CLUB2    =  0;
 const CLUB3    =  1;
@@ -188,11 +195,11 @@ function shuffle(array) {
 }
 
 function calculateRank(handArray) { // returnsa 6-digit base-13 number
-  if(handArray.length != (nCardsPerPlayer + nCardsPerBoard)) {
-    throw new Error( `Calculate Rank Error: Invalid hand size. Expected (${nCardsPerPlayer + nCardsPerBoard}), but was (${handArray.length})` );
-  }
-
+  // if(handArray.length != (nCardsPerPlayer + nCardsPerBoard)) {
+  //   throw new Error( `Calculate Rank Error: Invalid hand size. Expected (${nCardsPerPlayer + nCardsPerBoard}), but was (${handArray.length})` );
+  // }
   // I dunno, is using psudo-booleans a good thing?
+
   return isRoyalFlush(handArray) ? isRoyalFlush(handArray) : 
       isStraightFlush(handArray) ? isStraightFlush(handArray) :
            isFourKind(handArray) ? isFourKind(handArray) :
