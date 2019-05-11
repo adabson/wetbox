@@ -28,8 +28,7 @@ body{
 <script>
 
 const BASE = 13;
-const M = [1, 13, 169, 2197, 28561, 371293]; // BASE-13 MULTIPLIERS = [0,1,2,3,4,5].map( x => Math.pow(BASE, x) )
-
+const M = [ 371293, 28561, 2197, 169, 13, 1 ]; // BASE-13 MULTIPLIERS = [5,4,3,2,1,0].map( x => Math.pow(BASE, x) )
 asBase13 = x => parseInt( x ).toString( BASE );
 
 function base13SubRank( tri, nth ) { // n=0 is most significant bit
@@ -62,8 +61,12 @@ const RANK = [
   RANK.STRAIGHT_FLUSH,
   RANK.ROYAL_FLUSH 
 ] = RANK;
-RANK.CALC = r => { return Math.max( 0, RANK.indexOf( r ) ) * M[5]; } // the top-level rank as tridecimal. RANK.CALC( RANK.ROYAL_FLUSH )
-RANK.HIGH = n => { return n * M[4]; } //n=0=deuce to n=12(c)=ace and inserts it into the 2nd digit
+RANK.ZERO  = r => { return Math.max( 0, RANK.indexOf( r ) ) * M[0]; } // the top-level rank as tridecimal. ie RANK.ZERO( RANK.ROYAL_FLUSH ) = 10(a)
+RANK.ONE   = n => { return n * M[1]; } //n=0=deuce to n=12(c)=ace and inserts it into the 2nd digit
+RANK.TWO   = n => { return n * M[2]; }
+RANK.THREE = n => { return n * M[3]; }
+RANK.FOUR  = n => { return n * M[4]; }
+RANK.FIVE  = n => { return n * M[5]; }
 RANK.toString = function(triDecimal) {
   asBase13nthDigit
 }
@@ -235,7 +238,7 @@ function isRoyalFlush(handArray) {
   const isRoyalDiamonds = handArray.containsAll( DIAMONDT, DIAMONDJ, DIAMONDQ, DIAMONDK, DIAMONDA );
   const isRoyalHearts   = handArray.containsAll( HEARTT, HEARTJ, HEARTQ, HEARTK, HEARTA );
   const isRoyalSpades   = handArray.containsAll( SPADET, SPADEJ, SPADEQ, SPADEK, SPADEA );
-  return ( isRoyalClubs | isRoyalDiamonds | isRoyalHearts | isRoyalSpades ) ? RANK.CALC( RANK.ROYAL_FLUSH ) : 0 ; // @todo* RANK.ROYAL_FLUSH.TRI;
+  return ( isRoyalClubs | isRoyalDiamonds | isRoyalHearts | isRoyalSpades ) ? RANK.ZERO( RANK.ROYAL_FLUSH ) : 0 ; // @todo* RANK.ROYAL_FLUSH.TRI;
 }
 
 function isFlush(handArray) {
@@ -256,7 +259,7 @@ function isFlush(handArray) {
   const isHeartFlush = noHearts >= nCardsPerHand;
   const isSpadeFlush = noSpades >= nCardsPerHand;
 
-  return ( isClubFlush | isDiamondFlush | isHeartFlush | isSpadeFlush ) * RANK.CALC( RANK.FLUSH );
+  return ( isClubFlush | isDiamondFlush | isHeartFlush | isSpadeFlush ) * RANK.ZERO( RANK.FLUSH );
 }
 
 function sortedSuitAgnosticSet(handArray) {
@@ -290,7 +293,7 @@ function isStraight(handArray) {
     }
     if( run === runLength ) {
       let straightHigh = ( ( suitAgnosticArray[i] + runLength ) % nCardsPerSuit );
-      return RANK.CALC( RANK.STRAIGHT ) + RANK.HIGH( straightHigh ); 
+      return RANK.ZERO( RANK.STRAIGHT ) + RANK.ONE( straightHigh ); 
     }
     last = suitAgnosticArray[i];
   }
@@ -310,35 +313,35 @@ function isStraightFlush(handArray) {
     else if(card >= SPADE2   && card <= SPADEA   ) spadeSubset.push(card);
   });
 
-  return ( isStraight(clubSubset) | isStraight(diamondSubset) | isStraight(heartSubset) | isStraight(spadeSubset) ) * RANK.CALC( RANK.STRAIGHT_FLUSH );
+  return ( isStraight(clubSubset) | isStraight(diamondSubset) | isStraight(heartSubset) | isStraight(spadeSubset) ) * RANK.ZERO( RANK.STRAIGHT_FLUSH );
 }
 
 function isFourKind(handArray) {
   let typeCount = cardTypeCount(handArray);
-  return ( typeCount.indexOf(4) + 1 ) * RANK.CALC( RANK.FOUR_KIND );
+  return ( typeCount.indexOf(4) + 1 ) * RANK.ZERO( RANK.FOUR_KIND );
 }
 
 function isThreeKind(handArray) {
   let typeCount = cardTypeCount(handArray);
-  return ( typeCount.indexOf(3) + 1 ) * RANK.CALC( RANK.THREE_KIND );
+  return ( typeCount.indexOf(3) + 1 ) * RANK.ZERO( RANK.THREE_KIND );
 }
 
 function isFullHouse(handArray) {
   let reverseSortedTypeCount = cardTypeCount(handArray).sort((a, b) => b - a);
-  return ( reverseSortedTypeCount[0] === 3 && reverseSortedTypeCount[1] >= 2 ) * RANK.CALC( RANK.FULL_HOUSE );
+  return ( reverseSortedTypeCount[0] === 3 && reverseSortedTypeCount[1] >= 2 ) * RANK.ZERO( RANK.FULL_HOUSE );
 }
 
 function isTwoPair(handArray) {
   let reverseSortedTypeCount = cardTypeCount(handArray).sort((a, b) => b - a);
-  return ( reverseSortedTypeCount[0] === 2 && reverseSortedTypeCount[1] === 2 ) * RANK.CALC( RANK.TWO_PAIR );
+  return ( reverseSortedTypeCount[0] === 2 && reverseSortedTypeCount[1] === 2 ) * RANK.ZERO( RANK.TWO_PAIR );
 }
 function isPair(handArray) {
   let reverseSortedTypeCount = cardTypeCount(handArray).sort((a, b) => b - a);
-  return ( reverseSortedTypeCount[0] === 2 ) * RANK.CALC( RANK.PAIR );
+  return ( reverseSortedTypeCount[0] === 2 ) * RANK.ZERO( RANK.PAIR );
 }
 
 function isHighCard(handArray) {
-  return RANK.CALC( RANK.HIGH_CARD ) + RANK.HIGH( Math.max(...handArray) );
+  return RANK.ZERO( RANK.ONE_CARD ) + RANK.ONE( Math.max(...handArray) );
 }
 
 function toCardString(oneIndexedCard) { // keep it at one so false (0) results in unknown kicker
