@@ -334,7 +334,7 @@ function isFullHouse(handArray) {
 function isTwoPair(handArray) {
   let reverseSortedTypeCount = cardTypeCount(handArray).sort(DESC);
   if( !( reverseSortedTypeCount[0] === 2 && reverseSortedTypeCount[1] === 2 ) ) { return 0; }
-  // RANK.ZERO( RANK.TWO_PAIR );
+
   let typeCount = cardTypeCount(handArray);
   let pairVals = [];
   let kicker = -1;
@@ -342,7 +342,7 @@ function isTwoPair(handArray) {
     if(typeCount[i]===2) {
       pairVals.push(i);
       typeCount[i]=0;
-    } else if( typeCount[i]===1 && kicker===-1) {
+    } else if( typeCount[i]===1 && kicker===-1) { //assumes holdem (7 cards, up to 3 pairs, solo final card)
       kicker = i;
     }
   }
