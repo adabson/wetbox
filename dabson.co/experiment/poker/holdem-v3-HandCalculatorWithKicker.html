@@ -62,7 +62,7 @@ const RANK = [
   RANK.STRAIGHT_FLUSH,
   RANK.ROYAL_FLUSH 
 ] = RANK;
-RANK.TRI = n => n * M[5];
+RANK.TOP = r => { return ( Math.max( 0, RANK.indexOf( r ) ) * M[5] ).toString( BASE ); } // the top-level rank as tridecimal. RANK.TOP( RANK.ROYAL_FLUSH )
 RANK.toString = function(triDecimal) {
   asBase13nthDigit
 }
@@ -234,7 +234,7 @@ function isRoyalFlush(handArray) {
   const isRoyalDiamonds = handArray.containsAll( DIAMONDT, DIAMONDJ, DIAMONDQ, DIAMONDK, DIAMONDA );
   const isRoyalHearts   = handArray.containsAll( HEARTT, HEARTJ, HEARTQ, HEARTK, HEARTA );
   const isRoyalSpades   = handArray.containsAll( SPADET, SPADEJ, SPADEQ, SPADEK, SPADEA );
-  return ( isRoyalClubs | isRoyalDiamonds | isRoyalHearts | isRoyalSpades ) ; // @todo* RANK.ROYAL_FLUSH.TRI;
+  return ( isRoyalClubs | isRoyalDiamonds | isRoyalHearts | isRoyalSpades ) ? RANK.TOP( RANK.ROYAL_FLUSH ) : 0 ; // @todo* RANK.ROYAL_FLUSH.TRI;
 }
 
 function isFlush(handArray) {
@@ -361,7 +361,7 @@ function testRank(rankType) {
   for(let i=0;i<1000000;i++) {
     shuffle(deck);
     let handArray = deck.slice(0,7);
-    if(calculateRank(handArray) === rankType ) {
+    if(calculateRank(handArray).startsWith( rankType ) ) {
       console.log(`${rankType} achived for p1 on the ${i}th iteration!`);
       console.log(deck.slice(0,7));
       renderGame();
@@ -381,7 +381,7 @@ function calculateWinners(...hands) {
 shuffle(deck);
 renderGame();
 
-// testRank(RANK.ROYAL_FLUSH);
+testRank(RANK.ROYAL_FLUSH);
 // testRank(RANK.STRAIGHT_FLUSH);
 // testRank(RANK.FOUR_KIND);
 // testRank(RANK.FULL_HOUSE);
