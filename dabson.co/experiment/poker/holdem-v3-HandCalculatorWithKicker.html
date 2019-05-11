@@ -17,11 +17,14 @@
   position:relative;
   left:-.042em;
   top:.004em;
+  font-weight:normal;
 }
 body{
   font-family:Arial,sans-serif;
   font-size:2em;
-  background-color:#bfb;
+  background-color:#296e01;
+  color:#fff;
+  font-weight:bold;
 }
 </style>
 <body></body>
@@ -170,11 +173,11 @@ function renderGame() {
 
 function getCardEl(cardNo) {
   let cardUnicode = deckMap[cardNo];
-  let color = cardNo >= DIAMOND2 && cardNo <= HEARTA ? 'c00' : '000';
+  let color = cardNo >= DIAMOND2 && cardNo <= HEARTA ? '900' : '000';
   let cardEl = document.createElement('span');
   let cardInnerEl = document.createElement('span');
   cardEl.setAttribute('class', 'card');
-  cardEl.setAttribute('style', `color:#${color};border-color:${color}`);
+  cardEl.setAttribute('style', `color:#${color};border-color:#${color}`);
 
   cardInnerEl.innerHTML = `&#${cardUnicode};`; // because most implementations of javascript only support 16-bit javascript, we need to use 32-bit HTML specialchars
   cardEl.appendChild(cardInnerEl);
