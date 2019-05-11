@@ -70,6 +70,10 @@ RANK.THREE = n => { return n * M[3]; }
 RANK.FOUR  = n => { return n * M[4]; }
 RANK.FIVE  = n => { return n * M[5]; }
 RANK.S = (r,n1,n2,n3,n4,n5) => { return RANK.ZERO(r) + n1*M[1] + n2*M[2] + n3*M[3] + n4*M[4] + n5*M[5]; }
+RANK.TOP = function(pureRank) {
+  let index = Math.floor( pureRank / M[0]);
+  return RANK[index];
+}
 
 const CLUB2    =  0;
 const CLUB3    =  1;
@@ -204,17 +208,19 @@ function calculateRank(handArray) { // returnsa 6-digit base-13 number
   // }
   // I dunno, is using psudo-booleans a good thing?
 
-  return isRoyalFlush(handArray) ? RANK.ROYAL_FLUSH    + ' ' + isRoyalFlush(handArray).toString( BASE ) : 
-      isStraightFlush(handArray) ? RANK.STRAIGHT_FLUSH + ' ' + isStraightFlush(handArray).toString( BASE ) :
-           isFourKind(handArray) ? RANK.FOUR_KIND      + ' ' + isFourKind(handArray).toString( BASE ) :
-          isFullHouse(handArray) ? RANK.FULL_HOUSE     + ' ' + isFullHouse(handArray).toString( BASE ) :
-              isFlush(handArray) ? RANK.FLUSH          + ' ' + isFlush(handArray).toString( BASE ) :
-           isStraight(handArray) ? RANK.STRAIGHT       + ' ' + isStraight(handArray).toString( BASE ) :
-          isThreeKind(handArray) ? RANK.THREE_KIND     + ' ' + isThreeKind(handArray).toString( BASE ) :
-            isTwoPair(handArray) ? RANK.TWO_PAIR       + ' ' + isTwoPair(handArray).toString( BASE ) :
-               isPair(handArray) ? RANK.PAIR           + ' ' + isPair(handArray).toString( BASE ) :
-           isHighCard(handArray) ? RANK.HIGH_CARD      + ' ' + isHighCard(handArray).toString( BASE ) :
-                                   0;
+  let pureRank = isRoyalFlush(handArray) ? isRoyalFlush(handArray) : 
+              isStraightFlush(handArray) ? isStraightFlush(handArray) :
+                   isFourKind(handArray) ? isFourKind(handArray) :
+                  isFullHouse(handArray) ? isFullHouse(handArray) :
+                      isFlush(handArray) ? isFlush(handArray) :
+                   isStraight(handArray) ? isStraight(handArray) :
+                  isThreeKind(handArray) ? isThreeKind(handArray) :
+                    isTwoPair(handArray) ? isTwoPair(handArray) :
+                       isPair(handArray) ? isPair(handArray) :
+                   isHighCard(handArray) ? isHighCard(handArray) :
+                                           0;
+
+  return RANK.TOP( pureRank ) + ' ' + pureRank.toString(13);
 }
 
 function sequence( n ) {
@@ -392,11 +398,11 @@ renderGame();
 
 // testRank(RANK.ROYAL_FLUSH);
 // testRank(RANK.STRAIGHT_FLUSH);
-//testRank(RANK.FOUR_KIND);
+// testRank(RANK.FOUR_KIND);
 // testRank(RANK.FULL_HOUSE);
 // testRank(RANK.FLUSH);
 // testRank(RANK.STRAIGHT);
-testRank(RANK.THREE_KIND);
+// testRank(RANK.THREE_KIND);
 // testRank(RANK.TWO_PAIR);
 // testRank(RANK.PAIR);
 // testRank(RANK.HIGH_CARD);
