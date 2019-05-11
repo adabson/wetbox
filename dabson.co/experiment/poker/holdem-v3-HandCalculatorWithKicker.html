@@ -59,12 +59,12 @@ const RANK = [
   RANK.ROYAL_FLUSH 
 ] = RANK;
 RANK.ZERO  = r => { return Math.max( 0, RANK.indexOf( r ) ) * M[0]; } // the top-level rank as tridecimal. ie RANK.ZERO( RANK.ROYAL_FLUSH ) = 10(a)
-RANK.ONE   = n => { return n * M[1]; } //n=0=deuce to n=12(c)=ace and inserts it into the 2nd digit
+RANK.ONE   = n => { return n * M[1]; } // n=0=deuce to n=12(c)=ace and inserts it into the 2nd digit
 RANK.TWO   = n => { return n * M[2]; }
 RANK.THREE = n => { return n * M[3]; }
 RANK.FOUR  = n => { return n * M[4]; }
 RANK.FIVE  = n => { return n * M[5]; }
-RANK.S = (a,b,c,d,e) => { return a*M[1] + b*M[2] + c*M[3] + d*M[4] * e*M[5]; }
+RANK.S = (a,b,c,d,e) => { return a*M[1] + b*M[2] + c*M[3] + d*M[4] + e*M[5]; }
 
 const CLUB2    =  0;
 const CLUB3    =  1;
@@ -337,6 +337,9 @@ function isPair(handArray) {
 
 function isHighCard(handArray) {
   let highs = sortedSuitAgnosticSet( handArray ).sort(DESC);
+  console.log(highs)
+  console.log(RANK.S( ...highs ).toString(BASE))
+  console.log('---')
   return RANK.ZERO( RANK.HIGH_CARD ) + RANK.S( ...highs );
 }
 
