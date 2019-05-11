@@ -320,11 +320,6 @@ function isStraightFlush(handArray) {
   return ( isStraight(clubSubset) | isStraight(diamondSubset) | isStraight(heartSubset) | isStraight(spadeSubset) ) * RANK.ZERO( RANK.STRAIGHT_FLUSH );
 }
 
-function isFourKind(handArray) {
-  let typeCount = cardTypeCount(handArray);
-  return ( typeCount.indexOf(4) + 1 ) * RANK.ZERO( RANK.FOUR_KIND );
-}
-
 function isFullHouse(handArray) {
   let reverseSortedTypeCount = cardTypeCount(handArray).sort(DESC);
   return ( reverseSortedTypeCount[0] === 3 && reverseSortedTypeCount[1] >= 2 ) * RANK.ZERO( RANK.FULL_HOUSE );
@@ -335,26 +330,20 @@ function isTwoPair(handArray) {
   return ( reverseSortedTypeCount[0] === 2 && reverseSortedTypeCount[1] === 2 ) * RANK.ZERO( RANK.TWO_PAIR );
 }
 
-function isThreeKind(handArray) {
-  let triple = cardTypeCount(handArray).indexOf(3);
-  if(triple === -1) { return 0; }
+function isNKind(handArray, nKind) {
+  let nTupleVal = cardTypeCount(handArray).indexOf(nKind);
+  if(nTupleVal === -1) { return 0; }
   let kickers = suitAgnosticSet( handArray )
-    .filter( x => x !== triple)
+    .filter( x => x !== nTupleVal)
     .sort(DESC)
-    .slice(0, nCardsPerHand - 3);
-  return RANK.S( RANK.THREE_KIND, triple, ...kickers, 0, 0);
+    .slice(0, nCardsPerHand - nKind);
+  let zeroRank = Math.pow(2, nKind - 1); // assumes hoedem ranks: pairs=2, trips=4, quads=8
+  return RANK.S( RANK.THREE_KIND, nTupleVal, ...kickers, ...zeros(nKind-1));
 }
 
-function isPair(handArray) {
-  let typeCount = cardTypeCount(handArray);
-  if(!typeCount.includes(2) ) { return 0; }
-  let pairValue = typeCount.indexOf(2);
-  let kickers = suitAgnosticSet( handArray )
-    .filter( x => x !== pairValue)
-    .sort(DESC)
-    .slice(0, nCardsPerHand - 2);
-  return RANK.S(RANK.PAIR, pairValue, ...kickers, 0);
-}
+isFourKind  = handArray => { return isNKind(handArray, 4); }
+isThreeKind = handArray => { return isNKind(handArray, 3); }
+isPair      = handArray => { return isNKind(handArray, 2); }
 
 function isHighCard(handArray) {
   let highs = suitAgnosticSet( handArray ).sort(DESC);
@@ -403,11 +392,11 @@ renderGame();
 
 // testRank(RANK.ROYAL_FLUSH);
 // testRank(RANK.STRAIGHT_FLUSH);
-// testRank(RANK.FOUR_KIND);
+testRank(RANK.FOUR_KIND);
 // testRank(RANK.FULL_HOUSE);
 // testRank(RANK.FLUSH);
 // testRank(RANK.STRAIGHT);
- testRank(RANK.THREE_KIND);
+// testRank(RANK.THREE_KIND);
 // testRank(RANK.TWO_PAIR);
 // testRank(RANK.PAIR);
 // testRank(RANK.HIGH_CARD);
