@@ -337,7 +337,7 @@ function isNKind(handArray, nKind) {
     .filter( x => x !== nTupleVal)
     .sort(DESC)
     .slice(0, nCardsPerHand - nKind);
-  let zeroRank = M[0] * Math.pow(2, nKind - 1); // assumes hoedem ranks: pairs=2, trips=4, quads=8
+  let zeroRank = RANK[ Math.pow(2, nKind - 1) ]; // assumes hoedem ranks: pairs=2, trips=4, quads=8
   return RANK.S( zeroRank, nTupleVal, ...kickers, ...zeros(nKind-1));
 }
 
