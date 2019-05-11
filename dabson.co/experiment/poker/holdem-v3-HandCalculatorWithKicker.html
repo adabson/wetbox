@@ -327,7 +327,16 @@ function isFourKind(handArray) {
 
 function isThreeKind(handArray) {
   let typeCount = cardTypeCount(handArray);
-  return ( typeCount.indexOf(3) + 1 ) * RANK.ZERO( RANK.THREE_KIND );
+  let triple = typeCount.indexOf(3);
+  if(triple === -1) { return 0; }
+  return RANK.S( RANK.THREE_KIND, 
+    triple, 
+    ...(suitAgnosticSet( handArray )
+      .filter( x => x !== triple)
+      .sort(DESC)
+      .slice(0, nCardsPerHand - 3) ),
+    0,
+    0);
 }
 
 function isFullHouse(handArray) {
@@ -375,7 +384,7 @@ function toCardString(oneIndexedCard) { // keep it at one so false (0) results i
 
 function testRank(rankType) {
   console.log('Testing for: '+rankType);
-  for(let i=0;i<1000000;i++) {
+  for(let i=0;i<100000;i++) {
     shuffle(deck);
     let handArray = deck.slice(0,7);
     if(calculateRank(handArray).startsWith( rankType ) ) {
@@ -402,7 +411,7 @@ renderGame();
 // testRank(RANK.FULL_HOUSE);
 // testRank(RANK.FLUSH);
 // testRank(RANK.STRAIGHT);
-// testRank(RANK.THREE_KIND);
+ testRank(RANK.THREE_KIND);
 // testRank(RANK.TWO_PAIR);
 // testRank(RANK.PAIR);
 // testRank(RANK.HIGH_CARD);
