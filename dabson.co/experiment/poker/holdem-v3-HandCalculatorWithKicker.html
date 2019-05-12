@@ -22,11 +22,10 @@
 body{
   font-family:Arial,sans-serif;
   font-size:2em;
-
   background-color:#afa;
-/*  background-color:#296e01;
-  color:#fff;
-  font-weight:bold;*/
+}
+b {
+  background-color:#ff0;
 }
 </style>
 <body></body>
@@ -180,8 +179,9 @@ function renderGame() {
 
     let playerRank = calculateRank(playerHand);
     let playerRankSt = RANK.getZeroRank( playerRank );
-    let playerRankEl = document.createTextNode(`${playerRankSt} ${playerRank.toString(BASE)} ${isWinner ? 'WINNER!' : ''}`);
-    playerEl.appendChild(playerRankEl);
+    //let playerRankEl = document.createTextNode();
+    playerEl.innerHTML += `${playerRankSt} ${playerRank.toString(BASE)} ${isWinner ? '<b>WINNER!</b>' : ''}`;
+    //playerEl.appendChild(playerRankEl);
     document.body.appendChild(playerEl);
   }
 }
