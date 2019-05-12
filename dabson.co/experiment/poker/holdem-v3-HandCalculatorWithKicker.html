@@ -276,7 +276,6 @@ function isStraight(handArray) {
     }
     if( run === runLength ) {
       let straightHigh = suitAgnosticArray[i] + runLength;
-      console.log('straight',handArray,'high',straightHigh)
       return RANK.ZERO( RANK.STRAIGHT ) + RANK.ONE( straightHigh ); 
     }
     last = suitAgnosticArray[i];
@@ -304,17 +303,10 @@ function isStraightFlush(handArray) {
   let fatSuit = (suitSplit(handArray).sort(FATTEST))[0];
   let isFatEnough = fatSuit.length >= nCardsPerHand;
   let isFatStraight = isStraight(fatSuit);
+
   if( !isFatEnough || !isFatStraight ) { return 0; }
-
   let diff = RANK.ZERO( RANK.STRAIGHT_FLUSH ) - RANK.ZERO( RANK.FLUSH ); // equals 3 * M[0];
-  //console.log( 'isFAtStrait' + isFatEnough, isFatStraight );
-
   return isFatStraight + diff;
-
-  // console.log('CDHS',clubs,diamonds,hearts,spades);
-  // console.log(isStraight(clubs),'\n', isStraight(diamonds),'\n', isStraight(hearts),'\n', isStraight(spades));
-  // console.log('SF ret',Math.max( isStraight(clubs), isStraight(diamonds), isStraight(hearts), isStraight(spades) ));
-  // return Math.max( isStraight(clubs), isStraight(diamonds), isStraight(hearts), isStraight(spades) );
 }
 
 function isFullHouse(handArray) {
@@ -398,7 +390,7 @@ function testRank(rankType) {
   for(let i=0;i<len;i++) {
     shuffle(deck);
     let handArray = deck.slice(0,7);
-    if(calculateRank(handArray).startsWith( rankType + ' ' ) ) {
+    if(calculateRank(handArray).startsWith( rankType + ' ' ) ) { // STRAIGHT_FLUSH starts with STRAIGHT
       console.log(`${rankType} achived for p1 on the ${i}th iteration!`);
       console.log(deck.slice(0,7));
       renderGame();
