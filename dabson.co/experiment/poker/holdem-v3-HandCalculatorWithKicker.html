@@ -283,9 +283,7 @@ function cardTypeCount( handArray ) { // returns counter array ace to king
 }
 
 function isStraight(handArray) {
-  let runString = '';
   let suitAgnosticArray = sortedSuitAgnosticSet( handArray );
-  // @todo ALL BROKEN
 
   let last = suitAgnosticArray[suitAgnosticArray.length-1];
   let runLength = nCardsPerHand - 1;
@@ -298,7 +296,7 @@ function isStraight(handArray) {
       run = 0;
     }
     if( run === runLength ) {
-      let straightHigh = ( ( suitAgnosticArray[i] + runLength ) % nCardsPerSuit );
+      let straightHigh = suitAgnosticArray[i] + runLength;
       return RANK.ZERO( RANK.STRAIGHT ) + RANK.ONE( straightHigh ); 
     }
     last = suitAgnosticArray[i];
@@ -319,10 +317,7 @@ function isStraightFlush(handArray) {
     else if(card >= SPADE2   && card <= SPADEA   ) spadeSubset.push(card);
   });
 
-  let [a,b,c,d] = [ isStraight(clubSubset), isStraight(diamondSubset), isStraight(heartSubset), isStraight(spadeSubset)];
-  if(!(a|b|c|d)) { return 0; }
-
-  return Math.max(a,b,c,d);
+  return Math.max( isStraight(clubSubset), isStraight(diamondSubset), isStraight(heartSubset), isStraight(spadeSubset) );
 }
 
 function isFullHouse(handArray) {
@@ -402,7 +397,7 @@ function toCardString(oneIndexedCard) { // keep it at one so false (0) results i
 
 function testRank(rankType) {
   console.log('Testing for: '+rankType);
-  let len = 10000000;
+  let len = 100000;
   for(let i=0;i<len;i++) {
     shuffle(deck);
     let handArray = deck.slice(0,7);
@@ -428,11 +423,11 @@ shuffle(deck);
 renderGame();
 
 // testRank(RANK.ROYAL_FLUSH);
- testRank(RANK.STRAIGHT_FLUSH);
+// testRank(RANK.STRAIGHT_FLUSH);
 // testRank(RANK.FOUR_KIND);
 // testRank(RANK.FULL_HOUSE);
 // testRank(RANK.FLUSH);
-// testRank(RANK.STRAIGHT);
+ testRank(RANK.STRAIGHT);
 // testRank(RANK.THREE_KIND);
 // testRank(RANK.TWO_PAIR);
 // testRank(RANK.PAIR);
