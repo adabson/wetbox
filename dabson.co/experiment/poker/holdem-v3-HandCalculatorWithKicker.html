@@ -237,7 +237,7 @@ function isRoyalFlush(handArray) {
   const isRoyalDiamonds = handArray.containsAll( DIAMONDT, DIAMONDJ, DIAMONDQ, DIAMONDK, DIAMONDA );
   const isRoyalHearts   = handArray.containsAll( HEARTT, HEARTJ, HEARTQ, HEARTK, HEARTA );
   const isRoyalSpades   = handArray.containsAll( SPADET, SPADEJ, SPADEQ, SPADEK, SPADEA );
-  return ( isRoyalClubs | isRoyalDiamonds | isRoyalHearts | isRoyalSpades ) ? RANK.ZERO( RANK.ROYAL_FLUSH ) : 0 ; // @todo* RANK.ROYAL_FLUSH.TRI;
+  return ( isRoyalClubs | isRoyalDiamonds | isRoyalHearts | isRoyalSpades ) ? RANK.ZERO( RANK.ROYAL_FLUSH ) : 0; 
 }
 
 function isFlush(handArray) {
@@ -276,6 +276,7 @@ function isStraight(handArray) {
     }
     if( run === runLength ) {
       let straightHigh = suitAgnosticArray[i] + runLength;
+      console.log('straight',handArray,'high',straightHigh)
       return RANK.ZERO( RANK.STRAIGHT ) + RANK.ONE( straightHigh ); 
     }
     last = suitAgnosticArray[i];
@@ -300,8 +301,20 @@ function suitSplit(handArray) { //returns a 2D array of the 4 suits
 }
 
 function isStraightFlush(handArray) {
-  let [clubs,diamonds,hearts,spades] = suitSplit(handArray);
-  return Math.max( isStraight(clubs), isStraight(diamonds), isStraight(hearts), isStraight(spades) );
+  let fatSuit = (suitSplit(handArray).sort(FATTEST))[0];
+  let isFatEnough = fatSuit.length >= nCardsPerHand;
+  let isFatStraight = isStraight(fatSuit);
+  if( !isFatEnough || !isFatStraight ) { return 0; }
+
+  let diff = RANK.ZERO( RANK.STRAIGHT_FLUSH ) - RANK.ZERO( RANK.FLUSH ); // equals 3 * M[0];
+  //console.log( 'isFAtStrait' + isFatEnough, isFatStraight );
+
+  return isFatStraight + diff;
+
+  // console.log('CDHS',clubs,diamonds,hearts,spades);
+  // console.log(isStraight(clubs),'\n', isStraight(diamonds),'\n', isStraight(hearts),'\n', isStraight(spades));
+  // console.log('SF ret',Math.max( isStraight(clubs), isStraight(diamonds), isStraight(hearts), isStraight(spades) ));
+  // return Math.max( isStraight(clubs), isStraight(diamonds), isStraight(hearts), isStraight(spades) );
 }
 
 function isFullHouse(handArray) {
@@ -381,11 +394,11 @@ function toCardString(oneIndexedCard) { // keep it at one so false (0) results i
 
 function testRank(rankType) {
   console.log('Testing for: '+rankType);
-  let len = 100000;
+  let len = 10000;
   for(let i=0;i<len;i++) {
     shuffle(deck);
     let handArray = deck.slice(0,7);
-    if(calculateRank(handArray).startsWith( rankType ) ) {
+    if(calculateRank(handArray).startsWith( rankType + ' ' ) ) {
       console.log(`${rankType} achived for p1 on the ${i}th iteration!`);
       console.log(deck.slice(0,7));
       renderGame();
@@ -407,10 +420,10 @@ shuffle(deck);
 renderGame();
 
 // testRank(RANK.ROYAL_FLUSH);
-// testRank(RANK.STRAIGHT_FLUSH);
+ testRank(RANK.STRAIGHT_FLUSH);
 // testRank(RANK.FOUR_KIND);
 // testRank(RANK.FULL_HOUSE);
- testRank(RANK.FLUSH);
+// testRank(RANK.FLUSH);
 // testRank(RANK.STRAIGHT);
 // testRank(RANK.THREE_KIND);
 // testRank(RANK.TWO_PAIR);
