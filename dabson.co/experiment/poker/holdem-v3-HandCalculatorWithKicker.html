@@ -170,7 +170,7 @@ function renderGame() {
 
     let playerRank = calculateRank(playerHand);
     let playerRankSt = RANK.getZeroRank( playerRank );
-    let playerRankEl = document.createTextNode(`${playerRankSt} ${playerRank}`);
+    let playerRankEl = document.createTextNode(`${playerRankSt} ${playerRank.toString(13)}`);
     playerEl.appendChild(playerRankEl);
 
     document.body.appendChild(playerEl);
