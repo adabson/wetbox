@@ -1,7 +1,7 @@
 <html>
 <style>
 .card{
-  font-size:4.5em;
+  font-size:4em;
   line-height:.88em;
   width:.63em;
   background-color:#fff;
@@ -169,8 +169,8 @@ function renderGame() {
     }
 
     let playerRank = calculateRank(playerHand);
-    let playerRankSt = RANK.getZeroRank( playerRank ).toString(13);
-    let playerRankEl = document.createTextNode(`${playerRankSt} ${playerRank}`);
+    let playerRankSt = RANK.getZeroRank( playerRank );
+    let playerRankEl = document.createTextNode(`${playerRankSt} ${playerRank.toString(BASE)}`);
     playerEl.appendChild(playerRankEl);
 
     document.body.appendChild(playerEl);
@@ -387,7 +387,7 @@ function toCardString(oneIndexedCard) { // keep it at one so false (0) results i
 
 function testRank(rankType) {
   console.log('Testing for: ' + rankType);
-  let len = 10000;
+  let len = 100000;
   for(let i=0;i<len;i++) {
     shuffle(deck);
     let handArray = deck.slice(0,7);
@@ -403,10 +403,14 @@ function testRank(rankType) {
   }
 }
 
-function calculateWinners(...hands) {
-  // calculate rank
-  // if > 1people with same rank, calculate high (or split if equivilent hand/no high)
-  // if > 1 people with same high, caluclate kicker(s) (or split if equivilent hand/no kickers)
+function calculateWinners(hands) { //returns a binary array of respective hands: 1 if winner, 0 if not
+  if(hands.length<1) {
+    return [];
+  }
+  let winningHand = JSON.Parse(JSON.stringify(hands)).sort(DESC)[0];
+  let ret = hands.map( x => x === winningHand );
+
+  return ret;
 }
 
 shuffle(deck);
