@@ -36,6 +36,7 @@ const BASE = 13;
 const M = [ 371293, 28561, 2197, 169, 13, 1 ]; // BASE-13 DIGIT MULTIPLIERS = [5,4,3,2,1,0].map( x => Math.pow(BASE, x) )
 const ASC = (a, b) => a - b;
 const DESC = (a, b) => b - a;
+const FATTEST = (a, b) => b.length - a.length; // sorts arrays largest size to smallest size
 
 const RANK = [
   'Unranked',
@@ -248,24 +249,10 @@ function isRoyalFlush(handArray) {
 }
 
 function isFlush(handArray) {
-  let noClubs = 0;
-  let noDiamonds = 0;
-  let noHearts = 0;
-  let noSpades = 0;
-
-  handArray.forEach(card => {
-         if(card <= CLUBA ) noClubs++;
-    else if(card >= DIAMOND2 && card <= DIAMONDA ) noDiamonds++
-    else if(card >= HEART2 && card <= HEARTA ) noHearts++
-    else if(card >= SPADE2 && card <= SPADEA ) noSpades++
-  });
-
-  const isClubFlush = noClubs >= nCardsPerHand;
-  const isDiamondFlush = noDiamonds >= nCardsPerHand;
-  const isHeartFlush = noHearts >= nCardsPerHand;
-  const isSpadeFlush = noSpades >= nCardsPerHand;
-
-  return ( isClubFlush | isDiamondFlush | isHeartFlush | isSpadeFlush ) * RANK.ZERO( RANK.FLUSH );
+  let fatSuits = suitSplit(handArray).sort(FATTEST);
+  let highestSuitCollection = fatSuits[0].length;
+  let highestCardInBiggestCollection = Math.max( ...fatSuits[0] );
+  return highestSuitCollection < nCardsPerHand ? 0 : RANK.S( RANK.FLUSH, highestCardInBiggestCollection, 0, 0, 0, 0 );
 }
 
 function suitAgnosticSet(handArray) {
@@ -304,7 +291,7 @@ function isStraight(handArray) {
   return 0;
 }
 
-function isStraightFlush(handArray) {
+function suitSplit(handArray) { //returns a 2D array of the 4 suits
   let clubSubset = [];
   let diamondSubset = [];
   let heartSubset = [];
@@ -317,7 +304,12 @@ function isStraightFlush(handArray) {
     else if(card >= SPADE2   && card <= SPADEA   ) spadeSubset.push(card);
   });
 
-  return Math.max( isStraight(clubSubset), isStraight(diamondSubset), isStraight(heartSubset), isStraight(spadeSubset) );
+  return [clubSubset, diamondSubset, heartSubset, spadeSubset];
+}
+
+function isStraightFlush(handArray) {
+  let [clubs,diamonds,hearts,spades] = suitSplit(handArray);
+  return Math.max( isStraight(clubs), isStraight(diamonds), isStraight(hearts), isStraight(spades) );
 }
 
 function isFullHouse(handArray) {
@@ -426,8 +418,8 @@ renderGame();
 // testRank(RANK.STRAIGHT_FLUSH);
 // testRank(RANK.FOUR_KIND);
 // testRank(RANK.FULL_HOUSE);
-// testRank(RANK.FLUSH);
- testRank(RANK.STRAIGHT);
+ testRank(RANK.FLUSH);
+// testRank(RANK.STRAIGHT);
 // testRank(RANK.THREE_KIND);
 // testRank(RANK.TWO_PAIR);
 // testRank(RANK.PAIR);
