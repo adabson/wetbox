@@ -169,7 +169,8 @@ function renderGame() {
     }
 
     let playerRank = calculateRank(playerHand);
-    let playerRankEl = document.createTextNode(playerRank);
+    let playerRankSt = RANK.getZeroRank( playerRank );
+    let playerRankEl = document.createTextNode(`${playerRankSt} ${playerRank}`);
     playerEl.appendChild(playerRankEl);
 
     document.body.appendChild(playerEl);
@@ -213,7 +214,7 @@ function calculateRank(handArray) { // returnsa rank with pureRank (6-digit base
                        isPair(handArray) ? isPair(handArray) :
                    isHighCard(handArray) ? isHighCard(handArray) : 0;
 
-  return RANK.getZeroRank( pureRank ) + ' ' + pureRank.toString(BASE);
+  return pureRank;
 }
 
 function sequence( n ) {
@@ -385,12 +386,12 @@ function toCardString(oneIndexedCard) { // keep it at one so false (0) results i
 }
 
 function testRank(rankType) {
-  console.log('Testing for: '+rankType);
+  console.log('Testing for: ' + rankType);
   let len = 10000;
   for(let i=0;i<len;i++) {
     shuffle(deck);
     let handArray = deck.slice(0,7);
-    if(calculateRank(handArray).startsWith( rankType + ' ' ) ) { // STRAIGHT_FLUSH starts with STRAIGHT
+    if(rankType === RANK.getZeroRank( calculateRank(handArray) ) ) { // STRAIGHT_FLUSH starts with STRAIGHT
       console.log(`${rankType} achived for p1 on the ${i}th iteration!`);
       console.log(deck.slice(0,7));
       renderGame();
@@ -411,8 +412,8 @@ function calculateWinners(...hands) {
 shuffle(deck);
 renderGame();
 
-// testRank(RANK.ROYAL_FLUSH);
- testRank(RANK.STRAIGHT_FLUSH);
+ testRank(RANK.ROYAL_FLUSH);
+// testRank(RANK.STRAIGHT_FLUSH);
 // testRank(RANK.FOUR_KIND);
 // testRank(RANK.FULL_HOUSE);
 // testRank(RANK.FLUSH);
