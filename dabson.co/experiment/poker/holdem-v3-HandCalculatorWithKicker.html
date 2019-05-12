@@ -319,7 +319,10 @@ function isStraightFlush(handArray) {
     else if(card >= SPADE2   && card <= SPADEA   ) spadeSubset.push(card);
   });
 
-  return ( isStraight(clubSubset) | isStraight(diamondSubset) | isStraight(heartSubset) | isStraight(spadeSubset) ) * RANK.ZERO( RANK.STRAIGHT_FLUSH );
+  let [a,b,c,d] = [ isStraight(clubSubset), isStraight(diamondSubset), isStraight(heartSubset), isStraight(spadeSubset)];
+  if(!(a|b|c|d)) { return 0; }
+
+  return Math.max(a,b,c,d);
 }
 
 function isFullHouse(handArray) {
@@ -425,9 +428,9 @@ shuffle(deck);
 renderGame();
 
 // testRank(RANK.ROYAL_FLUSH);
-// testRank(RANK.STRAIGHT_FLUSH);
+ testRank(RANK.STRAIGHT_FLUSH);
 // testRank(RANK.FOUR_KIND);
- testRank(RANK.FULL_HOUSE);
+// testRank(RANK.FULL_HOUSE);
 // testRank(RANK.FLUSH);
 // testRank(RANK.STRAIGHT);
 // testRank(RANK.THREE_KIND);
