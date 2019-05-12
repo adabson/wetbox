@@ -286,7 +286,7 @@ function isStraight(handArray) {
   let runString = '';
   let suitAgnosticArray = sortedSuitAgnosticSet( handArray );
   // @todo ALL BROKEN
-  //let highestRank = 
+  // let highestRank = 
   // if(suitAgnosticArray.reverse(0) === 0 ) {
   //   suitAgnosticArray.unshift(nCardsPerSuit); //aces count at both ends in a straight
   // }
@@ -340,10 +340,8 @@ function isFullHouse(handArray) {
       pairVals.push(i);
     }
   }
-  let kicker = pairVals[0];
-  if(tripVals.length > 1 && tripVals[1] > kicker) {
-    kicker = tripVals[1];
-  }
+
+  let kicker = tripVals.length > 1 ? tripVals[1] : pairVals[0];
   return RANK.S( RANK.FULL_HOUSE, tripVals[0], kicker, 0, 0, 0 );
 }
 
@@ -405,14 +403,19 @@ function toCardString(oneIndexedCard) { // keep it at one so false (0) results i
 
 function testRank(rankType) {
   console.log('Testing for: '+rankType);
-  for(let i=0;i<100000;i++) {
+  let len = 10000000;
+  for(let i=0;i<len;i++) {
     shuffle(deck);
+
     let handArray = deck.slice(0,7);
     if(calculateRank(handArray).startsWith( rankType ) ) {
       console.log(`${rankType} achived for p1 on the ${i}th iteration!`);
       console.log(deck.slice(0,7));
       renderGame();
       break;
+    }
+    if(i === len-1) {
+      console.log(`failed to find in ${len} iterations`);
     }
   }
 }
