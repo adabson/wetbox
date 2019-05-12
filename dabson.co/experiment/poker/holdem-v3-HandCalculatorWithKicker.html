@@ -146,9 +146,7 @@ const nPlayers        = 8;
 const nDeck           = deckMap.length; // 52
 const nMaxPlayers     = Math.floor((nDeck-nCardsPerBoard)/nCardsPerPlayer); // 52-5=47, no burns, 2 cards each = 46/2 = 23 max players
 
-
-const deck = sequence(nDeck); // 0-12 clubs, 13-25 diamonds, 26-38 hearts, 39-51 spades
-//shuffle(deck);
+const deck = sequence(nDeck); // 0-12 clubs, 13-25 diamonds, 26-38 hearts, 39-51 spades // shuffle(deck);
 
 function renderGame() {
   document.body.innerHTML = '';
@@ -204,11 +202,6 @@ function shuffle(array) {
 }
 
 function calculateRank(handArray) { // returnsa 6-digit base-13 number
-  // if(handArray.length != (nCardsPerPlayer + nCardsPerBoard)) {
-  //   throw new Error( `Calculate Rank Error: Invalid hand size. Expected (${nCardsPerPlayer + nCardsPerBoard}), but was (${handArray.length})` );
-  // }
-  // I dunno, is using psudo-booleans a good thing?
-
   let pureRank = isRoyalFlush(handArray) ? isRoyalFlush(handArray) : 
               isStraightFlush(handArray) ? isStraightFlush(handArray) :
                    isFourKind(handArray) ? isFourKind(handArray) :
@@ -218,10 +211,9 @@ function calculateRank(handArray) { // returnsa 6-digit base-13 number
                   isThreeKind(handArray) ? isThreeKind(handArray) :
                     isTwoPair(handArray) ? isTwoPair(handArray) :
                        isPair(handArray) ? isPair(handArray) :
-                   isHighCard(handArray) ? isHighCard(handArray) :
-                                           0;
+                   isHighCard(handArray) ? isHighCard(handArray) : 0;
 
-  return RANK.getZeroRank( pureRank ) + ' ' + pureRank.toString(13);
+  return RANK.getZeroRank( pureRank ) + ' ' + pureRank.toString(BASE);
 }
 
 function sequence( n ) {
