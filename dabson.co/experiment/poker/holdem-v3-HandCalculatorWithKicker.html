@@ -150,7 +150,7 @@ const deck = sequence(nDeck); // 0-12 clubs, 13-25 diamonds, 26-38 hearts, 39-51
 
 function renderGame() {
   document.body.innerHTML = '';
-  let cardsEl = document.createElement('div'); //getElementById('cards');
+  let cardsEl = document.createElement('div'); // getElementById('cards');
   document.body.appendChild(cardsEl);
 
   for(let i=0;i<nCardsPerBoard;i++) {
@@ -201,7 +201,7 @@ function shuffle(array) {
   return array;
 }
 
-function calculateRank(handArray) { // returnsa 6-digit base-13 number
+function calculateRank(handArray) { // returnsa rank with pureRank (6-digit base-13 number)
   let pureRank = isRoyalFlush(handArray) ? isRoyalFlush(handArray) : 
               isStraightFlush(handArray) ? isStraightFlush(handArray) :
                    isFourKind(handArray) ? isFourKind(handArray) :
