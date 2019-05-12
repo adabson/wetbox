@@ -172,7 +172,7 @@ function renderGame() {
     playerHands.push( playerHand );
   }
 
-  playerWinners = calculateWinners(...playerHands);
+  playerWinners = calculateWinners(playerHands);
   for(let i=0;i<playerHands.length;i++) {
     let playerHand = playerHands[i];
     let playerEl = playerEls[i];
@@ -416,16 +416,19 @@ function calculateWinners(hands) { //returns a binary array of respective hands:
   if(hands.length<1) {
     return [];
   }
-  let winningHand = JSON.parse(JSON.stringify(hands)).sort(DESC)[0];
-  let ret = hands.map( x => x === winningHand );
 
+  let handRanks = hands.map(calculateRank); // x => {console.log(x); return calculateRank(x)}
+  let sortedHandRanks = JSON.parse(JSON.stringify(handRanks)).sort(DESC);
+  let winningRank = sortedHandRanks[0];
+  console.log(winningRank.toString(BASE));
+  let ret = handRanks.map( x => x === winningRank );
   return ret;
 }
 
 shuffle(deck);
 renderGame();
 
-testRank(RANK.ROYAL_FLUSH);
+// testRank(RANK.ROYAL_FLUSH);
 // testRank(RANK.STRAIGHT_FLUSH);
 // testRank(RANK.FOUR_KIND);
 // testRank(RANK.FULL_HOUSE);
@@ -434,7 +437,7 @@ testRank(RANK.ROYAL_FLUSH);
 // testRank(RANK.THREE_KIND);
 // testRank(RANK.TWO_PAIR);
 // testRank(RANK.PAIR);
-// testRank(RANK.HIGH_CARD);
+testRank(RANK.HIGH_CARD);
 
 </script>
 </html>
