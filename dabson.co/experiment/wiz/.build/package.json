@@ -7,7 +7,7 @@
     "dev": "webpack-dev-server --env.NODE_ENV=development"
   },
   "dependencies": {
-    "three": "^0.95.0",
+    "three": "^0.125.0",
     "wetbox": "^0.2.25"
   },
   "devDependencies": {
