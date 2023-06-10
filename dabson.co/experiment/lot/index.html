@@ -256,6 +256,8 @@ function ithCombination( n, k, i ) { // i is ith iteration 0 <= i < nCk
   }
 }
 
+const satball = i => ithCombination(45, 6, i).map(j=>++j);
+
 function inverseIthCombination( n, combinationArray ) { // returns a 0-indexed iteration 0<=i<n array
   let k = combinationArray.length;
   let position = Array.from(combinationArray, x => sequence(n).indexOf(x));
