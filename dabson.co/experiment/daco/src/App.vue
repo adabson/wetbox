@@ -52,7 +52,7 @@ export default {
         },
         {
           id: 3,
-          title: "Horse", 
+          title: "Horse",
           description: "Don't I look handsome?",
           image: "img/horse.png"
         },
