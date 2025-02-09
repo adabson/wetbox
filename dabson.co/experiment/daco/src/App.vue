@@ -42,25 +42,25 @@ export default {
           id: 1,
           title: "King",
           description: "Where's my Burger!?",
-          image: "/img/king.png"
+          image: "img/king.png"
         },
         {
           id: 2,
           title: "Skate",
           description: "Simply Gorgeous, darling",
-          image: "/img/skate.png"
+          image: "img/skate.png"
         },
         {
           id: 3,
           title: "Horse",
           description: "Don't I look handsome?",
-          image: "/img/horse.png"
+          image: "img/horse.png"
         },
         {
           id: 4,
           title: "Prince",
           description: "..of Egypt in his emo era.",
-          image: "/img/prince.png"
+          image: "img/prince.png"
         },
       ],
       contact: "github.com/adabson"
