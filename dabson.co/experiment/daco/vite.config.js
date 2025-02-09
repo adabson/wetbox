@@ -6,7 +6,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: 'https://dabson.co/experiment/daco/dist',
+  base: process.env.VITE_BASE_URL || '/',
   plugins: [
     vue(),
     vueDevTools(),
