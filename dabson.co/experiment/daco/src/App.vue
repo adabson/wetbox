@@ -36,7 +36,7 @@ export default {
     return {
       name: "Andrew Dabson",
       tagline: "Designer & Developer",
-      about: "Been out of the design game since getting an office job. Apparantly you can call yourself an AI designer / prompt engineer these days. I'm here for it.",
+      about: "Regrettably haven't indulged recreation design since slaving away at an office job. Turns out you can call yourself an AI designer / prompt engineer these days & I'm here for it.",
       portfolio: [
         {
           id: 1,
