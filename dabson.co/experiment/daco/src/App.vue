@@ -35,8 +35,8 @@ export default {
   data() {
     return {
       name: "Andrew Dabson",
-      tagline: "Designer & Developer",
-      about: "I've been missing recreational design since slaving away at an office job. Turns out you can call yourself an AI designer / prompt engineer these days & I'm here for it.",
+      tagline: "Designer. Developer. Duck negotiator.",
+      about: "I've been missing recreational design since slaving away at an office job. Turns out there's new opportunity for aspiring AI designers / prompt engineers.",
       portfolio: [
         {
           id: 1,
@@ -47,7 +47,7 @@ export default {
         {
           id: 2,
           title: "Skate",
-          description: "Simply Gorgeous, darling",
+          description: "Simply gorgeous, darling",
           image: "img/skate.png"
         },
         {
