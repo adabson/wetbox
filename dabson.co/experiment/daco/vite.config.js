@@ -23,14 +23,5 @@ export default defineConfig((command, mode) => {
         '@': fileURLToPath(new URL('./src', import.meta.url))
       },
     },
-    // build: {
-    //   rollupOptions: {
-    //     output: {
-    //       assetFileNames: 'assets/img/[name][extname]',
-    //       chunkFileNames: 'assets/js/[name]-[hash].js',
-    //       entryFileNames: 'assets/js/[name]-[hash].js',
-    //     }
-    //   }
-    // }
   };
 })
