@@ -62,6 +62,12 @@ export default {
           description: "..of Egypt in his emo era.",
           image: "img/prince.png"
         },
+        {
+          id: 5,
+          title: "Quack",
+          description: "you tossed bread in the wrong neighborhood.",
+          image: "img/code-duck.png"
+        },
       ],
       contact: "github.com/adabson"
     };
